@@ -39,7 +39,7 @@ jobs:
           node --input-type=module -e '
             import { createNaturalFilter, defineSearch, enumField, keywordProvider } from "jevfilter";
             import { jev } from "jevfilter/jev";
-            const nf = createNaturalFilter({ schema: defineSearch({ resource: "tickets", fields: { status: enumField(["open", "closed"]) } }), provider: keywordProvider() });
+            const nf = createNaturalFilter({ schema: defineSearch({ resource: "tickets", fields: { status: enumField(["open", "closed"]) } }), provider: keywordProvider(), allowUnauthenticated: true });
             const r = await nf.prepare("open tickets");
             if (r.status !== "ready" || r.filters.status !== "open" || typeof jev !== "function") process.exit(1);
             console.log("ok", JSON.stringify(r.filters));'
