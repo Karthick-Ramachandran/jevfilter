@@ -1,0 +1,17 @@
+{
+  "name": "jevfilter-demo",
+  "private": true,
+  "type": "module",
+  "description": "Hosted demo and landing page for jevfilter (Cloudflare Worker + static assets). Not published to npm.",
+  "scripts": {
+    "dev": "wrangler dev --env-file ../.env",
+    "types": "wrangler types",
+    "typecheck": "wrangler types && tsc --noEmit",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "wrangler": "4.136.3"
+  }
+}

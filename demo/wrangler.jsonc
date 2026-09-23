@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "jevfilter",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-09-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
+    "not_found_handling": "404-page"
+  },
+  // ADR-0006: the shared Jev key is limited to 10/min per IP and 30/min globally (spend cap, ~$4.2/day worst case).
+  "ratelimits": [
+    { "name": "IP_LIMITER", "namespace_id": "4101", "simple": { "limit": 10, "period": 60 } },
+    { "name": "GLOBAL_LIMITER", "namespace_id": "4102", "simple": { "limit": 30, "period": 60 } }
+  ],
+  "vars": {
+    // Kill switch: set to "1" and redeploy to stop all model calls.
+    "DEMO_DISABLED": "0"
+  },
+  "observability": { "enabled": true }
+}

@@ -37,6 +37,18 @@ sanitized `ProviderError` messages. No key cache across requests. The playground
 the `x-jev-api-key` header for a single request, binds to 127.0.0.1 by default, and never logs or
 stores the key.
 
+## Hosted demo (ADR-0006)
+
+- The browser only calls the demo's own `/api/*`. The Worker calls Jev server-side, so the key never
+  reaches the browser (verified: 0 of 18 responses and static files contain it).
+- The shared key is the Worker secret `TYPESAFE_API_KEY`, set from `.env` over stdin and never in
+  a file or command argument. Local dev loads it with `wrangler dev --env-file ../.env`, with no copy made.
+- Shared-key limits are 10/min per IP and 30/min globally. `DEMO_DISABLED=1` is the kill switch.
+  Visitor keys (`x-jev-api-key`) are used per request only.
+- Static assets carry a strict CSP (`demo/public/_headers`): no inline scripts or styles, `connect-src 'self'`.
+- Demo accounts come from a fixed allowlist; scope is derived from the account, never from text.
+  `/api/execute` re-validates filters and verifies entity ids belong to the account.
+
 ## Sensitive Data
 
 The search text goes to the configured Jev endpoint. Records, candidate labels, and credentials do

@@ -17,6 +17,7 @@ Natural language to validated filters: schema, parsers, provider questions, prep
 - why did Jev drop a date or a category from the filters
 - rename the package to jevfilter and bundle it for the npm launch
 - rewrite the README (sharp, humanized) for launch
+- build a hosted demo and landing page (see docs/context/demo-site.md)
 
 ## Also Known As
 
