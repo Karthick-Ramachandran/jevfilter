@@ -71,6 +71,8 @@ export interface ResultMeta {
   provider: string;
   model?: string;
   usage?: { inputTokens: number; outputTokens?: number };
+  /** True when the provider's answers came from a cache. */
+  cached?: boolean;
 }
 
 export type NaturalFilterResult<F extends Fields = Fields> =
@@ -435,6 +437,7 @@ export function createNaturalFilter<F extends Fields, Ctx = unknown, R = unknown
       provider: provider.name,
       ...(response.model ? { model: response.model } : {}),
       ...(response.usage ? { usage: response.usage } : {}),
+      ...(response.cached ? { cached: true } : {}),
     };
 
     const intent = picks.intent!.d;

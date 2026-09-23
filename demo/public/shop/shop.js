@@ -241,6 +241,10 @@ function stats(s) {
   const box = $("stats");
   box.replaceChildren();
   if (!s) { box.append(el("span", "stat good", "no model call"), el("span", "stat", "sidebar filters, validated")); return; }
+  if (s.cached) {
+    box.append(el("span", "stat good", "cached answer, 0 tokens"), el("span", "stat", `${s.ms} ms`), el("span", "stat good", "no SQL written by a model"));
+    return;
+  }
   box.append(
     el("span", "stat", `${s.modelCalls} model call`),
     el("span", "stat", `${s.inputTokens.toLocaleString()} tokens`),

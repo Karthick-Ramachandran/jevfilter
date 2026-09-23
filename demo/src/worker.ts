@@ -10,6 +10,8 @@
  */
 import {
   createNaturalFilter,
+  memoryCache,
+  withCache,
   parseDates,
   parseNumbers,
   type FilterProvider,
@@ -41,7 +43,12 @@ const JSON_HEADERS = {
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 
 // Built once per isolate. The key comes from each request's context, never from module scope.
-const provider = jev<Ctx>({ apiKey: (ctx) => ctx.jevKey, maxRetries: 1, timeout: 4_000 });
+// ADR-0008: answers are cached per company (helpdesk) or shared (public store catalog).
+// authorize, validation, entity lookup and the search itself still run on every request.
+const provider = withCache(jev<Ctx>({ apiKey: (ctx) => ctx.jevKey, maxRetries: 1, timeout: 4_000 }), {
+  store: memoryCache({ maxEntries: 1000 }),
+  scope: (ctx) => ctx.account.id,
+});
 
 interface TraceEntry {
   id: string;
@@ -119,7 +126,10 @@ async function jevKeyFor(req: Request, env: Env): Promise<{ value: string; own: 
 }
 
 type ShopCtx = { jevKey: string };
-const shopProvider = jev<ShopCtx>({ apiKey: (ctx) => ctx.jevKey, maxRetries: 1, timeout: 4_000 });
+const shopProvider = withCache(jev<ShopCtx>({ apiKey: (ctx) => ctx.jevKey, maxRetries: 1, timeout: 4_000 }), {
+  store: memoryCache({ maxEntries: 1000 }),
+  shared: true,
+});
 
 /** The simple store demo: one model call, then the store's own product query. */
 async function handleShopSearch(req: Request, env: Env): Promise<Response> {
@@ -131,6 +141,7 @@ async function handleShopSearch(req: Request, env: Env): Promise<Response> {
   const started = Date.now();
   const result = await nf.prepare(String(body.text ?? ""), { context: { jevKey: key.value } });
   const usage = "meta" in result ? result.meta?.usage : undefined;
+  const cached = "meta" in result && result.meta?.cached === true;
   return json({
     result,
     products: result.status === "ready" ? listProducts(result.filters) : null,
@@ -138,7 +149,8 @@ async function handleShopSearch(req: Request, env: Env): Promise<Response> {
       ms: Date.now() - started,
       inputTokens: usage?.inputTokens ?? 0,
       estimatedUsd: usage ? Math.round(usage.inputTokens * USD_PER_INPUT_TOKEN * 1e6) / 1e6 : 0,
-      modelCalls: usage ? 1 : 0,
+      modelCalls: usage && !cached ? 1 : 0,
+      cached,
     },
   });
 }
@@ -193,6 +205,7 @@ async function handleSearch(req: Request, env: Env): Promise<Response> {
       model: "meta" in result ? (result.meta?.model ?? null) : null,
       ms,
       keySource: ownKey ? "yours" : "shared demo key",
+      cached: "meta" in result && result.meta?.cached === true,
       sqlGenerated: null,
     },
   });

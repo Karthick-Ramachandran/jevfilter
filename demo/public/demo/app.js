@@ -272,6 +272,7 @@ function renderFacts(x, search, ranBy) {
   if (x) {
     facts.append(
       fact("Tokens", x.usage ? x.usage.inputTokens.toLocaleString() : "0"),
+      fact("Cache", x.cached ? "hit, no model call" : "miss", x.cached ? "good" : null),
       fact("Cost", x.usage ? `$${x.usage.estimatedUsd.toFixed(5)}` : "$0"),
       fact("Time", `${x.ms} ms`),
       fact("Key", x.keySource),

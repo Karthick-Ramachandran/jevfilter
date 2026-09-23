@@ -46,3 +46,4 @@ export {
   type ChoiceSpec,
 } from "./provider.ts";
 export { mockProvider, keywordProvider, type MockAnswer } from "./mock.ts";
+export { withCache, memoryCache, type CacheStore, type CacheOptions } from "./cache.ts";

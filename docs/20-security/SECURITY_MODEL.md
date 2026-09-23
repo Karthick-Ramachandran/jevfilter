@@ -37,6 +37,14 @@ sanitized `ProviderError` messages. No key cache across requests. The playground
 the `x-jev-api-key` header for a single request, binds to 127.0.0.1 by default, and never logs or
 stores the key.
 
+## Caching (ADR-0008)
+
+`withCache` stores only provider answers, keyed by a SHA-256 hash of the provider, model, scope,
+search text, and compiled questions. Scope is required (`scope(context)` or an explicit
+`shared: true`), so one tenant's cache is never served to another. `authorize`, validation, entity
+resolution, and the executor run on every call. Errors and incomplete answers are never cached,
+and a failing store is ignored.
+
 ## Hosted demo (ADR-0006)
 
 - The browser only calls the demo's own `/api/*`. The Worker calls Jev server-side, so the key never

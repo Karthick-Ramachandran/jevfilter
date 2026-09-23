@@ -78,6 +78,7 @@ export function jev<Ctx = unknown>(options: JevOptions<Ctx> = {}): FilterProvide
 
   return {
     name: "jev",
+    model,
     async choose(request, { context, signal }) {
       const client = await clientFor(context);
       const questions: Record<string, ChoiceQuestion> = {};

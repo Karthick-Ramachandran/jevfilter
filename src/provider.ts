@@ -32,6 +32,8 @@ export interface ProviderResponse {
   answers: Record<string, ProviderAnswer>;
   model?: string;
   usage?: { inputTokens: number; outputTokens?: number };
+  /** True when the answers came from a cache (see withCache). */
+  cached?: boolean;
 }
 
 export interface ProviderCallOptions<Ctx = unknown> {
@@ -42,6 +44,8 @@ export interface ProviderCallOptions<Ctx = unknown> {
 
 export interface FilterProvider<Ctx = unknown> {
   readonly name: string;
+  /** Model identifier. Part of the cache key, so a model upgrade doesn't reuse old answers. */
+  readonly model?: string;
   choose(request: ProviderRequest, options: ProviderCallOptions<Ctx>): Promise<ProviderResponse>;
 }
 

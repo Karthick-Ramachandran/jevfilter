@@ -77,6 +77,30 @@ decides what runs.
 What Jev does receive: the search text and your filter schema (field names, descriptions, and
 allowed values). If your category names or descriptions are sensitive, treat them like the search text.
 
+## Is it a fit?
+
+JevFilter is for finding records by attributes your API already filters on: status, priority,
+owner, dates, amounts, customer. If your screen has a row of filter dropdowns, that's the fit:
+admin dashboards, CRMs, support desks, issue trackers, billing, e-commerce admin, inventory, and
+back-office tools.
+
+It doesn't search inside content. "The doc where we discussed AWS costs" needs full-text or vector
+search, and JevFilter doesn't replace that. For the same reason it isn't a tool for web search, RAG,
+Q&A, or recommendations. You can put it in front of those systems to handle the structured part of
+a request, but it won't find meaning in free text.
+
+Before you integrate, check that:
+
+1. Your API already accepts structured filters.
+2. You can describe each field in a sentence, including the words your users use for its values.
+3. You have a lookup for named things (customers, owners, products) that respects the user's scope.
+4. Your server-side authorization is already correct. JevFilter doesn't bypass it, and it can't fix it.
+5. Sending the search text and your filter schema to Jev is acceptable for your data.
+6. Your UI can show a clarification question when a request is ambiguous.
+
+If all six hold, the remaining question is how well Jev reads requests against your schema, and
+`npm run eval` answers that.
+
 ## Install
 
 ```sh
@@ -249,6 +273,34 @@ answers, and the executor still only receives schema-valid filters.
 The confidence thresholds come from this one small suite, so run `npm run eval` against your own
 schema before relying on them.
 
+## Caching
+
+Repeat searches don't need to call the model again. Wrap the provider:
+
+```ts
+import { createNaturalFilter, memoryCache, withCache } from "jevfilter";
+import { jev } from "jevfilter/jev";
+
+const provider = withCache(jev(), {
+  store: memoryCache({ maxEntries: 1000 }), // or your own { get, set } backed by Redis or KV
+  scope: (session) => session.tenantId,     // or `shared: true` for public data
+  ttlMs: 10 * 60_000,
+});
+```
+
+Only the model's answers are cached. `authorize`, validation, the entity lookup, and your executor
+run on every search, and dates like "last week" are recomputed from today, so a cache hit can't
+skip security or go stale on the calendar. The key is a hash of the exact questions sent, including
+your schema and the model version, so changing either one misses the cache. Scope is required:
+leaving out both `scope` and `shared: true` throws. Identical searches that arrive at the same time
+share one model call, and `result.meta.cached` tells you when a result came from the cache.
+
+## Search on Enter
+
+Each interpretation is a network call. On the hosted demo it took about 300 to 500 ms. Run it when
+the user presses Enter or pauses, not on every keystroke, and keep your normal filter controls for
+instant edits. Those go straight to `execute()` with no model call.
+
 ## Try it locally
 
 ```sh
@@ -297,7 +349,12 @@ authority over your database.
 
 ## Roadmap
 
-The goal is one filter schema for people, APIs, and agents. Today `defineSearch` drives the
+Not in v0.1, in rough order of what users ask for first: "A or B" and exclusions across fields,
+sorting and limits ("latest", "biggest"), passing leftover words ("about OAuth") to your text
+search, an eval report that compares two schema or model versions, and more providers, including
+self-hosted ones.
+
+The longer-term goal is one filter schema for people, APIs, and agents. Today `defineSearch` drives the
 natural-language parser. Later it could also generate a classic filter UI, URL serialization,
 OpenAPI and WebMCP tool schemas, and test fixtures, all producing the same validated filters for
 the same existing API.

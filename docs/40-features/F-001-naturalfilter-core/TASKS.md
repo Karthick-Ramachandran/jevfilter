@@ -49,6 +49,10 @@ Scope: rename to `jevfilter` (ADR-0004, confirmed by the maintainer: "let's name
 
 Evidence: publint "All good!", attw green for ESM (CJS/node10 intentionally unsupported), tarball 27.4 kB / 21 files, clean-install consumer typechecks and gets live Jev results matching the README hero example, live eval 23/23.
 
+## T7: Answer cache
+
+Status: Done (2026-09-23), ADR-0008 accepted by the maintainer. `src/cache.ts`: `withCache`, `memoryCache`, scope required, in-flight sharing, `meta.cached`. 10 tests in `test/cache.test.ts`. Live demo: a repeat store search went from 602 ms and 2,829 tokens to 1 ms and 0 tokens, and a different company missed the cache as intended.
+
 ## Completion Evidence
 
 Status: Done.
