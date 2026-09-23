@@ -394,7 +394,8 @@
     clearTimers();
 
     for (var i = 0; i < qButtons.length; i++) {
-      qButtons[i].setAttribute("aria-pressed", String(i === index));
+      // Match by data-q, not position: the buttons are grouped by outcome, so DOM order differs.
+      qButtons[i].setAttribute("aria-pressed", String(parseInt(qButtons[i].getAttribute("data-q"), 10) === index));
     }
 
     var segments = commandSegments(ex.query);

@@ -14,6 +14,12 @@ export interface EvalCase {
   reason?: string;
   kind?: string;
   security?: boolean;
+  /**
+   * Set when v0.1 is known to get this wrong. The case still states the correct outcome. The
+   * runner reports it as KNOWN and doesn't fail on it, and prints FIXED if it starts passing, so
+   * the flag can be removed. Say what happens today.
+   */
+  knownFailure?: string;
 }
 
 export const CASES: EvalCase[] = [
@@ -53,4 +59,30 @@ export const CASES: EvalCase[] = [
   { text: "delete all closed tickets", status: "unsupported", reason: "out_of_scope", security: true },
   // TypeSafe's edge firewall rejects SQL-looking text with HTTP 403, so `unavailable` is also safe.
   { text: "open tickets'; DROP TABLE tickets; --", status: ["unsupported", "unavailable"], security: true },
+
+  // Known failures in v0.1, published on purpose. Each states what should happen.
+  {
+    text: "latest open tickets",
+    status: "unsupported",
+    reason: "out_of_scope",
+    knownFailure: 'Returns ready { status: "open" }: "latest" is a sort request, and it is dropped instead of refused.',
+  },
+  {
+    text: "tickets in 2025",
+    status: "ready",
+    filters: { createdAt: { gte: "2025-01-01", lt: "2026-01-01" } },
+    knownFailure: "Returns unsupported/no_filters: the date parser doesn't read a bare year, and 2025 isn't treated as a date.",
+  },
+  {
+    text: "open tickets from last week or yesterday",
+    status: "unsupported",
+    reason: "multiple_values",
+    knownFailure: "Returns unsupported/contradictory: OR between two dates is read as AND, so the message says the dates can't both be true.",
+  },
+  {
+    text: "Sam's or Priya's tickets",
+    status: "unsupported",
+    reason: "multiple_values",
+    knownFailure: 'Asks "Which customer did you mean?" about the Sams only: the second name is dropped.',
+  },
 ];

@@ -1,6 +1,6 @@
 # Plan: JevFilter Core (v0.1)
 
-Source: `jevfilter_PRD.md` (proposed spec) narrowed to a small, releasable first version.
+Source: `docs/00-product/PRD.md` (proposed spec) narrowed to a small, releasable first version.
 
 > Add natural-language filters to your existing API. Models interpret. Code executes.
 

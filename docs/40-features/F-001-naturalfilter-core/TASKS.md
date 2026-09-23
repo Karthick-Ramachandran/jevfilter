@@ -55,6 +55,17 @@ Status: Done (2026-09-23), ADR-0008 accepted by the maintainer. `src/cache.ts`: 
 
 An independent review found 7 bugs, all reproduced: non-string scope merged tenants; `shared` collided with a tenant named "shared"; a hung provider blocked later searches; a hung store broke search; a non-finite TTL never expired; waiting callers inherited an invalid answer; and a failed leader fanned out uncached calls. All are fixed. `test/cache.test.ts` now has 19 tests, and all 8 new ones fail on the pre-review code. Live demo: a repeat store search went from 602 ms and 2,829 tokens to 1 ms and 0 tokens, and a different company missed the cache as intended.
 
+## T8: Published known failures
+
+Status: Done (2026-09-23), after a public review asked for failing cases. `evals/cases.ts` supports `knownFailure`: the case states the correct outcome, the runner prints KNOWN and doesn't fail the run, and it prints FIXED if the case starts passing. Four were found by probing live Jev and are real:
+
+- "latest open tickets" drops the sort.
+- "tickets in 2025" isn't parsed as a year.
+- "…last week or yesterday" reads OR as AND (contradictory).
+- "Sam's or Priya's tickets" drops the second name.
+
+Live run: 23/23 regular, 4 known, 0 leaks, exit 0 (48,724 tokens).
+
 ## Completion Evidence
 
 Status: Done.

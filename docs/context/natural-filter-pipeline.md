@@ -13,6 +13,8 @@ Natural language to validated filters: schema, parsers, provider questions, prep
 - change how dates like "last week" or "last 7 days" are parsed
 - add a new provider (OpenAI, custom) behind the provider interface
 - add a nasty query to the eval suite
+- publish eval cases that fail on purpose (knownFailure)
+- answer a public review/roast of the project
 - added TYPESAFE_API_KEY in .env, run the evals against live Jev
 - why did Jev drop a date or a category from the filters
 - rename the package to jevfilter and bundle it for the npm launch
@@ -28,7 +30,7 @@ Natural language to validated filters: schema, parsers, provider questions, prep
 
 ## Start Here
 
-- jevfilter_PRD.md — full proposed spec; v0.1 is a deliberate subset (see the feature plan)
+- docs/00-product/PRD.md — full proposed spec; v0.1 is a deliberate subset (see the feature plan)
 - docs/40-features/F-001-naturalfilter-core/PLAN.md — v0.1 scope, assumptions, acceptance criteria
 - src/core.ts — compile questions, prepare (union result), execute (re-validate + re-authorize)
 - src/parse.ts — deterministic date/number parsing and entity phrase candidates

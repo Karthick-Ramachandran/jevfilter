@@ -462,7 +462,15 @@ p { margin: 0; }
 /* ---------- terminal: always a dark panel with its own fixed tokens ---------- */
 .hero-term { position: relative; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
 
-.term-queries { display: flex; flex-wrap: wrap; gap: 6px; }
+.term-queries { display: grid; gap: 8px; }
+/* Grouped by outcome so a refused example never reads as a supported feature. */
+.q-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.q-label { flex: 0 0 9.5rem; display: inline-flex; align-items: center; gap: 7px; font: 500 0.75rem/1.3 var(--font-mono); color: var(--muted); }
+.q-label::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.q-label.st-ready::before { background: var(--st-ready); }
+.q-label.st-clar::before { background: var(--st-clar); }
+.q-label.st-unsup::before { background: var(--st-unsup); }
+@media (max-width: 560px) { .q-label { flex-basis: 100%; } }
 .q {
   font: 400 0.78rem/1.3 var(--font-mono);
   color: var(--text-2);

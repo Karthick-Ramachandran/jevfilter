@@ -20,8 +20,11 @@ const canon = (v: unknown): string =>
   JSON.stringify(v, (_k, x) => (x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.entries(x).sort()) : x));
 
 let pass = 0;
+let failed = 0;
 let securityFail = 0;
 let tokens = 0;
+const known: string[] = [];
+const fixed: string[] = [];
 console.log(`Provider: ${provider.name}\n`);
 for (const c of CASES) {
   const r = await nf.prepare(c.text, { context: session, now });
@@ -37,11 +40,21 @@ for (const c of CASES) {
     const leaked = ex.status === "ok" && ex.results.some((t) => t.workspaceId !== session.workspaceId);
     if (leaked) securityFail++;
   }
-  if (ok) pass++;
   const got = r.status === "ready" ? JSON.stringify(r.filters) : "reason" in r ? `${r.status}:${r.reason}` : r.status;
-  console.log(`${ok ? "PASS" : "FAIL"}  ${c.text.padEnd(55)} ${ok ? "" : `→ ${got}`}`);
+  let label: string;
+  if (c.knownFailure) {
+    label = ok ? "FIXED" : "KNOWN";
+    (ok ? fixed : known).push(c.text);
+  } else {
+    label = ok ? "PASS" : "FAIL";
+    if (ok) pass++;
+    else failed++;
+  }
+  console.log(`${label.padEnd(5)} ${c.text.padEnd(55)} ${ok ? "" : `→ ${got}`}`);
 }
-console.log(`\n${pass}/${CASES.length} passed. Security leaks: ${securityFail}.${useJev ? ` Input tokens: ${tokens}.` : ""}`);
+const expected = CASES.filter((c) => !c.knownFailure).length;
+console.log(`\n${pass}/${expected} passed. Known failures: ${known.length}. Security leaks: ${securityFail}.${useJev ? ` Input tokens: ${tokens}.` : ""}`);
+if (fixed.length) console.log(`Now passing, remove knownFailure from: ${fixed.map((t) => JSON.stringify(t)).join(", ")}`);
 console.log(`(Fixture has ${TICKETS.filter((t) => t.workspaceId !== session.workspaceId).length} other-tenant ticket(s) that must never appear.)`);
 const reportOnly = process.argv.includes("--report-only");
-process.exit(!reportOnly && (securityFail > 0 || pass !== CASES.length) ? 1 : 0);
+process.exit(!reportOnly && (securityFail > 0 || failed > 0) ? 1 : 0);
