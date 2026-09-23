@@ -49,7 +49,13 @@ returned answers are copies. When identical calls are shared and the leading cal
 abandoned, or answers badly, a waiting caller takes over instead of inheriting the result. Within
 one scope, answers bought with one caller's key can serve another caller.
 
-## Hosted demo (ADR-0006)
+## Hosted demo (ADR-0009)
+
+- The public site is the Cloudflare Pages project `jevfilter` (https://jevfilter.pages.dev). Pages
+  serves the static pages with the `_headers` CSP. Its `/api/*` Function forwards each request
+  unchanged, through a service binding, to the `jevfilter` Worker, which holds the key and the rate
+  limits. The Worker was confirmed (via `wrangler tail`, comparing values without printing them) to
+  receive the same visitor IP through Pages as when called directly, so per-IP limits hold.
 
 - The browser only calls the demo's own `/api/*`. The Worker calls Jev server-side, so the key never
   reaches the browser (verified: 0 of 18 responses and static files contain it).

@@ -8,7 +8,9 @@
     "types": "wrangler types",
     "typecheck": "wrangler types && tsc --noEmit",
     "deploy": "wrangler deploy",
-    "check": "wrangler deploy --dry-run"
+    "check": "wrangler deploy --dry-run",
+    "deploy:pages": "cd pages && wrangler pages deploy --branch main",
+    "deploy:pages:preview": "cd pages && wrangler pages deploy --branch preview"
   },
   "devDependencies": {
     "typescript": "^5.9.0",

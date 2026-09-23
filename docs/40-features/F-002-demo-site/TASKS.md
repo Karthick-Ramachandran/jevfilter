@@ -38,3 +38,13 @@ Checks against the live URL:
 - Cache hit on repeat searches (0 tokens). All 5 tampered execute requests were rejected.
 - The per-IP limit returned 429 at the 12th request in a burst. A few later requests passed, which matches the limiter's documented eventual consistency.
 - In the browser: Geist fonts load, the store search returns products, and the helpdesk clarification and X-ray render.
+
+## T4: Move the public site to Cloudflare Pages
+
+Status: Done (2026-09-23), ADR-0009. https://jevfilter.pages.dev serves the static pages from Pages. `/api/*` is forwarded by `demo/pages/functions/api/[[path]].ts` to the `jevfilter` Worker through a service binding.
+
+- It went to a preview first (`preview.jevfilter.pages.dev`), with the full security check passing before production.
+- In production: 0 key occurrences, 0 leaked rows, and each company's Sam chooser is scoped. All 5 tampered requests were rejected, and cache hits work.
+- The CSP header is on all pages, including 404. API responses keep `no-store` and `nosniff`. In the browser, the store search works and Geist loads.
+- The same visitor IP reaches the Worker through Pages as when called directly (compared in `wrangler tail` without printing it).
+- The Worker's workers.dev URL is still up. Turning it off is the maintainer's call.

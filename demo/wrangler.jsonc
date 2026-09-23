@@ -10,7 +10,8 @@
     "run_worker_first": ["/api/*"],
     "not_found_handling": "404-page"
   },
-  // ADR-0006: the shared Jev key is limited to 10/min per IP and 30/min globally (spend cap, ~$4.2/day worst case).
+  // ADR-0009: the shared Jev key is limited to 10/min per IP and 30/min globally (spend cap, ~$4.2/day worst case).
+  // The public site is the Pages project in ./pages, which reaches this Worker through a service binding.
   "ratelimits": [
     { "name": "IP_LIMITER", "namespace_id": "4101", "simple": { "limit": 10, "period": 60 } },
     { "name": "GLOBAL_LIMITER", "namespace_id": "4102", "simple": { "limit": 30, "period": 60 } }
