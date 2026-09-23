@@ -28,7 +28,8 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 - demo/src/worker.ts — /api/search (trace, tokens), /api/execute, /api/meta
 - demo/src/data.ts — synthetic companies, schema, scoped resolver and executor
 - demo/public/demo/ — the demo app (index.html, app.js, app.css)
-- demo/public/index.html, demo/public/landing/ — landing page
+- demo/public/index.html — landing page
+- demo/public/landing/ — landing page styles, script, and images
 - demo/public/_headers — CSP and security headers
 
 ## Rules

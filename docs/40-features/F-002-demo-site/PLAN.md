@@ -4,7 +4,7 @@ A public demo that shows what JevFilter refuses and asks, as well as what it get
 
 ## Approach
 
-A Cloudflare Worker (`demo/`, ADR-0005) serves a static single-page app and one JSON API that runs
+A Cloudflare Worker (`demo/`, ADR-0006) serves a static single-page app and one JSON API that runs
 the real library (`../src`) against about 2,000 synthetic tickets across three fictional companies.
 
 The page has three parts:
