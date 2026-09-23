@@ -273,9 +273,17 @@ The repo includes a suite of awkward queries (`evals/cases.ts`):
 "tickets"                                → unsupported: no_filters (never invents a category)
 ```
 
-On `jev-1.13.0` all 23 cases pass with no cross-tenant leaks, using about 41k input tokens for the
-whole suite. Separately, 60 unit tests include a hostile provider that returns random and malicious
-answers, and the executor still only receives schema-valid filters.
+On `jev-1.13.0` all 23 regular cases pass with no cross-tenant leaks. The suite also publishes 4
+known failures, each stating what should happen and what v0.1 does instead:
+
+- "latest open tickets" drops the sort request instead of refusing it.
+- "tickets in 2025" isn't read as a date, because the parser doesn't handle bare years.
+- "open tickets from last week or yesterday" reads OR as AND and reports contradictory dates.
+- "Sam's or Priya's tickets" asks about the Sams and drops Priya.
+
+A full run uses about 49k input tokens. Known failures don't fail the run, and the runner says when
+one starts passing. Separately, 81 unit tests include a hostile provider that returns random and
+malicious answers, and the executor still only receives schema-valid filters.
 
 The confidence thresholds come from this one small suite, so run `npm run eval` against your own
 schema before relying on them.

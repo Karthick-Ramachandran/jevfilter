@@ -1,4 +1,7 @@
 # NaturalFilter
+
+> Moved from the repository root on 2026-09-23. Accepted ADRs written earlier refer to it by its old name, `jevfilter_PRD.md`.
+
 ## Product requirements document
 
 **Working title:** JevFilter · **Version:** 0.1 · **Date:** 23 September 2026  

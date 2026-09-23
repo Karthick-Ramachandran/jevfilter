@@ -10,7 +10,7 @@ user's authorized scope. Powered by Jev. No generated SQL.
 Philosophy: **Models interpret. Code executes.** The model only chooses among closed options built
 from the schema. Code parses values, validates, authorizes, and executes.
 
-Full proposed spec: `jevfilter_PRD.md`. v0.1 scope: `docs/40-features/F-001-naturalfilter-core/PLAN.md`.
+Full proposed spec: `docs/00-product/PRD.md`. v0.1 scope: `docs/40-features/F-001-naturalfilter-core/PLAN.md`.
 
 ## Users
 

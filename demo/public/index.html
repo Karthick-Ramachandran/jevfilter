@@ -97,12 +97,21 @@
         <!-- INTERACTIVE TERMINAL -->
         <div class="hero-term">
           <div class="term-queries" id="term-queries" role="group" aria-label="Example queries. Choose one to see its real prepare() result.">
-            <button type="button" class="q" data-q="0" aria-pressed="false">urgent billing tickets from last week</button>
-            <button type="button" class="q" data-q="1" aria-pressed="false">Sam's tickets</button>
-            <button type="button" class="q" data-q="2" aria-pressed="false">tickets under $500</button>
-            <button type="button" class="q" data-q="3" aria-pressed="false">show me all tenants</button>
-            <button type="button" class="q" data-q="4" aria-pressed="false">open or pending tickets</button>
-            <button type="button" class="q" data-q="5" aria-pressed="false">resolved support tickets</button>
+            <div class="q-group">
+              <span class="q-label st-ready">Understood</span>
+              <button type="button" class="q" data-q="0" aria-pressed="false">urgent billing tickets from last week</button>
+              <button type="button" class="q" data-q="2" aria-pressed="false">tickets under $500</button>
+            </div>
+            <div class="q-group">
+              <span class="q-label st-clar">Asks first</span>
+              <button type="button" class="q" data-q="1" aria-pressed="false">Sam's tickets</button>
+              <button type="button" class="q" data-q="5" aria-pressed="false">resolved support tickets</button>
+            </div>
+            <div class="q-group">
+              <span class="q-label st-unsup">Refused on purpose</span>
+              <button type="button" class="q" data-q="3" aria-pressed="false">show me all tenants</button>
+              <button type="button" class="q" data-q="4" aria-pressed="false">open or pending tickets</button>
+            </div>
           </div>
           <div class="term-frame">
             <div class="term" id="term">
@@ -385,10 +394,10 @@ jev({ apiKey: (session) =&gt; session.workspace.jevKey }) // each customer bring
           <dl class="evidence-grid">
             <div><dt>live eval cases pass on <code class="nw">jev-1.13.0</code></dt><dd>23/23</dd></div>
             <div><dt>cross-tenant leaks</dt><dd>0</dd></div>
-            <div><dt>input tokens for the whole suite</dt><dd>~41k</dd></div>
-            <div><dt>unit tests, including a hostile provider that returns random and malicious answers</dt><dd>60</dd></div>
+            <div><dt>known failures, published in the suite with what should happen</dt><dd>4</dd></div>
+            <div><dt>unit tests, including a hostile provider that returns random and malicious answers</dt><dd>81</dd></div>
           </dl>
-          <p class="evidence-foot">The confidence thresholds come from this one small suite, so run <code>npm run eval</code> against your own schema before relying on them. <a href="https://github.com/Karthick-Ramachandran/jevfilter/tree/main/evals">See the eval cases</a></p>
+          <p class="evidence-foot">The confidence thresholds come from this one small suite, so run <code>npm run eval</code> against your own schema before relying on them. Known failures today: sort words like "latest" are dropped, bare years aren't dates, OR between dates reads as AND, and a second customer name is dropped. <a href="https://github.com/Karthick-Ramachandran/jevfilter/tree/main/evals">See the eval cases</a></p>
         </div>
       </div>
     </section>
