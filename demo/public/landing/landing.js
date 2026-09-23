@@ -322,7 +322,7 @@
     var r = ex.result;
     var list;
     if (r.status === "ready") {
-      extra.appendChild(el("span", "x-label", "interpretation chips · executable"));
+      extra.appendChild(el("span", "x-label", "interpretation chips, ready to execute"));
       list = el("ul", "chips");
       chipsFor(ex).forEach(function (text, i) {
         var li = el("li", "chip" + (animate ? " is-new" : ""));
@@ -336,7 +336,7 @@
       extra.appendChild(list);
     } else if (r.status === "needs_clarification") {
       var q = r.questions[0];
-      extra.appendChild(el("span", "x-label", "ask the user · not executable yet"));
+      extra.appendChild(el("span", "x-label", "question for the user, not executable yet"));
       extra.appendChild(el("p", "x-q", q.question));
       list = el("ul", "chips");
       var opts = q.options
@@ -351,7 +351,7 @@
       });
       extra.appendChild(list);
     } else {
-      extra.appendChild(el("span", "x-label", r.reason + " · nothing runs"));
+      extra.appendChild(el("span", "x-label", r.reason + ", nothing runs"));
       extra.appendChild(el("p", "x-msg", r.message));
     }
   }

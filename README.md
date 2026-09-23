@@ -2,10 +2,11 @@
 
 # JevFilter
 
-**Your API already knows how to search. JevFilter lets users ask.**
+**Turn a user's search sentence into filters your API already accepts.**
 
-Natural language in, validated filters out. JevFilter doesn't generate SQL, and your query layer
-and authorization stay in charge.
+You describe the filters your API supports. JevFilter reads the user's request against that schema
+and returns a typed, validated filter object. Your existing query code runs the search with your
+authorization checks, and JevFilter never writes SQL.
 
 [![npm](https://img.shields.io/npm/v/jevfilter.svg)](https://www.npmjs.com/package/jevfilter)
 [![CI](https://github.com/Karthick-Ramachandran/jevfilter/actions/workflows/ci.yml/badge.svg)](https://github.com/Karthick-Ramachandran/jevfilter/actions/workflows/ci.yml)
@@ -16,7 +17,7 @@ and authorization stay in charge.
 
 <a href="https://jevfilter.pages.dev/shop/"><img src="https://raw.githubusercontent.com/Karthick-Ramachandran/jevfilter/main/.github/assets/jevfilter-demo.gif" alt="The JevFilter store demo: typing 'black waterproof boots under $130' fills in the category, color, waterproof and price filters and shows matching boots; removing a chip re-runs without a model call; 'Kestrel or Alder boots' is refused instead of guessed." width="860"></a>
 
-<sub>Recorded on the live store demo. The sentence becomes filters, and a chip can be removed with no model call. "Kestrel or Alder boots" is refused rather than guessed.</sub>
+<sub>Recorded on the live store demo. Typing "black waterproof boots under $130" fills in four filters, removing a chip re-runs the search without calling the model, and JevFilter refuses "Kestrel or Alder boots" instead of guessing.</sub>
 
 <br><br>
 
@@ -46,10 +47,9 @@ const result = await search.prepare("urgent billing tickets from last week");
 }
 ```
 
-You pass those filters to the `searchTickets(filters)` you already have, and it runs the search
-the way it always has.
+You pass those filters to the `searchTickets(filters)` function you already have.
 
-## AI interprets. Your code queries.
+## Only one step uses a model
 
 ```
   "urgent billing tickets from last week"
@@ -94,15 +94,15 @@ what code parsed, what Jev chose and how sure it was, the validated filters, and
 - Send the model your database credentials, your records, or your query code.
 - Guess which record you meant when a name matches several.
 
-What Jev does receive: the search text and your filter schema (field names, descriptions, and
-allowed values). If your category names or descriptions are sensitive, treat them like the search text.
+Jev receives the search text and your filter schema, meaning field names, descriptions, and allowed
+values. If your category names or descriptions are sensitive, treat them like the search text.
 
 ## Is it a fit?
 
-JevFilter is for finding records by attributes your API already filters on: status, priority,
-owner, dates, amounts, customer. If your screen has a row of filter dropdowns, that's the fit:
-admin dashboards, CRMs, support desks, issue trackers, billing, e-commerce admin, inventory, and
-back-office tools.
+JevFilter finds records by attributes your API already filters on, such as status, priority,
+owner, dates, amounts, and customer. It suits screens that already have a row of filter dropdowns,
+like admin dashboards, CRMs, support desks, issue trackers, billing, e-commerce admin, inventory,
+and back-office tools.
 
 It doesn't search inside content. "The doc where we discussed AWS costs" needs full-text or vector
 search, and JevFilter doesn't replace that. For the same reason it isn't a tool for web search, RAG,
@@ -118,8 +118,10 @@ Before you integrate, check that:
 5. Sending the search text and your filter schema to Jev is acceptable for your data.
 6. Your UI can show a clarification question when a request is ambiguous.
 
-If all six hold, the remaining question is how well Jev reads requests against your schema, and
-`npm run eval` answers that.
+If all six hold, what's left to check is how well Jev reads your users' requests against your
+schema. To measure that, copy `evals/`, replace the `createTicketFilter` import in
+`evals/run.ts` with your own `createNaturalFilter` setup, and write your cases in `cases.ts`. Then
+run it with your key in `TYPESAFE_API_KEY`.
 
 ## Install
 
@@ -188,7 +190,7 @@ The filters are typed from your schema, so `status` is `"open" | "pending" | "cl
 leaving both out throws when you call `createNaturalFilter`, so skipping authorization is always
 a decision someone wrote down.
 
-## It can say "I don't know"
+## What prepare() returns
 
 `prepare()` returns a union of five outcomes, and TypeScript narrows on `status`. This is the
 short form; the API reference has every field:
@@ -243,7 +245,7 @@ option.
 | `dateField()` | `{ gte: "2026-08-01", lt: "2026-09-01" }` | Code does the calendar math in your timezone; Jev only picks the field |
 | `entityField({ resolve })` | `"cus_4"` (your id) | Jev picks a phrase and your resolver finds the records. One match binds; several trigger a question |
 
-"Last month" is the previous calendar month, not the last 30 days. "Under" means `<` and
+"Last month" is the whole previous calendar month (in September, that's August 1 to 31). "Under" means `<` and
 "at most" means `≤`. An ambiguous date like `03/04/2026` produces a question. Unit checks cover
 currencies ($, €, £, ₹ and the codes USD, EUR, GBP, INR): "under ₹500" against a USD field is
 refused. A non-currency unit such as `unit: "replies"` isn't parsed from the text in v0.1, but
@@ -303,8 +305,8 @@ A full run uses about 49k input tokens. Known failures don't fail the run, and t
 one starts passing. Separately, 81 unit tests include a hostile provider that returns random and
 malicious answers, and the executor still only receives schema-valid filters.
 
-The confidence thresholds come from this one small suite, so run `npm run eval` against your own
-schema before relying on them.
+The confidence thresholds were tuned on this one small suite, so measure them on your own schema
+before relying on them. "Is it a fit?" above explains how.
 
 ## Caching
 
@@ -327,20 +329,20 @@ skip security or go stale on the calendar. `result.meta.cached` tells you when a
 the cache.
 
 - **The key** is a hash of the provider's name and `model`, the scope, the search text, and the
-  questions built from your schema. Editing a field's description or values changes the questions and misses the
-  cache. `jev()` reports its model; set `model` on a custom provider so upgrades miss the cache too.
+  questions built from your schema. Editing a field's description or values changes the questions
+  and misses the cache. `jev()` reports its model; set `model` on a custom provider so upgrades miss the cache too.
 - **Scope is required.** `scope` must return a non-empty string, usually the tenant id. Anything else
   fails the search instead of sharing a cache. Use `shared: true` only for public data.
 - **A slow or broken store can't break search.** A read that throws or takes longer than
   `storeTimeoutMs` (default 250) counts as a miss, and writes happen in the background.
 - **Identical searches at the same moment share one model call.** If that call fails or returns an
   unusable answer, another waiting search makes the call instead of inheriting the failure.
-- **Per-customer keys:** within one scope, a cached answer can be served to a user whose search
+- **Per-customer keys:** Within one scope, a cached answer can be served to a user whose search
   would have been paid with a different key. If each tenant brings its own key, scope by tenant.
 
 ## Search on Enter
 
-Each interpretation is a network call. On the hosted demo it took about 300 to 500 ms. Run it when
+Each interpretation is a network call. On the hosted demo it took about 300 to 520 ms. Run it when
 the user presses Enter or pauses, not on every keystroke, and keep your normal filter controls for
 instant edits. Those go straight to `execute()` with no model call.
 
@@ -373,8 +375,8 @@ const myProvider: FilterProvider = {
 
 An answer that isn't one of the offered labels makes the result `unavailable`. Report a
 probability for at least the chosen label. An answer without one counts as unknown confidence, so
-JevFilter asks the user instead of accepting it. The package also
-exports `mockProvider` and the offline `keywordProvider` for tests and demos.
+JevFilter asks the user instead of accepting it. The package also exports `mockProvider` and the
+offline `keywordProvider` for tests and demos.
 
 ## Limits in v0.1
 
@@ -388,8 +390,8 @@ exports `mockProvider` and the offline `keywordProvider` for tests and demos.
 - The model can still misread a request it's allowed to make, which is why you should show the chips
   and let users edit them.
 
-JevFilter doesn't claim to make AI safe. Its guarantee is narrower: the model never gets direct
-authority over your database.
+The one guarantee JevFilter makes about the model is that it never gets direct authority over
+your database.
 
 ## Roadmap
 

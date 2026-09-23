@@ -235,7 +235,7 @@ SQL inside an enum value, an unknown `$or` operator, a `__proto__` key, another 
 id, and an empty object. All six were rejected before any SQL ran. The `DELETE` through the app's
 role was refused.
 
-A few results need a closer look.
+Notes on three of the results:
 
 - Case 7 found nothing. Jev read "gift orders shipped to Japan" as status `shipped`, while the
   operator probably meant "ships to". The chip `[order status is shipped]` shows the operator

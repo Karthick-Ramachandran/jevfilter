@@ -240,7 +240,7 @@ function renderRail(x, result, search) {
     };
     for (const q of loud) qs.append(card(q));
     if (rest.length) {
-      const more = el("button", "more", `${rest.length} field${rest.length === 1 ? "" : "s"} not mentioned: show`);
+      const more = el("button", "more", `Show ${rest.length} field${rest.length === 1 ? "" : "s"} not mentioned`);
       more.type = "button";
       more.addEventListener("click", () => { for (const q of rest) qs.insertBefore(card(q), more); more.remove(); });
       qs.append(more);

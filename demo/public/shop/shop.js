@@ -307,7 +307,7 @@ async function run() {
   syncSidebar(false);
   const { ok, data } = await post("/api/shop/execute", { filters });
   if (!ok || !data) { verdict((data?.errors ?? ["Those filters can't be used."]).join(", "), "refused"); return; }
-  verdict(Object.keys(filters).length ? "Your filters:" : "No filters: showing every product.");
+  verdict(Object.keys(filters).length ? "Your filters:" : "No filters, so every product is shown.");
   renderProducts(data.products);
   stats(null);
 }
