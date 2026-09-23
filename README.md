@@ -340,6 +340,14 @@ the cache.
 - **Per-customer keys:** Within one scope, a cached answer can be served to a user whose search
   would have been paid with a different key. If each tenant brings its own key, scope by tenant.
 
+`memoryCache` lives in one process. To share the cache across servers, pass a store backed by
+Redis or Workers KV. The hosted demo puts Workers KV behind the in-memory cache
+([`demo/src/kv-cache.ts`](demo/src/kv-cache.ts)). After a fresh deployment, a repeat search there
+took 3 ms and 0 tokens instead of 714 ms and 2,960 tokens. On Workers, hand background writes to
+`ctx.waitUntil`, or the runtime can cancel them once the response is sent. Stored entries hold
+Jev's chosen labels, such as `is "yellow"`, which show how a search was interpreted. The search text
+itself isn't stored.
+
 ## Search on Enter
 
 Each interpretation is a network call. On the hosted demo it took about 300 to 520 ms. Run it when

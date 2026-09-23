@@ -15,6 +15,8 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 - deploy the demo to Cloudflare
 - make the demo URL shorter (jevfilter.pages.dev instead of the workers.dev URL)
 - add an interactive demo, video, or GIF to the GitHub README
+- raise the demo rate cap for a launch
+- test caching with a real external store (Workers KV) and across instances
 - a docs page with all the available APIs, supported fields, and what is possible
 
 Live: https://jevfilter.pages.dev (Pages project `jevfilter` for the site; Worker `jevfilter` for /api with secret `TYPESAFE_API_KEY` and kill switch `DEMO_DISABLED`). Deploy the site with `npm run deploy:pages`, and the API with `npm run deploy`, both run in `demo/`.
@@ -27,7 +29,7 @@ Live: https://jevfilter.pages.dev (Pages project `jevfilter` for the site; Worke
 
 ## Start Here
 
-- docs/adrs/ADR-0009-serve-the-demo-on-cloudflare-pages-with-the-api-worker-behind-a-service-binding.md — hosting (Pages + API Worker), key and limits decision
+- docs/adrs/ADR-0010-demo-answer-cache-in-workers-kv-and-a-60-per-minute-global-cap.md — hosting (Pages + API Worker), key, limits (10/min per IP, 60/min global) and the KV answer cache
 - demo/pages/wrangler.jsonc — Pages project config and the service binding to the Worker
 - demo/pages/functions/api/[[path]].ts — forwards /api/* to the Worker
 - docs/40-features/F-002-demo-site/PLAN.md — what the demo shows and its acceptance criteria
@@ -39,10 +41,12 @@ Live: https://jevfilter.pages.dev (Pages project `jevfilter` for the site; Worke
 - demo/public/landing/ — landing page styles, script, and images
 - demo/public/_headers — CSP and security headers
 - demo/public/docs/index.html — API reference page, written from src/
+- demo/src/kv-cache.ts — two-level answer cache: isolate memory, then Workers KV (ANSWER_CACHE)
+- demo/test/kv-cache.test.ts — KV cache tests (cross-isolate sharing, tenants, failures)
 
 ## Rules
 
-- ADR-0009 (Pages site, API Worker behind a service binding, key as Worker secret, 10/min per IP, 30/min global)
+- ADR-0010 (Pages site, API Worker behind a service binding, key as Worker secret, 10/min per IP, 60/min global, KV answer cache)
 - ADR-0003 (bring your own key via x-jev-api-key)
 - CONVENTIONS: render every string with textContent; no inline script or style (CSP)
 

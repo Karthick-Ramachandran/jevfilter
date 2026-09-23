@@ -1,5 +1,5 @@
 /**
- * JevFilter demo API Worker (ADR-0009). The site is served by Cloudflare Pages at
+ * JevFilter demo API Worker (ADR-0010). The site is served by Cloudflare Pages at
  * jevfilter.pages.dev; its /api/* Function forwards requests here through a service binding.
  *
  *   POST /api/search   { text, account }  → interpret with Jev, then run the scoped search
@@ -11,7 +11,6 @@
  */
 import {
   createNaturalFilter,
-  memoryCache,
   withCache,
   parseDates,
   parseNumbers,
@@ -21,6 +20,7 @@ import {
 import { jev } from "../../src/jev.ts";
 import { ACCOUNTS, dataset, helpdesk, listTickets, type Account, type Session, type Ticket } from "./data.ts";
 import { listProducts, shop } from "./shop.ts";
+import { kvStore, pendingWrites, tieredStore, type KvLike } from "./kv-cache.ts";
 
 interface Env {
   ASSETS: Fetcher;
@@ -28,6 +28,8 @@ interface Env {
   GLOBAL_LIMITER: RateLimit;
   TYPESAFE_API_KEY?: string;
   DEMO_DISABLED?: string;
+  /** Shared answer cache (ADR-0010). Optional so the Worker still runs without the binding. */
+  ANSWER_CACHE?: KVNamespace;
 }
 
 type Ctx = Session & { jevKey: string };
@@ -44,10 +46,13 @@ const JSON_HEADERS = {
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 
 // Built once per isolate. The key comes from each request's context, never from module scope.
-// ADR-0008: answers are cached per company (helpdesk) or shared (public store catalog).
+// ADR-0008/0010: answers are cached per company (helpdesk) or shared (public store catalog), in
+// isolate memory first and then in Workers KV, which every isolate shares.
 // authorize, validation, entity lookup and the search itself still run on every request.
+// The KV binding is the same for every request, so a module-level reference is safe.
+let answerKv: KvLike | undefined;
 const provider = withCache(jev<Ctx>({ apiKey: (ctx) => ctx.jevKey, maxRetries: 1, timeout: 4_000 }), {
-  store: memoryCache({ maxEntries: 1000 }),
+  store: tieredStore(kvStore(() => answerKv)),
   scope: (ctx) => ctx.account.id,
 });
 
@@ -111,12 +116,12 @@ function searchResponse(account: Account, now: Date, filters: Parameters<typeof 
 
 /**
  * The visitor's own key (x-jev-api-key) if sent, else the shared secret behind the rate limits
- * (ADR-0009). The value only ever goes into a request context, never into a response.
+ * (ADR-0010). The value only ever goes into a request context, never into a response.
  */
 async function jevKeyFor(req: Request, env: Env): Promise<{ value: string; own: boolean } | { error: Response }> {
   const header = req.headers.get("x-jev-api-key")?.trim();
   if (header && header.length <= 512) return { value: header, own: true };
-  // Shared key: 10/min per IP plus a 30/min global spend cap (ADR-0009).
+  // Shared key: 10/min per IP plus a 60/min global spend cap (ADR-0010).
   const ip = req.headers.get("cf-connecting-ip") ?? "unknown";
   const [perIp, global] = await Promise.all([env.IP_LIMITER.limit({ key: ip }), env.GLOBAL_LIMITER.limit({ key: "all" })]);
   if (!perIp.success || !global.success) {
@@ -128,7 +133,7 @@ async function jevKeyFor(req: Request, env: Env): Promise<{ value: string; own: 
 
 type ShopCtx = { jevKey: string };
 const shopProvider = withCache(jev<ShopCtx>({ apiKey: (ctx) => ctx.jevKey, maxRetries: 1, timeout: 4_000 }), {
-  store: memoryCache({ maxEntries: 1000 }),
+  store: tieredStore(kvStore(() => answerKv)),
   shared: true,
 });
 
@@ -241,7 +246,18 @@ function handleMeta(): Response {
 }
 
 export default {
-  async fetch(req: Request, env: Env): Promise<Response> {
+  async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    answerKv = env.ANSWER_CACHE;
+    try {
+      return await route(req, env);
+    } finally {
+      // KV writes started by this request must outlive the response (ADR-0010).
+      if (pendingWrites.size) ctx.waitUntil(Promise.allSettled([...pendingWrites]));
+    }
+  },
+} satisfies ExportedHandler<Env>;
+
+async function route(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
     try {
       if (url.pathname === "/api/meta" && req.method === "GET") return handleMeta();
@@ -255,5 +271,4 @@ export default {
       // Never echo internals (or a key) back to the browser.
       return json({ error: "Bad request." }, 400);
     }
-  },
-} satisfies ExportedHandler<Env>;
+}

@@ -49,7 +49,14 @@ returned answers are copies. When identical calls are shared and the leading cal
 abandoned, or answers badly, a waiting caller takes over instead of inheriting the result. Within
 one scope, answers bought with one caller's key can serve another caller.
 
-## Hosted demo (ADR-0009)
+## Hosted demo (ADR-0010)
+
+- Shared-key limits: 10 searches/min per IP and 60/min globally (raised from 30 for launch traffic).
+- Answer cache: isolate memory, then the Workers KV namespace `ANSWER_CACHE`. KV holds only provider
+  answers under `jf:answers:v1:<sha256>` keys for 10 minutes. It never holds search text, records,
+  or the key. The answers do include the chosen labels (for example `is "yellow"`), which are schema
+  values that show how a search was interpreted, close to the resulting filters. Verified on
+  production on 2026-09-23 by reading the stored entries. KV writes run in `ctx.waitUntil`. A failing or slow KV falls back to memory or a miss.
 
 - The public site is the Cloudflare Pages project `jevfilter` (https://jevfilter.pages.dev). Pages
   serves the static pages with the `_headers` CSP. Its `/api/*` Function forwards each request

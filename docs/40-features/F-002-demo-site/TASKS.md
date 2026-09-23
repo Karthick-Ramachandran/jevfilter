@@ -41,7 +41,7 @@ Checks against the live URL:
 
 ## T4: Move the public site to Cloudflare Pages
 
-Status: Done (2026-09-23), ADR-0009. https://jevfilter.pages.dev serves the static pages from Pages. `/api/*` is forwarded by `demo/pages/functions/api/[[path]].ts` to the `jevfilter` Worker through a service binding.
+Status: Done (2026-09-23), ADR-0010. https://jevfilter.pages.dev serves the static pages from Pages. `/api/*` is forwarded by `demo/pages/functions/api/[[path]].ts` to the `jevfilter` Worker through a service binding.
 
 - It went to a preview first (`preview.jevfilter.pages.dev`), with the full security check passing before production.
 - In production: 0 key occurrences, 0 leaked rows, and each company's Sam chooser is scoped. All 5 tampered requests were rejected, and cache hits work.
@@ -57,3 +57,12 @@ Status: Done (2026-09-23).
 - `helpdesk-xray-light.png` and `helpdesk-xray-dark.png` sit in the README in a `<picture>` element that follows the reader's theme.
 - The README has the GIF (linking to the live store) and three live-demo buttons. GitHub's markdown API marks the GIF `data-animated-image`, and all badge URLs return 200.
 - **Fix:** the store kept the previous search's filters (sidebar badge, selected category, chips) after a refused request or an HTTP error, although nothing ran. `clearAll()` now resets them. Verified locally, then deployed to Pages. `.github/assets` is not in the npm package.
+
+## T6: Launch cap and shared KV answer cache
+
+Status: Done (2026-09-23), ADR-0010. Global cap raised from 30 to 60 per minute; the per-IP cap stays at 10. `demo/src/kv-cache.ts` adds a two-level cache: isolate memory, then Workers KV (`ANSWER_CACHE`, id 5d9b0d2c…), with writes passed to `ctx.waitUntil`.
+
+- **Unit tests:** `demo/test/kv-cache.test.ts` (9) cover cross-isolate sharing, tenant separation, prefix, TTL of at least 60 s, no search text, KV throwing, hanging and write failures, junk values, and a missing binding.
+- **Local runtime:** after a full restart of wrangler dev, a store search hit at 0 tokens in 7 ms (was 704 ms, 2,826 tokens). Acme hit and Globex missed.
+- **Production:** after a redeploy (version 40bc269a to 4077b800, fresh isolates), a store search hit at 0 tokens in 3 ms (was 714 ms, 2,960 tokens). Acme hit and Globex missed.
+- **KV contents** read back from production: answers only, with no search text and no secrets. The chosen labels (e.g. `is "yellow"`) show the interpretation; the security model says so.

@@ -10,7 +10,8 @@
     "deploy": "wrangler deploy",
     "check": "wrangler deploy --dry-run",
     "deploy:pages": "cd pages && wrangler pages deploy --branch main",
-    "deploy:pages:preview": "cd pages && wrangler pages deploy --branch preview"
+    "deploy:pages:preview": "cd pages && wrangler pages deploy --branch preview",
+    "test": "node --test --experimental-strip-types test/*.test.ts"
   },
   "devDependencies": {
     "typescript": "^5.9.0",

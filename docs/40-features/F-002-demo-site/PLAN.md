@@ -4,7 +4,7 @@ A public demo that shows what JevFilter refuses and asks, as well as what it get
 
 ## Approach
 
-Cloudflare Pages serves the static pages, and a Worker (`demo/`, ADR-0009) serves the JSON API behind a service binding. The API runs
+Cloudflare Pages serves the static pages, and a Worker (`demo/`, ADR-0010) serves the JSON API behind a service binding. The API runs
 the real library (`../src`) against about 2,000 synthetic tickets across three fictional companies.
 
 The page has three parts:

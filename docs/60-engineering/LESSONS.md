@@ -47,9 +47,10 @@ Applies To:
 
 - demo/**
 
-- Measure tokens per search before setting a spend cap: the first estimate (1.8k tokens, $1.10/day at 300/min) was about 40x too low for the global cap. The helpdesk schema uses about 2.3k tokens per search, so 300/min is about $42/day. ADR-0009 sets 30/min (about $4.2/day worst case).
+- Measure tokens per search before setting a spend cap: the first estimate (1.8k tokens, $1.10/day at 300/min) was about 40x too low for the global cap. The helpdesk schema uses about 2.3k tokens per search, so 300/min is about $42/day. ADR-0010 sets 30/min (about $4.2/day worst case).
 - Pages Functions don't support the Rate Limiting binding, and `_headers` doesn't apply to Function responses. Keep rate-limited logic in a Worker and forward `/api/*` to it through a service binding; the Worker sets its own API headers.
 - A new `*.pages.dev` project fails TLS for about two minutes after the first deploy, until its certificate is issued. Wait for a 200 before testing.
 - Worker CSP forbids inline `<script>`/`<style>`/`style=""`; setting `element.style.x` from a script file (CSSOM) is fine.
 - The shop and helpdesk providers use 4 s attempts with one retry inside the 9 s budget. A single 6 s attempt failed twice during a slow period on the Jev API while direct calls took about 450 ms.
 - agent-browser: Meta+A doesn't select all in its headless Chromium, so typed text was appended to the old query (and looked like a Jev misread). Clear inputs with `fill <sel> ""`. Screenshot paths are resolved from the browser daemon's working directory, so pass absolute paths.
+- Workers can cancel promises that are still pending after the response is sent. Any background write (like the cache's fire-and-forget KV put) must be tracked and handed to `ctx.waitUntil`. `demo/src/kv-cache.ts` keeps `pendingWrites`, and the Worker's fetch passes them on; the local restart test proves the write lands.
