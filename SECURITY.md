@@ -5,7 +5,7 @@
 Please report security issues privately via GitHub's "Report a vulnerability" (Security Advisories)
 on this repository. Do not open a public issue. We aim to reply within 5 working days.
 
-## What NaturalFilter guarantees
+## What JevFilter guarantees
 
 - Providers can only choose among closed options that the library built from your schema. Any other
   answer makes the result `unavailable`, and your executor is never called.

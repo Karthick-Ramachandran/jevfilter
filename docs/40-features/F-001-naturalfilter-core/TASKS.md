@@ -1,4 +1,4 @@
-# Tasks: NaturalFilter Core (v0.1)
+# Tasks: JevFilter Core (v0.1)
 
 ## T1: Core pipeline and schema
 
@@ -22,7 +22,7 @@ Tests: `test/parse.test.ts`.
 
 Status: Done
 
-Scope: `naturalfilter/jev`: apiKey string | context function | env; pinned model; sanitized errors.
+Scope: `jevfilter/jev`: apiKey string | context function | env; pinned model; sanitized errors.
 
 Tests: `test/jev.test.ts` (real SDK, fake fetch).
 
@@ -40,6 +40,14 @@ Status: Done (2026-09-23), model jev-1.13.0, key from `.env`.
 - Final run 22/23, 0 security leaks, about 41k input tokens per full run. Answers were identical across repeated runs.
 - Then fixed the silent drop on "resolved support tickets" (category support at 0.18-0.22) with a `MENTION_CONFIDENCE` clarification (0.15, chosen from the measured distribution). Final: 23/23 on two consecutive runs, 0 leaks.
 - ADR-0001..0003 accepted on 2026-09-23 by the maintainer ("you can acceeot the adrs").
+
+## T6: npm launch packaging as `jevfilter`
+
+Status: Done (2026-09-23). Not published or pushed; that is the maintainer's call.
+
+Scope: rename to `jevfilter` (ADR-0004 supersedes ADR-0001), package metadata, `prepack` build, `lint:package` (publint + attw esm-only), CI (`.github/workflows/ci.yml`: check on Node 22/24 and a Node 20 consumer of the packed tarball), CONTRIBUTING.md, launch README (humanized).
+
+Evidence: publint "All good!", attw green for ESM (CJS/node10 intentionally unsupported), tarball 27.4 kB / 21 files, clean-install consumer typechecks and gets live Jev results matching the README hero example, live eval 23/23.
 
 ## Completion Evidence
 

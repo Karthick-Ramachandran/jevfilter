@@ -15,10 +15,12 @@ Natural language to validated filters: schema, parsers, provider questions, prep
 - add a nasty query to the eval suite
 - added TYPESAFE_API_KEY in .env, run the evals against live Jev
 - why did Jev drop a date or a category from the filters
+- rename the package to jevfilter and bundle it for the npm launch
+- rewrite the README (sharp, humanized) for launch
 
 ## Also Known As
 
-- naturalfilter, NaturalFilter, JevFilter, jev-search
+- jevfilter, JevFilter, JevFilter, jev-search
 - natural-language search, NL filters, filter plan, interpretation chips
 - BYOK, per-tenant key, TYPESAFE_API_KEY, x-jev-api-key
 - Jev, TypeSafe, systemOne, choice question
@@ -37,7 +39,7 @@ Natural language to validated filters: schema, parsers, provider questions, prep
 
 ## Rules
 
-- ADR-0001 single zero-dependency package, `naturalfilter/jev` optional peer (Accepted)
+- ADR-0004 publish as `jevfilter`, zero-dependency core, `jevfilter/jev` optional peer (supersedes ADR-0001)
 - ADR-0002 stateless validated filters, no plan store (Accepted)
 - ADR-0003 bring-your-own Jev key (Accepted)
 - CONVENTIONS: FilterProvider, validateFilters, question ids, erasable-syntax-only TypeScript

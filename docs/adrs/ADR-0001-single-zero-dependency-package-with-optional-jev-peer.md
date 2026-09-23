@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted — superseded by ADR-0004-publish-as-jevfilter-single-zero-dependency-package-with-optional-jev-peer
 
 ## Context
 

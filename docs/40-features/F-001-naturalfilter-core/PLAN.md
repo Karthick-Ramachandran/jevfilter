@@ -1,4 +1,4 @@
-# Plan: NaturalFilter Core (v0.1)
+# Plan: JevFilter Core (v0.1)
 
 Source: `jevfilter_PRD.md` (proposed spec) narrowed to a small, releasable first version.
 
@@ -6,12 +6,12 @@ Source: `jevfilter_PRD.md` (proposed spec) narrowed to a small, releasable first
 
 ## Approach
 
-One npm package, `naturalfilter`, with two entry points:
+One npm package, `jevfilter`, with two entry points:
 
-- `naturalfilter`: schema builders (`defineSearch`, `enumField`, `booleanField`, `numberField`,
+- `jevfilter`: schema builders (`defineSearch`, `enumField`, `booleanField`, `numberField`,
   `dateField`, `entityField`), `createNaturalFilter`, the `NaturalFilterResult` union, the
   deterministic number/date parsers, strict filter validation, and a `mockProvider` for tests.
-- `naturalfilter/jev`: `jev({ apiKey, model, ... })`, the Jev provider built on
+- `jevfilter/jev`: `jev({ apiKey, model, ... })`, the Jev provider built on
   `@typesafe-ai/sdk` (optional peer dependency).
 
 Pipeline for `prepare(text, context)`:
@@ -41,7 +41,7 @@ app can use each customer's own Jev key. Without it, the SDK falls back to `TYPE
   (see the proposed ADR on stateless validated filters).
 - Not in v0.1: OR across fields, multiple values on one field, sorting and ranking preferences,
   multi-turn memory, a React package, languages other than English.
-- Core has zero runtime dependencies. `@typesafe-ai/sdk` is only needed for `naturalfilter/jev`.
+- Core has zero runtime dependencies. `@typesafe-ai/sdk` is only needed for `jevfilter/jev`.
 
 ## Assumptions (simplest reading, recorded for review)
 

@@ -1,9 +1,9 @@
-# Product: NaturalFilter (npm `naturalfilter`)
+# Product: JevFilter (npm `jevfilter`)
 
 ## Purpose
 
 Add natural-language filters to an existing API. A developer declares the fields their list
-endpoint already supports. NaturalFilter turns a user's sentence into typed, validated filters (or a
+endpoint already supports. JevFilter turns a user's sentence into typed, validated filters (or a
 clarification, or a clear refusal), and the developer's own read-only executor runs them inside the
 user's authorized scope. Powered by Jev. No generated SQL.
 

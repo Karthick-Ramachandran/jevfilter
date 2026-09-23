@@ -1,4 +1,4 @@
-# Test Plan: NaturalFilter Core (v0.1)
+# Test Plan: JevFilter Core (v0.1)
 
 Run: `npm test` (node:test over `test/*.test.ts`), `npm run eval`, `npm run check`.
 

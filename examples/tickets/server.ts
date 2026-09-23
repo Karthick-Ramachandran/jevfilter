@@ -82,6 +82,6 @@ createServer(async (req, res) => {
     return send(res, 400, { error: "bad request" });
   }
 }).listen(PORT, HOST, () => {
-  console.log(`NaturalFilter playground → http://${HOST}:${PORT}`);
+  console.log(`JevFilter playground → http://${HOST}:${PORT}`);
   console.log(process.env.TYPESAFE_API_KEY ? "Using TYPESAFE_API_KEY from the environment." : "No server key: paste your Jev key in the page, or use the offline baseline.");
 });
