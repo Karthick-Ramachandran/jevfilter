@@ -1,0 +1,17 @@
+{
+  "version": "1.7.1",
+  "templateVersion": "1.7.1",
+  "aiTools": [
+    "claude",
+    "codex"
+  ],
+  "docsDir": "docs",
+  "featuresDir": "docs/40-features",
+  "modulesDir": "docs/30-modules",
+  "adrDir": "docs/adrs",
+  "preCommitGates": [],
+  "prePushGates": [],
+  "testCommand": null,
+  "fenceEnabled": true,
+  "contextHook": true
+}

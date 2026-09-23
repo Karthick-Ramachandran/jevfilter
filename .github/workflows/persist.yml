@@ -1,0 +1,23 @@
+name: Persist OS
+
+# Run once per change: on pull requests, and on pushes to the default branch.
+# This avoids Doctor running twice for the same PR (branch push + pull_request event).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  doctor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: doctor's staleness check compares doc vs code commit times,
+          # which is unmeasurable in a shallow clone.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate repository memory
+        run: npx --yes persist-os@latest doctor
