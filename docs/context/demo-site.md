@@ -14,6 +14,7 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 - change the demo's rate limits or pause the demo (DEMO_DISABLED)
 - deploy the demo to Cloudflare
 - make the demo URL shorter (jevfilter.pages.dev instead of the workers.dev URL)
+- add an interactive demo, video, or GIF to the GitHub README
 - a docs page with all the available APIs, supported fields, and what is possible
 
 Live: https://jevfilter.pages.dev (Pages project `jevfilter` for the site; Worker `jevfilter` for /api with secret `TYPESAFE_API_KEY` and kill switch `DEMO_DISABLED`). Deploy the site with `npm run deploy:pages`, and the API with `npm run deploy`, both run in `demo/`.
