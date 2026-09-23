@@ -341,6 +341,22 @@ export function createNaturalFilter<F extends Fields, Ctx = unknown, R = unknown
   }
 
   async function prepare(text: string, options: PrepareOptions<Ctx> = {}): Promise<NaturalFilterResult<F>> {
+    // A ref'd timer, not AbortSignal.timeout(): that one is unref'd, so a hung provider could let
+    // the process exit before the deadline fires (seen on Node 22). Cleared on every return path.
+    const deadline = new AbortController();
+    const timer = setTimeout(
+      () => deadline.abort(new DOMException("prepare() exceeded its time budget", "TimeoutError")),
+      timeoutMs,
+    );
+    const signal = options.signal ? AbortSignal.any([options.signal, deadline.signal]) : deadline.signal;
+    try {
+      return await interpret(text, options, signal);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  async function interpret(text: string, options: PrepareOptions<Ctx>, signal: AbortSignal): Promise<NaturalFilterResult<F>> {
     const context = options.context as Ctx;
     const input = typeof text === "string" ? text.normalize("NFC").replace(/\s+/g, " ").trim() : "";
     if (!input) return { status: "blocked", reason: "empty_input", message: "Type what you are looking for." };
@@ -366,9 +382,6 @@ export function createNaturalFilter<F extends Fields, Ctx = unknown, R = unknown
     const phrases = entityEntry ? phraseCandidates(input, [...dates, ...numbers], resourceWords) : [];
     const compiled = compile(schema, dates, numbers, phrases);
 
-    const signal = options.signal
-      ? AbortSignal.any([options.signal, AbortSignal.timeout(timeoutMs)])
-      : AbortSignal.timeout(timeoutMs);
 
     let response: ProviderResponse;
     try {
