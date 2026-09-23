@@ -28,6 +28,7 @@ Applies To:
 - `AbortSignal.timeout()` is unref'd: with a hung provider, Node 22 let the event loop exit before `prepare()` timed out. `prepare()` now uses its own ref'd `setTimeout` and clears it on every path. Covered by "times out a hanging provider" in CI's Node 22 job.
 - When the same word is a value in two enum fields ("refunded" as order status and payment status), Jev sets one and asks about the other. Keep value names distinct across fields, or expect a clarification.
 - "Shipped to Japan" was read as `status: shipped` plus the country. Phrases that double as a status value become filters; the chip shows it so the user can remove it.
+- Cache and in-flight sharing: never coerce a scope with `String()` (objects and undefined collapse to one key), don't let callers inherit another request's failure, timeout, or invalid answer, and treat a hanging store like a failing one. Covered by the "withCache hardening" tests.
 
 ## Demo site
 

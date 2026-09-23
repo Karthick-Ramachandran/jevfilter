@@ -40,10 +40,14 @@ stores the key.
 ## Caching (ADR-0008)
 
 `withCache` stores only provider answers, keyed by a SHA-256 hash of the provider, model, scope,
-search text, and compiled questions. Scope is required (`scope(context)` or an explicit
-`shared: true`), so one tenant's cache is never served to another. `authorize`, validation, entity
-resolution, and the executor run on every call. Errors and incomplete answers are never cached,
-and a failing store is ignored.
+search text, and compiled questions. Scope is required: `scope(context)` must return a non-empty
+string (anything else fails the search, never coerces), or `shared: true` for public data, which
+uses a separate key space from any scope. `authorize`, validation, entity resolution, and the
+executor run on every call. Errors and incomplete answers are never stored. A store that throws or
+hangs counts as a miss on read (bounded by `storeTimeoutMs`) and is ignored on write. Stored and
+returned answers are copies. When identical calls are shared and the leading call fails, is
+abandoned, or answers badly, a waiting caller takes over instead of inheriting the result. Within
+one scope, answers bought with one caller's key can serve another caller.
 
 ## Hosted demo (ADR-0006)
 
@@ -52,7 +56,9 @@ and a failing store is ignored.
 - The shared key is the Worker secret `TYPESAFE_API_KEY`, set from `.env` over stdin and never in
   a file or command argument. Local dev loads it with `wrangler dev --env-file ../.env`, with no copy made.
 - Shared-key limits are 10/min per IP and 30/min globally. `DEMO_DISABLED=1` is the kill switch.
-  Visitor keys (`x-jev-api-key`) are used per request only.
+  Visitor keys (`x-jev-api-key`) are used per request only. Visitors with their own key skip the
+  shared-key limits and can still get cached answers; cache hits count against the limits for
+  shared-key visitors, because the limiter runs before the cache.
 - Static assets carry a strict CSP (`demo/public/_headers`): no inline scripts or styles, `connect-src 'self'`.
 - Demo accounts come from a fixed allowlist; scope is derived from the account, never from text.
   `/api/execute` re-validates filters and verifies entity ids belong to the account.

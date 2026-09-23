@@ -1,7 +1,18 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { createTicketFilter, type Session } from "../examples/tickets/tickets.ts";
-import { memoryCache, mockProvider, withCache, type FilterProvider, type ProviderRequest } from "../src/index.ts";
+import { createTicketFilter, listTickets, ticketSearch, type Session } from "../examples/tickets/tickets.ts";
+import { createNaturalFilter, memoryCache, mockProvider, withCache, type FilterProvider, type ProviderRequest } from "../src/index.ts";
+
+/** Ticket filter over a cached provider, with a custom prepare() budget. */
+function createNaturalFilterFor(provider: FilterProvider<Session>, opts: { timeoutMs: number }) {
+  return createNaturalFilter({
+    schema: ticketSearch,
+    provider: withCache(provider, { store: memoryCache(), scope: (s) => s.workspaceId }),
+    authorize: (s: Session) => s.canSearchTickets,
+    executor: listTickets,
+    timeoutMs: opts.timeoutMs,
+  });
+}
 
 const now = new Date("2026-09-23T10:00:00Z");
 const acme: Session = { userId: "u1", workspaceId: "ws_acme", canSearchTickets: true };
@@ -98,6 +109,30 @@ describe("withCache", () => {
     assert.equal(b.status, "ready");
   });
 
+  it("doesn't pass one caller's failure to another caller waiting on the same call", async () => {
+    let calls = 0;
+    const base = counting().provider;
+    const flaky: FilterProvider<Session> = {
+      name: "flaky",
+      async choose(req, o) {
+        calls++;
+        if (calls === 1) {
+          await new Promise((r) => setTimeout(r, 20));
+          throw new Error("first caller's deadline");
+        }
+        return base.choose(req, o);
+      },
+    };
+    const nf = createTicketFilter(withCache(flaky, { store: memoryCache(), scope: (s) => s.workspaceId }));
+    const [a, b] = await Promise.all([
+      nf.prepare("urgent tickets", { context: acme, now }),
+      nf.prepare("urgent tickets", { context: acme, now }),
+    ]);
+    assert.equal(a.status, "unavailable");
+    assert.equal(b.status, "ready");
+    assert.equal(calls, 2);
+  });
+
   it("changes the key when the model changes", async () => {
     const store = memoryCache();
     const c1 = counting();
@@ -118,6 +153,132 @@ describe("withCache", () => {
     const broken = { get: () => { throw new Error("redis down"); }, set: () => { throw new Error("redis down"); } };
     const nf = createTicketFilter(withCache(c.provider, { store: broken, scope: (s) => s.workspaceId }));
     assert.equal((await nf.prepare("urgent tickets", { context: acme, now })).status, "ready");
+  });
+});
+
+describe("withCache hardening (review findings)", () => {
+  const ok = () => counting().provider;
+  const wrap = (provider: FilterProvider<Session>, extra: Record<string, unknown> = {}) =>
+    createTicketFilter(withCache(provider, { store: memoryCache(), scope: (s: Session) => s.workspaceId, ...extra } as never));
+
+  it("1: refuses a scope that isn't a non-empty string instead of merging tenants", async () => {
+    const c = counting();
+    const store = memoryCache();
+    const byObject = createTicketFilter(withCache(c.provider, { store, scope: (s) => ({ id: s.workspaceId }) as never }));
+    const a = await byObject.prepare("urgent tickets", { context: acme, now });
+    const b = await byObject.prepare("urgent tickets", { context: other, now });
+    assert.equal(a.status, "unavailable");
+    assert.equal(b.status, "unavailable");
+    const missing = createTicketFilter(withCache(c.provider, { store, scope: () => undefined as never }));
+    assert.equal((await missing.prepare("urgent tickets", { context: acme, now })).status, "unavailable");
+    assert.equal(c.calls(), 0);
+  });
+
+  it("2: keeps shared:true apart from a tenant named \"shared\"", async () => {
+    const store = memoryCache();
+    const pub = counting();
+    const ten = counting();
+    await createTicketFilter(withCache(pub.provider, { store, shared: true })).prepare("urgent tickets", { context: acme, now });
+    const r = await createTicketFilter(withCache(ten.provider, { store, scope: () => "shared" })).prepare("urgent tickets", { context: acme, now });
+    assert.equal(ten.calls(), 1);
+    assert.equal(r.status === "ready" && r.meta.cached, undefined);
+  });
+
+  it("3: a provider that hangs and ignores its signal doesn't block later searches", async () => {
+    let calls = 0;
+    const base = ok();
+    const hangsOnce: FilterProvider<Session> = {
+      name: "hangs-once",
+      choose(req, o) {
+        calls++;
+        return calls === 1 ? new Promise(() => {}) : base.choose(req, o);
+      },
+    };
+    const nf = createNaturalFilterFor(hangsOnce, { timeoutMs: 40 });
+    assert.equal((await nf.prepare("urgent tickets", { context: acme, now })).status, "unavailable");
+    assert.equal((await nf.prepare("urgent tickets", { context: acme, now })).status, "ready");
+    assert.equal(calls, 2);
+  });
+
+  it("4: a hanging store is a miss on read and ignored on write", async () => {
+    const hang = () => new Promise<never>(() => {});
+    const c1 = counting();
+    const readHangs = createTicketFilter(withCache(c1.provider, { store: { get: hang, set: () => {} }, scope: (s) => s.workspaceId, storeTimeoutMs: 20 }));
+    assert.equal((await readHangs.prepare("urgent tickets", { context: acme, now })).status, "ready");
+    const c2 = counting();
+    const writeHangs = createTicketFilter(withCache(c2.provider, { store: { get: () => undefined, set: hang }, scope: (s) => s.workspaceId }));
+    assert.equal((await writeHangs.prepare("urgent tickets", { context: acme, now })).status, "ready");
+    assert.equal((await writeHangs.prepare("urgent tickets", { context: acme, now })).status, "ready");
+  });
+
+  it("5: rejects TTLs and sizes that aren't finite numbers", () => {
+    const { provider } = counting();
+    for (const ttlMs of [Number.NaN, Infinity, "600000", 0, -5]) {
+      assert.throws(() => withCache(provider, { store: memoryCache(), shared: true, ttlMs: ttlMs as never }), /ttlMs/);
+    }
+    assert.throws(() => memoryCache({ maxEntries: Number.NaN }), /maxEntries/);
+    assert.throws(() => memoryCache({ ttlMs: Number.NaN }), /ttlMs/);
+    const store = memoryCache();
+    store.set("k", { answers: {} }, Number.NaN);
+    assert.equal(store.get("k"), undefined);
+  });
+
+  it("6: a waiting caller doesn't inherit the leader's incomplete answer", async () => {
+    let calls = 0;
+    const base = ok();
+    const badFirst: FilterProvider<Session> = {
+      name: "bad-first",
+      async choose(req, o) {
+        calls++;
+        if (calls === 1) {
+          await new Promise((r) => setTimeout(r, 20));
+          return { answers: { intent: { choice: "nonsense", probabilities: {} } } };
+        }
+        return base.choose(req, o);
+      },
+    };
+    const nf = wrap(badFirst);
+    const [a, b] = await Promise.all([
+      nf.prepare("urgent tickets", { context: acme, now }),
+      nf.prepare("urgent tickets", { context: acme, now }),
+    ]);
+    assert.equal(a.status, "unavailable");
+    assert.equal(b.status, "ready");
+  });
+
+  it("7: after a leader fails, one waiting caller takes over and its answer is cached", async () => {
+    let calls = 0;
+    const base = ok();
+    const failFirst: FilterProvider<Session> = {
+      name: "fail-first",
+      async choose(req, o) {
+        calls++;
+        await new Promise((r) => setTimeout(r, 20));
+        if (calls === 1) throw new Error("503");
+        return base.choose(req, o);
+      },
+    };
+    const nf = wrap(failFirst);
+    const results = await Promise.all(Array.from({ length: 6 }, () => nf.prepare("urgent tickets", { context: acme, now })));
+    assert.equal(results.filter((r) => r.status === "ready").length, 5);
+    assert.equal(calls, 2);
+    const after = await nf.prepare("urgent tickets", { context: acme, now });
+    assert.equal(after.status === "ready" && after.meta.cached, true);
+    assert.equal(calls, 2);
+  });
+
+  it("returns copies, so a caller mutating an answer can't change the cache", async () => {
+    const c = counting();
+    const store = memoryCache();
+    const provider = withCache(c.provider, { store, shared: true });
+    const req = { state: { search_request: "urgent tickets" }, questions: { intent: { instructions: "?", options: { filter: null, other: null } } } };
+    const signal = new AbortController().signal;
+    const first = await provider.choose(req, { context: acme, signal });
+    const hit = await provider.choose(req, { context: acme, signal });
+    hit.answers.intent!.choice = "other";
+    const again = await provider.choose(req, { context: acme, signal });
+    assert.equal(first.answers.intent!.choice, "filter");
+    assert.equal(again.answers.intent!.choice, "filter");
   });
 });
 

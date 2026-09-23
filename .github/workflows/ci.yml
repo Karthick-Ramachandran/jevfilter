@@ -37,9 +37,13 @@ jobs:
           mkdir /tmp/consumer && cd /tmp/consumer && npm init -y >/dev/null
           npm install "$GITHUB_WORKSPACE"/jevfilter-*.tgz @typesafe-ai/sdk@0.6.0
           node --input-type=module -e '
-            import { createNaturalFilter, defineSearch, enumField, keywordProvider } from "jevfilter";
+            import { createNaturalFilter, defineSearch, enumField, keywordProvider, memoryCache, withCache } from "jevfilter";
             import { jev } from "jevfilter/jev";
-            const nf = createNaturalFilter({ schema: defineSearch({ resource: "tickets", fields: { status: enumField(["open", "closed"]) } }), provider: keywordProvider(), allowUnauthenticated: true });
+            const schema = defineSearch({ resource: "tickets", fields: { status: enumField(["open", "closed"]) } });
+            const provider = withCache(keywordProvider(), { store: memoryCache(), shared: true });
+            const nf = createNaturalFilter({ schema, provider, allowUnauthenticated: true });
             const r = await nf.prepare("open tickets");
+            const again = await nf.prepare("open tickets");
             if (r.status !== "ready" || r.filters.status !== "open" || typeof jev !== "function") process.exit(1);
-            console.log("ok", JSON.stringify(r.filters));'
+            if (again.status !== "ready" || again.meta.cached !== true) process.exit(2);
+            console.log("ok", JSON.stringify(r.filters), "cached:", again.meta.cached);'

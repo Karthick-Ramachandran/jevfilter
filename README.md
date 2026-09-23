@@ -290,10 +290,20 @@ const provider = withCache(jev(), {
 
 Only the model's answers are cached. `authorize`, validation, the entity lookup, and your executor
 run on every search, and dates like "last week" are recomputed from today, so a cache hit can't
-skip security or go stale on the calendar. The key is a hash of the exact questions sent, including
-your schema and the model version, so changing either one misses the cache. Scope is required:
-leaving out both `scope` and `shared: true` throws. Identical searches that arrive at the same time
-share one model call, and `result.meta.cached` tells you when a result came from the cache.
+skip security or go stale on the calendar. `result.meta.cached` tells you when a result came from
+the cache.
+
+- **The key** is a hash of the search text, the questions built from your schema, the scope, and the
+  provider's `model`. Editing a field's description or values changes the questions and misses the
+  cache. `jev()` reports its model; set `model` on a custom provider so upgrades miss the cache too.
+- **Scope is required.** `scope` must return a non-empty string, usually the tenant id. Anything else
+  fails the search instead of sharing a cache. Use `shared: true` only for public data.
+- **A slow or broken store can't break search.** A read that throws or takes longer than
+  `storeTimeoutMs` (default 250) counts as a miss, and writes happen in the background.
+- **Identical searches at the same moment share one model call.** If that call fails or returns an
+  unusable answer, another waiting search makes the call instead of inheriting the failure.
+- **Per-customer keys:** within one scope, a cached answer can be served to a user whose search
+  would have been paid with a different key. If each tenant brings its own key, scope by tenant.
 
 ## Search on Enter
 
