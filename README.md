@@ -12,6 +12,8 @@ and authorization stay in charge.
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![zero dependencies](https://img.shields.io/badge/runtime%20deps-0-brightgreen.svg)
 
+[Live demo](https://jevfilter.karthiram165.workers.dev/shop/) · [Helpdesk demo with X-ray](https://jevfilter.karthiram165.workers.dev/demo/) · [API reference](https://jevfilter.karthiram165.workers.dev/docs/)
+
 </div>
 
 ```ts
@@ -108,9 +110,9 @@ npm install jevfilter @typesafe-ai/sdk
 ```
 
 It runs server-side on Node.js 20+ and ships as ESM. Types need TypeScript 5.0 or newer. The core
-has no runtime dependencies; `@typesafe-ai/sdk` is only needed for the Jev provider. The API
-reference, served at `/docs/` on the demo site (source in `demo/public/docs/`), lists every option,
-status, and limit.
+has no runtime dependencies; `@typesafe-ai/sdk` is only needed for the Jev provider. The
+[API reference](https://jevfilter.karthiram165.workers.dev/docs/) lists every option, status, and
+limit.
 
 ## Quick start
 

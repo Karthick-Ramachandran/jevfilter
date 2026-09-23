@@ -29,4 +29,12 @@ Status: Done (2026-09-23). `/docs/` (`demo/public/docs/`), written from the sour
 
 ## T3: Deploy
 
-Status: Todo. `npx wrangler secret put TYPESAFE_API_KEY` (value piped from `.env`), then `npx wrangler deploy`.
+Status: Done (2026-09-23). Live at https://jevfilter.karthiram165.workers.dev (version ff4038bb). Deployed with `npx wrangler deploy`, then `TYPESAFE_API_KEY` set as a Worker secret piped from `.env` over stdin.
+
+Checks against the live URL:
+
+- Landing, /demo/, /shop/ and /docs/ all return 200 with the CSP header; the unknown path returns 404 with CSP.
+- Key found in 0 responses or static files; 0 leaked rows; each company's Sam chooser lists only its own customers.
+- Cache hit on repeat searches (0 tokens). All 5 tampered execute requests were rejected.
+- The per-IP limit returned 429 at the 12th request in a burst. A few later requests passed, which matches the limiter's documented eventual consistency.
+- In the browser: Geist fonts load, the store search returns products, and the helpdesk clarification and X-ray render.

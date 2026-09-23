@@ -15,6 +15,8 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 - deploy the demo to Cloudflare
 - a docs page with all the available APIs, supported fields, and what is possible
 
+Live: https://jevfilter.karthiram165.workers.dev (Worker `jevfilter`, secret `TYPESAFE_API_KEY`, kill switch `DEMO_DISABLED`).
+
 ## Also Known As
 
 - JevFilter Helpdesk, live demo, playground, landing page, workers.dev
