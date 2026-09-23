@@ -19,6 +19,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      # Demo Worker code (KV answer cache). Uses only the repo's own sources, no extra install.
+      - run: node --test --experimental-strip-types demo/test/*.test.ts
 
   # Consumers may run Node 20: build once, then import the packed tarball on Node 20.
   node20-consumer:

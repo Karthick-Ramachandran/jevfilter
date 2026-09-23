@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted — superseded by ADR-0010-demo-answer-cache-in-workers-kv-and-a-60-per-minute-global-cap
 
 ## Supersedes
 

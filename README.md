@@ -340,6 +340,55 @@ the cache.
 - **Per-customer keys:** Within one scope, a cached answer can be served to a user whose search
   would have been paid with a different key. If each tenant brings its own key, scope by tenant.
 
+`memoryCache` lives in one process. To share the cache across servers, pass a store backed by
+Redis or Workers KV. This Redis store, using the official `redis` client, was tested with
+`jevfilter@0.1.1`. A second process got a cache hit in 23 ms with 0 tokens, where the first took
+523 ms and 1,077 tokens, and another tenant missed. With Redis stopped or frozen, searches still
+returned correct filters, with reads giving up after `storeTimeoutMs`.
+
+```ts
+import { createClient } from "redis";
+import { withCache, type CacheStore } from "jevfilter";
+import { jev } from "jevfilter/jev";
+
+// Only the two methods it needs, so any Redis client with get/set fits.
+type RedisLike = {
+  get(key: string): Promise<string | null>;
+  set(key: string, value: string, options: { expiration: { type: "PX"; value: number } }): Promise<unknown>;
+};
+
+export function redisStore(client: RedisLike, prefix = "jf:answers:v1:"): CacheStore {
+  return {
+    async get(key) {
+      const raw = await client.get(prefix + key);
+      if (!raw) return undefined;
+      try {
+        const v = JSON.parse(raw);
+        return v?.answers && typeof v.answers === "object" ? v : undefined; // junk is a miss
+      } catch {
+        return undefined;
+      }
+    },
+    async set(key, value, ttlMs) {
+      await client.set(prefix + key, JSON.stringify(value), { expiration: { type: "PX", value: Math.max(1, Math.round(ttlMs)) } });
+    },
+  };
+}
+
+const client = createClient({ url: process.env.REDIS_URL });
+client.on("error", () => {}); // log it; a Redis outage shouldn't crash the app
+await client.connect();
+
+const provider = withCache(jev(), { store: redisStore(client), scope: (session) => session.tenantId });
+```
+
+The hosted demo puts Workers KV behind the in-memory cache
+([`demo/src/kv-cache.ts`](demo/src/kv-cache.ts)). After a fresh deployment, a repeat search there
+took 3 ms and 0 tokens instead of 714 ms and 2,960 tokens. On Workers, hand background writes to
+`ctx.waitUntil`, or the runtime can cancel them once the response is sent. Stored entries hold
+Jev's chosen labels, such as `is "yellow"`, which show how a search was interpreted. The search text
+itself isn't stored.
+
 ## Search on Enter
 
 Each interpretation is a network call. On the hosted demo it took about 300 to 520 ms. Run it when
