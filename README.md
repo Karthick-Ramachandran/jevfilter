@@ -14,7 +14,7 @@ and authorization stay in charge.
 
 <br>
 
-<a href="https://jevfilter.pages.dev/shop/"><img src=".github/assets/jevfilter-demo.gif" alt="The JevFilter store demo: typing 'black waterproof boots under $130' fills in the category, color, waterproof and price filters and shows matching boots; removing a chip re-runs without a model call; 'Kestrel or Alder boots' is refused instead of guessed." width="860"></a>
+<a href="https://jevfilter.pages.dev/shop/"><img src="https://raw.githubusercontent.com/Karthick-Ramachandran/jevfilter/main/.github/assets/jevfilter-demo.gif" alt="The JevFilter store demo: typing 'black waterproof boots under $130' fills in the category, color, waterproof and price filters and shows matching boots; removing a chip re-runs without a model call; 'Kestrel or Alder boots' is refused instead of guessed." width="860"></a>
 
 <sub>Recorded on the live store demo. The sentence becomes filters, and a chip can be removed with no model call. "Kestrel or Alder boots" is refused rather than guessed.</sub>
 
@@ -74,8 +74,8 @@ The [helpdesk demo](https://jevfilter.pages.dev/demo/) shows each of these steps
 what code parsed, what Jev chose and how sure it was, the validated filters, and what your API ran.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/helpdesk-xray-dark.png">
-  <img alt="The helpdesk demo: 'urgent billing tickets from last week' is annotated in place, becomes three filter chips and two tickets, and the What happened panel shows the parsed date range, Jev's probability for each choice, the validated filters, and that no SQL was generated." src=".github/assets/helpdesk-xray-light.png" width="860">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Karthick-Ramachandran/jevfilter/main/.github/assets/helpdesk-xray-dark.png">
+  <img alt="The helpdesk demo: 'urgent billing tickets from last week' is annotated in place, becomes three filter chips and two tickets, and the What happened panel shows the parsed date range, Jev's probability for each choice, the validated filters, and that no SQL was generated." src="https://raw.githubusercontent.com/Karthick-Ramachandran/jevfilter/main/.github/assets/helpdesk-xray-light.png" width="860">
 </picture>
 
 | Approach | What you get back |
