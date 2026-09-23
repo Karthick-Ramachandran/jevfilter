@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted — superseded by ADR-0009-serve-the-demo-on-cloudflare-pages-with-the-api-worker-behind-a-service-binding
 
 ## Supersedes
 

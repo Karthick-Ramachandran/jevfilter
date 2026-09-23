@@ -1,5 +1,6 @@
 /**
- * JevFilter demo Worker (ADR-0006).
+ * JevFilter demo API Worker (ADR-0009). The site is served by Cloudflare Pages at
+ * jevfilter.pages.dev; its /api/* Function forwards requests here through a service binding.
  *
  *   POST /api/search   { text, account }  → interpret with Jev, then run the scoped search
  *   POST /api/execute  { filters, account } → validated filters only (chips, clarifications)
@@ -110,12 +111,12 @@ function searchResponse(account: Account, now: Date, filters: Parameters<typeof 
 
 /**
  * The visitor's own key (x-jev-api-key) if sent, else the shared secret behind the rate limits
- * (ADR-0006). The value only ever goes into a request context, never into a response.
+ * (ADR-0009). The value only ever goes into a request context, never into a response.
  */
 async function jevKeyFor(req: Request, env: Env): Promise<{ value: string; own: boolean } | { error: Response }> {
   const header = req.headers.get("x-jev-api-key")?.trim();
   if (header && header.length <= 512) return { value: header, own: true };
-  // Shared key: 10/min per IP plus a 30/min global spend cap (ADR-0006).
+  // Shared key: 10/min per IP plus a 30/min global spend cap (ADR-0009).
   const ip = req.headers.get("cf-connecting-ip") ?? "unknown";
   const [perIp, global] = await Promise.all([env.IP_LIMITER.limit({ key: ip }), env.GLOBAL_LIMITER.limit({ key: "all" })]);
   if (!perIp.success || !global.success) {

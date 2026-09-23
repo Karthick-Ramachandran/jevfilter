@@ -13,7 +13,10 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 - how many tokens does a demo search use / what does the demo cost
 - change the demo's rate limits or pause the demo (DEMO_DISABLED)
 - deploy the demo to Cloudflare
+- make the demo URL shorter (jevfilter.pages.dev instead of the workers.dev URL)
 - a docs page with all the available APIs, supported fields, and what is possible
+
+Live: https://jevfilter.pages.dev (Pages project `jevfilter` for the site; Worker `jevfilter` for /api with secret `TYPESAFE_API_KEY` and kill switch `DEMO_DISABLED`). Deploy the site with `npm run deploy:pages`, and the API with `npm run deploy`, both run in `demo/`.
 
 ## Also Known As
 
@@ -23,7 +26,9 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 
 ## Start Here
 
-- docs/adrs/ADR-0006-demo-shared-jev-key-capped-at-30-searches-per-minute-globally.md — hosting, key and limits decision
+- docs/adrs/ADR-0009-serve-the-demo-on-cloudflare-pages-with-the-api-worker-behind-a-service-binding.md — hosting (Pages + API Worker), key and limits decision
+- demo/pages/wrangler.jsonc — Pages project config and the service binding to the Worker
+- demo/pages/functions/api/[[path]].ts — forwards /api/* to the Worker
 - docs/40-features/F-002-demo-site/PLAN.md — what the demo shows and its acceptance criteria
 - demo/wrangler.jsonc — Worker config, assets, rate limits, kill switch
 - demo/src/worker.ts — /api/search (trace, tokens), /api/execute, /api/meta
@@ -36,7 +41,7 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 
 ## Rules
 
-- ADR-0006 (key as Worker secret, browser never calls Jev, 10/min per IP, 30/min global)
+- ADR-0009 (Pages site, API Worker behind a service binding, key as Worker secret, 10/min per IP, 30/min global)
 - ADR-0003 (bring your own key via x-jev-api-key)
 - CONVENTIONS: render every string with textContent; no inline script or style (CSP)
 
