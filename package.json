@@ -1,0 +1,82 @@
+{
+  "name": "jevfilter",
+  "version": "0.1.0",
+  "description": "Your API already knows how to search. JevFilter lets users ask. Natural language in, validated filters out: no generated SQL, and your auth stays in control.",
+  "keywords": [
+    "natural-language",
+    "natural-language-search",
+    "filters",
+    "search",
+    "filter-bar",
+    "intent",
+    "jev",
+    "typesafe",
+    "llm",
+    "ai",
+    "text-to-filter",
+    "no-sql-generation",
+    "typescript"
+  ],
+  "homepage": "https://github.com/Karthick-Ramachandran/jevfilter#readme",
+  "bugs": {
+    "url": "https://github.com/Karthick-Ramachandran/jevfilter/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Karthick-Ramachandran/jevfilter.git"
+  },
+  "license": "MIT",
+  "author": "Karthick Ramachandran",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./jev": {
+      "types": "./dist/jev.d.ts",
+      "default": "./dist/jev.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && node scripts/fix-dts-extensions.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test --experimental-strip-types test/*.test.ts",
+    "check": "npm run typecheck && npm test && npm run build",
+    "example": "node --experimental-strip-types examples/tickets/server.ts",
+    "eval": "node --env-file-if-exists=.env --experimental-strip-types evals/run.ts",
+    "prepublishOnly": "npm run check",
+    "prepack": "npm run build",
+    "lint:package": "npx --yes publint@0.3 && npx --yes @arethetypeswrong/cli@0.18 --pack . --profile esm-only"
+  },
+  "peerDependencies": {
+    "@typesafe-ai/sdk": "^0.6.0"
+  },
+  "peerDependenciesMeta": {
+    "@typesafe-ai/sdk": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@typesafe-ai/sdk": "0.6.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "jevfilter-example-postgres",
+  "private": true,
+  "description": "JevFilter on top of an existing Postgres database: a multi-tenant order desk.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.6"
+  },
+  "scripts": {
+    "db:up": "docker compose up -d --wait",
+    "db:seed": "node --env-file-if-exists=.env --experimental-strip-types seed.ts",
+    "db:down": "docker compose down -v",
+    "db:psql": "docker compose exec db psql -U orderdesk_owner -d orderdesk",
+    "ask": "node --env-file-if-exists=../../.env --env-file-if-exists=.env --experimental-strip-types cli.ts",
+    "smoke": "node --env-file-if-exists=../../.env --env-file-if-exists=.env --experimental-strip-types smoke.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.0"
+  }
+}

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JevFilter Live Demo</title>
+<meta name="description" content="Search a demo helpdesk in plain English and watch each step: what code parsed, what Jev chose, which filters ran, and what it refused.">
+<meta property="og:title" content="JevFilter Live Demo">
+<meta property="og:description" content="Type a sentence, get validated filters for an API you already own. Watch every step.">
+<meta property="og:image" content="/landing/og.png">
+<link rel="icon" href="/landing/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/demo/app.css">
+<script src="/demo/app.js" defer></script>
+<script src="/demo/tour.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#q">Skip to search</a>
+
+<header class="bar">
+  <div class="bar-inner">
+    <a class="brand" href="/" aria-label="JevFilter home">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+      <span>JevFilter</span>
+      <span class="brand-sub">Helpdesk demo</span>
+    </a>
+    <div class="bar-actions">
+      <button type="button" id="tour-start" class="ghost">Take the tour</button>
+      <a class="ghost" href="https://github.com/Karthick-Ramachandran/jevfilter">GitHub</a>
+      <button type="button" id="theme" class="icon" aria-label="Switch light or dark theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="col">
+  <section class="bench" aria-labelledby="bench-title">
+    <div class="who" id="tour-account">
+      <span class="who-label">Signed in to</span>
+      <div id="accounts" class="accounts" role="radiogroup" aria-label="Demo company"></div>
+      <span id="who-user" class="who-user"></span>
+    </div>
+
+    <h1 id="bench-title" class="sr-only">Search the helpdesk in plain English</h1>
+
+    <form id="search" class="ask" autocomplete="off" data-tour="search">
+      <label for="q" class="sr-only">Describe the tickets you want</label>
+      <input id="q" name="q" maxlength="500" spellcheck="false" placeholder="Describe the tickets you want" value="urgent billing tickets from last week">
+      <button type="submit" id="go" class="go">Search</button>
+    </form>
+
+    <div class="sentence-wrap" id="tour-sentence" aria-live="polite">
+      <p id="sentence" class="sentence" hidden></p>
+      <div id="outcome" class="outcome"></div>
+    </div>
+
+    <div class="try">
+      <span class="try-label">Try</span>
+      <div id="examples" class="tries"></div>
+    </div>
+  </section>
+
+  <section class="inbox" id="tour-results" aria-labelledby="inbox-title">
+      <div class="inbox-head">
+        <h2 id="inbox-title">Inbox</h2>
+        <p id="inbox-meta" class="inbox-meta">Run a search to see matching tickets.</p>
+      </div>
+      <div id="results" class="results"></div>
+    </section>
+
+  <section class="break" id="tour-break" aria-labelledby="break-title">
+    <div class="break-copy">
+      <h2 id="break-title">Try to break it</h2>
+      <p>These requests try to escape the signed-in company or sneak in a query. Each one is refused, and nothing runs.</p>
+    </div>
+    <div id="attacks" class="attacks"></div>
+    <div class="leak" aria-live="polite">
+      <span class="leak-n" id="leak-count">0</span>
+      <span class="leak-label">rows from other companies returned, across every search you've run here</span>
+    </div>
+  </section>
+
+  <details class="byok">
+    <summary>Use your own Jev key</summary>
+    <p>Your key stays in this tab's memory and goes only to this demo's server, as a header on your own searches. It's never stored or logged. Leave it empty to use the shared key, which is limited to 10 searches a minute.</p>
+    <label for="key" class="sr-only">Jev API key</label>
+    <input id="key" type="password" spellcheck="false" autocomplete="off" placeholder="TYPESAFE_API_KEY">
+  </details>
+  </div>
+
+  <aside class="rail" id="tour-rail" aria-labelledby="rail-title">
+    <div class="rail-head">
+      <h2 id="rail-title">What happened</h2>
+      <p>Every search, step by step.</p>
+    </div>
+    <ol class="stages">
+      <li class="stage" id="stage-parse">
+        <div class="stage-top"><span class="stage-n">1</span><h3>Code parsed</h3></div>
+        <p class="stage-cap">Dates and numbers are read by code, so the model never produces a value.</p>
+        <div class="stage-body" id="x-parse"><p class="dim">Waiting for a search.</p></div>
+      </li>
+      <li class="stage" id="stage-jev">
+        <div class="stage-top"><span class="stage-n">2</span><h3>Jev chose</h3></div>
+        <p class="stage-cap">Jev picks from options built from the schema. The bars are its probabilities.</p>
+        <div class="stage-body" id="x-jev"><p class="dim">Waiting for a search.</p></div>
+      </li>
+      <li class="stage" id="stage-filters">
+        <div class="stage-top"><span class="stage-n">3</span><h3>Filters validated</h3></div>
+        <p class="stage-cap">This exact object is what your API receives. There is no SQL anywhere.</p>
+        <div class="stage-body" id="x-filters"><p class="dim">Waiting for a search.</p></div>
+      </li>
+      <li class="stage" id="stage-run">
+        <div class="stage-top"><span class="stage-n">4</span><h3>Your API ran it</h3></div>
+        <p class="stage-cap">Scope comes from the signed-in company. The search text can't change it.</p>
+        <div class="stage-body" id="x-run"><p class="dim">Waiting for a search.</p></div>
+      </li>
+    </ol>
+  </aside>
+</main>
+
+<footer class="foot">
+  <p>The data is synthetic: three fictional companies with 650 tickets each. What you type, along with the helpdesk's filter fields, is sent to TypeSafe's Jev model to interpret. Ticket records are not sent.</p>
+  <p><a href="/">What is JevFilter?</a> <a href="https://www.npmjs.com/package/jevfilter">npm</a> <a href="https://github.com/Karthick-Ramachandran/jevfilter">GitHub</a></p>
+</footer>
+
+<div id="tour" class="tour" hidden>
+  <div class="tour-hole" id="tour-hole"></div>
+  <div class="tour-card" id="tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title">
+    <p class="tour-step" id="tour-step"></p>
+    <h2 id="tour-title"></h2>
+    <p id="tour-text"></p>
+    <div class="tour-nav">
+      <button type="button" id="tour-skip" class="ghost">Skip tour</button>
+      <span class="tour-gap"></span>
+      <button type="button" id="tour-back" class="ghost">Back</button>
+      <button type="button" id="tour-next" class="go">Next</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

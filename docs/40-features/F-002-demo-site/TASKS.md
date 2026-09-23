@@ -1,0 +1,32 @@
+# Tasks: Hosted demo
+
+## T1: Worker, data, demo app
+
+Status: Done (2026-09-23)
+
+Scope: `demo/src/data.ts` (3 fictional companies, 650 tickets each, deterministic per day, duplicate Sams per company), `demo/src/worker.ts` (`/api/search` with X-ray trace + token usage, `/api/execute`, `/api/meta`, rate limits, kill switch), `demo/public/demo/*` (search, clarifications, results, X-ray, attack buttons, BYOK), `_headers` CSP, 404 page.
+
+Evidence (local `wrangler dev` against live Jev, `jev-1.13.0`):
+
+- 13 example and attack searches: 27,583 input tokens (~$0.0012), about 2.3k per search, 300-520 ms each.
+- 0 leaked rows. Sam chooser lists only the current company's Sams (Acme 3, Globex 2).
+- Hostile prompts → `unsupported/out_of_scope` or `unavailable` (TypeSafe's 403 firewall on SQL-like text).
+- `/api/execute` rejects another company's customer id and an injected `company` field.
+- Key found in 0 of 18 responses and static files. The CSP header is present.
+- `wrangler deploy --dry-run`: 80 KB bundle, limits 10/60 s and 30/60 s.
+
+## T2: Landing page
+
+Status: Done (2026-09-23). Built by a separate agent in `demo/public/index.html` and `demo/public/landing/**`: interactive terminal with six real outputs, "Why Jev instead of a hosted AI search service" (no other vendors named), quick start, FAQ, Geist fonts. Screenshots were checked at 1440/1024/768/390/360 in both themes. Humanizer pass done on the landing page, the demo page copy, and 404.
+
+## T2b: Store demo
+
+Status: Done (2026-09-23). `/shop/` + `demo/src/shop.ts`: 640 fictional products, 8 fields. The filter sidebar fills itself in from the sentence; sidebar clicks and chip removal call `/api/shop/execute` with no model call. Live checks: "red running shoes under $100" → 3 filters; "rated 4.5 or more" routes to rating, not price; "Kestrel or Alder boots" → multiple_values; "cheap stuff" → no_filters. About 2.9k input tokens and 330-450 ms per search.
+
+## T2c: API reference page
+
+Status: Done (2026-09-23). `/docs/` (`demo/public/docs/`), written from the source. A script over the built `.d.ts` found 0 of 172 names missing (all 57 exports, every config option, status, reason and clarification kind). All 73 parser examples on the page were asserted against real output. The review also found six places where the README disagreed with the source, all now fixed. It found `.ts` paths in the published `.d.ts` files, now rewritten to `.js` by `scripts/fix-dts-extensions.mjs` and checked with strict TypeScript 5 consumers. TypeScript 4.9 can't read the types (`const` type parameters), so TypeScript 5.0+ is now documented.
+
+## T3: Deploy
+
+Status: Todo. `npx wrangler secret put TYPESAFE_API_KEY` (value piped from `.env`), then `npx wrangler deploy`.

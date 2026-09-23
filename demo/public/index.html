@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JevFilter: natural language in, validated filters out</title>
+  <meta name="description" content="JevFilter is an open-source npm package that turns a user's sentence into typed, validated filters for the search API you already own. It doesn't generate SQL, and your code runs the query.">
+  <meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f5f4ee" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="JevFilter: natural language in, validated filters out">
+  <meta property="og:description" content="Your API already knows how to search. JevFilter lets users ask. Typed, validated filters from plain sentences, run by your own API.">
+  <meta property="og:image" content="/landing/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JevFilter: natural language in, validated filters out">
+  <meta name="twitter:description" content="Your API already knows how to search. JevFilter lets users ask.">
+  <meta name="twitter:image" content="/landing/og.png">
+  <link rel="icon" href="/landing/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&display=swap">
+  <link rel="stylesheet" href="/landing/landing.css">
+  <script src="/landing/landing.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/" aria-label="JevFilter home">
+        <svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+          <rect x="1" y="1" width="30" height="30" rx="7" class="bm-bg"/>
+          <path d="M12 8.5c-2.4 0-3.2 1-3.2 3v2.2c0 1.2-.7 2-2 2.3 1.3.3 2 1.1 2 2.3v2.2c0 2 .8 3 3.2 3" class="bm-br" fill="none" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M20 8.5c2.4 0 3.2 1 3.2 3v2.2c0 1.2.7 2 2 2.3-1.3.3-2 1.1-2 2.3v2.2c0 2-.8 3-3.2 3" class="bm-br" fill="none" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="16" cy="16" r="2.3" class="bm-dot"/>
+        </svg>
+        <span class="brand-name">JevFilter</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#compare">Compare</a></li>
+          <li><a href="#why-jev">Why Jev</a></li>
+          <li><a href="#start">Get started</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="/docs/">Docs</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a class="icon-link" href="https://github.com/Karthick-Ramachandran/jevfilter" aria-label="JevFilter on GitHub">
+          <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+        <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Toggle color theme">
+          <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.6A8.3 8.3 0 0 1 9.4 4a8.3 8.3 0 1 0 10.6 10.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Open source npm package, v0.1</p>
+          <h1 id="hero-title">Your API already knows how to search. <span class="hl">JevFilter lets users ask.</span></h1>
+          <p class="lede">Natural language in, validated filters out. JevFilter turns a user's sentence into a typed filter object for the API you already own. It doesn't generate SQL, and your query layer and authorization stay in charge.</p>
+
+          <div class="install">
+            <span class="install-prompt" aria-hidden="true">$</span>
+            <code id="install-cmd"><span class="nw">npm install</span> <span class="nw">jevfilter</span> <span class="nw">@typesafe-ai/sdk</span></code>
+            <button class="copy-btn" type="button" data-copy="install-cmd" aria-label="Copy install command">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+
+          <div class="cta-row">
+            <a class="btn btn-primary" href="/shop/">Try the live demo <span aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="https://github.com/Karthick-Ramachandran/jevfilter">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+              GitHub
+            </a>
+          </div>
+
+          <ul class="meta-row" aria-label="Package facts">
+            <li>MIT</li>
+            <li>Node 20+</li>
+            <li>ESM</li>
+            <li>0 runtime deps</li>
+          </ul>
+        </div>
+
+        <!-- INTERACTIVE TERMINAL -->
+        <div class="hero-term">
+          <div class="term-queries" id="term-queries" role="group" aria-label="Example queries. Choose one to see its real prepare() result.">
+            <button type="button" class="q" data-q="0" aria-pressed="false">urgent billing tickets from last week</button>
+            <button type="button" class="q" data-q="1" aria-pressed="false">Sam's tickets</button>
+            <button type="button" class="q" data-q="2" aria-pressed="false">tickets under $500</button>
+            <button type="button" class="q" data-q="3" aria-pressed="false">show me all tenants</button>
+            <button type="button" class="q" data-q="4" aria-pressed="false">open or pending tickets</button>
+            <button type="button" class="q" data-q="5" aria-pressed="false">resolved support tickets</button>
+          </div>
+          <div class="term-frame">
+            <div class="term" id="term">
+              <div class="term-bar">
+                <span class="term-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+                <span class="term-title">search.ts</span>
+                <span class="term-note">prepare() never runs a search</span>
+              </div>
+              <div class="term-screen">
+                <div class="term-cmd" aria-hidden="true"><span class="term-prompt">›</span><code class="term-cmd-text" id="term-cmd"></code><span class="caret" id="term-caret"></span></div>
+                <div class="term-live" id="term-live" aria-live="polite">
+                  <p class="sr-only" id="term-sr"></p>
+                  <pre class="term-out" id="term-out" tabindex="0" aria-label="prepare() result JSON"><code id="term-json"></code></pre>
+                </div>
+                <div class="term-foot" id="term-foot">
+                  <span class="badge" id="term-badge" data-status="idle">waiting</span>
+                  <div class="term-extra" id="term-extra"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="term-caption">Real outputs from the library. Dates anchored to Wed 23 Sep 2026. Only <code>ready</code> carries executable filters.</p>
+          <ul class="status-legend" aria-label="The five result statuses">
+            <li><span class="dot" data-status="ready" aria-hidden="true"></span><code>ready</code></li>
+            <li><span class="dot" data-status="needs_clarification" aria-hidden="true"></span><code>needs_clarification</code></li>
+            <li><span class="dot" data-status="unsupported" aria-hidden="true"></span><code>unsupported</code></li>
+            <li><span class="dot" data-status="blocked" aria-hidden="true"></span><code>blocked</code></li>
+            <li><span class="dot" data-status="unavailable" aria-hidden="true"></span><code>unavailable</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section how" id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="annot"><span class="annot-idx">01</span> how it works</p>
+          <h2 id="how-title">AI interprets. Your code queries.</h2>
+          <p class="section-lede">The model never writes a query. It picks from options built from your schema, and your code decides what runs.</p>
+        </div>
+
+        <ol class="pipe reveal" aria-label="Pipeline from sentence to search">
+          <li class="pipe-step" data-kind="input">
+            <span class="pipe-tag">input · the user</span>
+            <p class="pipe-title">A sentence</p>
+            <p class="pipe-detail"><code class="quote">"urgent billing tickets from last week"</code></p>
+          </li>
+          <li class="pipe-step" data-kind="code">
+            <span class="pipe-tag">code · deterministic</span>
+            <p class="pipe-title">Code finds dates &amp; numbers</p>
+            <p class="pipe-detail"><code class="nw">"last week"</code> → <code class="nw">2026-09-14</code> … <code class="nw">2026-09-21</code></p>
+          </li>
+          <li class="pipe-step" data-kind="model">
+            <span class="pipe-tag">model · closed options only</span>
+            <p class="pipe-title">Jev chooses from closed options</p>
+            <p class="pipe-detail">Which field? Which allowed value? Which phrase?</p>
+          </li>
+          <li class="pipe-step" data-kind="code">
+            <span class="pipe-tag">code · deterministic</span>
+            <p class="pipe-title">JevFilter validates every answer</p>
+            <p class="pipe-detail">Against the schema you defined.</p>
+          </li>
+          <li class="pipe-step" data-kind="yours">
+            <span class="pipe-tag">your code · your auth</span>
+            <p class="pipe-title">Your existing API executes it</p>
+            <p class="pipe-detail">With your auth, inside the user's tenant.</p>
+          </li>
+        </ol>
+
+        <div class="pipe-legend reveal" aria-hidden="true">
+          <span><span class="swatch" data-kind="model"></span>the only step a model touches</span>
+          <span><span class="swatch" data-kind="code"></span>deterministic code</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- WON'T DO -->
+    <section class="section wont" id="wont" aria-labelledby="wont-title">
+      <div class="wrap wont-grid">
+        <div class="section-head reveal">
+          <p class="annot"><span class="annot-idx">02</span> boundaries</p>
+          <h2 id="wont-title">What JevFilter won't do</h2>
+          <p class="section-lede">JevFilter doesn't claim to make AI safe. Its guarantee is narrower: the model never gets direct authority over your database.</p>
+        </div>
+        <ul class="wont-list reveal">
+          <li><span class="wont-key" aria-hidden="true">no_sql</span><p>Generate SQL, ORM code, or any other executable text.</p></li>
+          <li><span class="wont-key" aria-hidden="true">no_exec</span><p>Execute anything the model returns.</p></li>
+          <li><span class="wont-key" aria-hidden="true">no_scope</span><p>Expand the caller's permissions. Scope comes from your session, never from the filters.</p></li>
+          <li><span class="wont-key" aria-hidden="true">no_data</span><p>Send the model your database credentials or your records.</p></li>
+          <li><span class="wont-key" aria-hidden="true">no_guess</span><p>Guess which record you meant when a name matches several.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- COMPARE -->
+    <section class="section compare" id="compare" aria-labelledby="compare-title">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="annot"><span class="annot-idx">03</span> compare</p>
+          <h2 id="compare-title">What you get back</h2>
+          <p class="section-lede">Each approach returns something different. JevFilter returns a filter object that your existing API can already run.</p>
+        </div>
+        <div class="cmp-wrap reveal">
+        <table class="cmp">
+          <caption class="sr-only">Natural-language search approaches and what each returns</caption>
+          <thead>
+            <tr><th scope="col">Approach</th><th scope="col">What you get back</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Text-to-SQL</th><td>A query string you have to trust</td></tr>
+            <tr><th scope="row">AI search engine</th><td>A new index to keep all your data in</td></tr>
+            <tr><th scope="row">RAG</th><td>A generated answer</td></tr>
+            <tr><th scope="row">Agent tools</th><td>A model that decides which tools to call</td></tr>
+            <tr class="cmp-us"><th scope="row">JevFilter</th><td>A bounded, typed filter object for the API you already own</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY JEV -->
+    <section class="section why" id="why-jev" aria-labelledby="why-title">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="annot"><span class="annot-idx">04</span> why jev</p>
+          <h2 id="why-title">Why Jev instead of a hosted AI search service</h2>
+        </div>
+
+        <div class="why-story reveal">
+          <p>Hosted AI search services generally ask you to copy or index your records into their system. They run the search on their side and return their results or a generated answer. That usually means keeping a second copy of your data in sync and re-creating your permission rules there.</p>
+          <p>JevFilter with Jev keeps your data where it is. Jev receives the user's search text and your filter schema: field names, descriptions, and allowed values. It never sees your records, your credentials, your query code, or the customer names your resolver finds. Your existing API and its authorization run the query.</p>
+        </div>
+
+        <div class="why-sides reveal">
+          <div class="why-side" data-side="hosted">
+            <h3 class="why-side-title">A hosted AI search service, usually</h3>
+            <dl>
+              <div><dt>your records</dt><dd>Copied or indexed into their system</dd></div>
+              <div><dt>leaves your server</dt><dd>Your records, kept in sync</dd></div>
+              <div><dt>runs the search</dt><dd>The service, on its side</dd></div>
+              <div><dt>permission rules</dt><dd>Re-created in the service</dd></div>
+              <div><dt>comes back</dt><dd>Their results or a generated answer</dd></div>
+            </dl>
+          </div>
+          <div class="why-side" data-side="jev">
+            <h3 class="why-side-title">JevFilter with Jev</h3>
+            <dl>
+              <div><dt>your records</dt><dd>Stay in your database</dd></div>
+              <div><dt>leaves your server</dt><dd>The search text and your filter schema</dd></div>
+              <div><dt>runs the search</dt><dd>Your existing API</dd></div>
+              <div><dt>permission rules</dt><dd>Your authorization, unchanged</dd></div>
+              <div><dt>comes back</dt><dd>A typed filter object from your schema</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <ol class="why-notes reveal">
+          <li>
+            <span class="why-key">bounded decisions</span>
+            <h3>Jev picks from your options</h3>
+            <p>Jev is built for bounded decisions. It picks from options you define and returns a probability for each, instead of generating free text. The probabilities are why JevFilter can say "I'm not sure, which one?", and an answer outside the options is rejected.</p>
+          </li>
+          <li>
+            <span class="why-key">cost</span>
+            <h3>About $0.0001 per search</h3>
+            <p>TypeSafe lists Jev at $0.042 per million input tokens and doesn't charge for output tokens. A demo search uses about 2.3k input tokens, so we estimate each search costs roughly $0.0001.</p>
+          </li>
+          <li>
+            <span class="why-key">speed</span>
+            <h3>About 300 to 520 ms</h3>
+            <p>In the live demo, searches took about 300 to 520 ms end to end, measured locally against the live API.</p>
+          </li>
+          <li>
+            <span class="why-key">no lock-in</span>
+            <h3>Swap the provider, keep the schema</h3>
+            <p>Jev is the launch provider. The <code>FilterProvider</code> interface lets you swap providers without changing your schema or your API.</p>
+          </li>
+        </ol>
+
+        <p class="why-cta reveal"><a class="btn btn-primary" href="/shop/">Try the live demo <span aria-hidden="true">→</span></a></p>
+      </div>
+    </section>
+
+    <!-- GET STARTED -->
+    <section class="section start gridded" id="start" aria-labelledby="start-title">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="annot"><span class="annot-idx">05</span> quick start</p>
+          <h2 id="start-title">Three steps to a search box</h2>
+          <p class="section-lede">It runs server-side on Node.js 20+ and ships as ESM. The core has no runtime dependencies; <code>@typesafe-ai/sdk</code> is only needed for the Jev provider.</p>
+        </div>
+
+        <ol class="steps">
+          <li class="step reveal">
+            <div class="step-head">
+              <span class="step-num" aria-hidden="true">1</span>
+              <h3>Describe the filters your API already supports</h3>
+            </div>
+            <div class="code framed">
+              <div class="code-bar"><span>tickets.search.ts</span><button class="copy-btn" type="button" data-copy="code-1" aria-label="Copy step 1 code"><span class="copy-label">Copy</span></button></div>
+              <pre tabindex="0"><code id="code-1" data-lang="ts">import { defineSearch, enumField, booleanField, numberField, dateField, entityField } from "jevfilter";
+
+const tickets = defineSearch({
+  resource: "tickets",
+  fields: {
+    status: enumField({ open: "still open, active", pending: null, closed: "resolved, done" }),
+    priority: enumField({ low: null, medium: null, high: "urgent, critical, P1" }),
+    category: enumField(["billing", "sales", "support"]),
+    escalated: booleanField({ description: "escalated to a manager" }),
+    amount: numberField({ unit: "USD" }),
+    createdAt: dateField({ label: "created" }),
+    customer: entityField({ resolve: (name, session) =&gt; findCustomers(name, session) }),
+  },
+});</code></pre>
+            </div>
+            <p class="step-note">"Urgent" maps to <code>high</code> only because the description says so. JevFilter takes business meaning from your schema and adds none of its own.</p>
+          </li>
+
+          <li class="step reveal">
+            <div class="step-head">
+              <span class="step-num" aria-hidden="true">2</span>
+              <h3>Connect your existing API</h3>
+            </div>
+            <div class="code framed">
+              <div class="code-bar"><span>search.ts</span><button class="copy-btn" type="button" data-copy="code-2" aria-label="Copy step 2 code"><span class="copy-label">Copy</span></button></div>
+              <pre tabindex="0"><code id="code-2" data-lang="ts">import { createNaturalFilter } from "jevfilter";
+import { jev } from "jevfilter/jev";
+
+const search = createNaturalFilter({
+  schema: tickets,
+  provider: jev(), // reads TYPESAFE_API_KEY
+  authorize: (session) =&gt; session.canSearchTickets, // runs before any model call
+  executor: (filters, session) =&gt; searchTickets(filters, session), // your code, your scope
+  timeZone: "Asia/Kolkata",
+});</code></pre>
+            </div>
+          </li>
+
+          <li class="step reveal">
+            <div class="step-head">
+              <span class="step-num" aria-hidden="true">3</span>
+              <h3>Prepare, show, execute</h3>
+            </div>
+            <div class="code framed">
+              <div class="code-bar"><span>route.ts</span><button class="copy-btn" type="button" data-copy="code-3" aria-label="Copy step 3 code"><span class="copy-label">Copy</span></button></div>
+              <pre tabindex="0"><code id="code-3" data-lang="ts">const result = await search.prepare(userText, { context: session }); // never runs a search
+
+if (result.status === "ready") {
+  // show result.interpretation as chips, then:
+  const page = await search.execute(result.filters, { context: session });
+}</code></pre>
+            </div>
+            <p class="step-note">The filters are typed from your schema, so <code>status</code> is <code>"open" | "pending" | "closed" | { not: … }</code>.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- BYOK + EVIDENCE -->
+    <section class="section byok" id="keys" aria-labelledby="byok-title">
+      <div class="wrap byok-grid">
+        <div class="byok-copy reveal">
+          <p class="annot"><span class="annot-idx">06</span> keys</p>
+          <h2 id="byok-title">Bring your own Jev key</h2>
+          <p class="section-lede">JevFilter never ships a key or proxies requests. Keys never appear in logs, results, or errors.</p>
+          <p class="byok-powered">Powered by <a href="https://docs.typesafe.ai">Jev from TypeSafe AI</a>, the launch provider. Providers are pluggable.</p>
+        </div>
+        <div class="code framed reveal">
+          <div class="code-bar"><span>provider.ts</span><button class="copy-btn" type="button" data-copy="code-4" aria-label="Copy key options code"><span class="copy-label">Copy</span></button></div>
+          <pre tabindex="0"><code id="code-4" data-lang="ts">jev()                                                  // TYPESAFE_API_KEY from the environment
+jev({ apiKey: process.env.JEV_API_KEY })               // one key for your app
+jev({ apiKey: (session) =&gt; session.workspace.jevKey }) // each customer brings their own key</code></pre>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="evidence reveal" aria-labelledby="evidence-title">
+          <h3 id="evidence-title" class="evidence-title"><span class="annot-idx">07</span> tested against real Jev</h3>
+          <dl class="evidence-grid">
+            <div><dt>live eval cases pass on <code class="nw">jev-1.13.0</code></dt><dd>23/23</dd></div>
+            <div><dt>cross-tenant leaks</dt><dd>0</dd></div>
+            <div><dt>input tokens for the whole suite</dt><dd>~41k</dd></div>
+            <div><dt>unit tests, including a hostile provider that returns random and malicious answers</dt><dd>60</dd></div>
+          </dl>
+          <p class="evidence-foot">The confidence thresholds come from this one small suite, so run <code>npm run eval</code> against your own schema before relying on them. <a href="https://github.com/Karthick-Ramachandran/jevfilter/tree/main/evals">See the eval cases</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section faq gridded" id="faq" aria-labelledby="faq-title">
+      <div class="wrap faq-grid">
+        <div class="section-head reveal">
+          <p class="annot"><span class="annot-idx">08</span> faq</p>
+          <h2 id="faq-title">Questions developers ask</h2>
+        </div>
+        <div class="faq-list reveal">
+          <details>
+            <summary>Is this text-to-SQL?</summary>
+            <p>No. JevFilter returns filter objects built from your schema. Your code runs the query.</p>
+          </details>
+          <details>
+            <summary>Can the model see my data?</summary>
+            <p>Jev receives the search text and your configured filter schema (field names, descriptions, and allowed values). Records, credentials, and query code never are, so if your category names are sensitive, treat them like the search text. Candidate names aren't sent either, and entity candidate names aren't sent either: the model picks a phrase from the request, and your resolver looks it up within the user's scope.</p>
+          </details>
+          <details>
+            <summary>What if the model is wrong?</summary>
+            <p>Chips show users how their request was read, so they can check it and edit it. Ambiguity returns <code>needs_clarification</code>. If the model fails, times out, or answers outside the options it was given, you get <code>unavailable</code>, and nothing falls back to searching everything.</p>
+          </details>
+          <details>
+            <summary>Can a prompt escape tenant scope?</summary>
+            <p>Scope comes from your session, and the filters can't change it. <code>execute()</code> validates the filters again on every call and reruns <code>authorize(context)</code>, and your executor applies tenant and user scope as an outer AND.</p>
+          </details>
+          <details>
+            <summary>Do I need Jev?</summary>
+            <p>Jev is the launch provider. The <code>FilterProvider</code> interface lets you plug in any model that can answer closed multiple-choice questions, and the offline <code>keywordProvider</code> works for tests and demos.</p>
+          </details>
+          <details>
+            <summary>What does it cost?</summary>
+            <p>Each search makes one Jev call. A demo search uses about 2.3k input tokens. TypeSafe lists Jev at $0.042 per million input tokens and doesn't charge for output tokens, so we estimate a search costs about $0.0001.</p>
+          </details>
+          <details>
+            <summary>Which languages and limits?</summary>
+            <p>v0.1 is English only, with one entity field per search. There's no OR across fields and no "open or pending" on a single field. Requests are capped at 500 characters.</p>
+          </details>
+          <details>
+            <summary>What's the license?</summary>
+            <p>MIT.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="closer gridded" aria-labelledby="closer-title">
+      <div class="wrap closer-inner reveal">
+        <div class="closer-copy">
+          <p class="annot"><span class="annot-idx">&gt;_</span> try it</p>
+          <h2 id="closer-title">Type a sentence and watch it become a filter.</h2>
+          <p class="section-lede">The store demo searches 640 made-up products and fills in its filter sidebar from your sentence. The helpdesk demo shows every step on the server, and you can try to break it.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="/shop/">Try the store demo <span aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="/demo/">See every step</a>
+          </div>
+        </div>
+        <div class="mini-frame" aria-hidden="true">
+          <div class="mini-term">
+            <div class="term-bar"><span class="term-dots"><span></span><span></span><span></span></span><span class="term-title">route.ts</span></div>
+            <pre class="mini-out"><code><span class="m-p">›</span> <span class="m-kw">await</span> search.<span class="m-fn">prepare</span>(<span class="m-str">"tickets under $500"</span>)
+<span class="m-p">{</span> <span class="m-key">"status"</span><span class="m-p">:</span> <span class="m-str">"ready"</span><span class="m-p">,</span> <span class="m-key">"filters"</span><span class="m-p">:</span> <span class="m-p">{</span> <span class="m-key">"amount"</span><span class="m-p">:</span> <span class="m-p">{</span> <span class="m-key">"lt"</span><span class="m-p">:</span> <span class="m-num">500</span> <span class="m-p">} } }</span>
+
+<span class="m-p">›</span> <span class="m-kw">await</span> search.<span class="m-fn">execute</span>(result.filters, { context: session })
+<span class="m-com">// your API runs the query, inside the user's tenant</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div class="footer-brand">
+        <span class="brand-name">JevFilter</span>
+        <p>MIT © Karthick Ramachandran</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul class="footer-links">
+          <li><a href="https://github.com/Karthick-Ramachandran/jevfilter">GitHub</a></li>
+          <li><a href="https://www.npmjs.com/package/jevfilter">npm</a></li>
+          <li><a href="https://github.com/Karthick-Ramachandran/jevfilter#readme">Docs</a></li>
+          <li><a href="https://docs.typesafe.ai">Powered by Jev</a></li>
+          <li><a href="/docs/">API reference</a></li>
+          <li><a href="/shop/">Store demo</a></li>
+          <li><a href="/demo/">Helpdesk demo with X-ray</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <p class="sr-only" id="announcer" aria-live="polite"></p>
+</body>
+</html>

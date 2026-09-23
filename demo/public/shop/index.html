@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JevFilter Store Demo</title>
+<meta name="description" content="Type what you want to buy. JevFilter fills in the same filters a shopper would click, and the store's own search does the rest.">
+<meta property="og:title" content="JevFilter Store Demo">
+<meta property="og:description" content="Type what you want. Watch the filter sidebar fill itself in.">
+<meta property="og:image" content="/landing/og.png">
+<link rel="icon" href="/landing/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/shop/shop.css">
+<script src="/shop/shop.js" defer></script>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-inner">
+    <a class="brand" href="/" aria-label="JevFilter home">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+      <span>JevFilter</span>
+      <span class="brand-sub">Store demo</span>
+    </a>
+    <nav class="bar-actions">
+      <a class="ghost" href="/demo/">Helpdesk demo with X-ray</a>
+      <button type="button" id="theme" class="icon" aria-label="Switch light or dark theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+  <section class="hero">
+    <h1>Shop by saying what you want</h1>
+    <p class="lede">Trailhead is a pretend outdoor store with 640 products. Describe what you're after, and the filter sidebar fills itself in, just as if you had clicked it.</p>
+
+    <form id="search" class="ask" autocomplete="off">
+      <label for="q" class="sr-only">Describe what you want to buy</label>
+      <input id="q" maxlength="500" spellcheck="false" placeholder="red running shoes under $100" value="red running shoes under $100">
+      <button type="submit" id="go" class="go">Search</button>
+    </form>
+
+    <div class="examples" id="examples" aria-label="Examples"></div>
+
+    <div class="understood" aria-live="polite">
+      <div id="verdict" class="verdict"></div>
+      <div id="chips" class="chips"></div>
+      <div id="stats" class="stats"></div>
+    </div>
+  </section>
+
+  <div class="store">
+    <details class="side" id="side" open>
+      <summary><span>Filters</span><span id="side-count" class="count"></span></summary>
+      <form id="filters" class="filters" autocomplete="off">
+        <fieldset>
+          <legend>Category</legend>
+          <div id="f-category" class="opts"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Color</legend>
+          <div id="f-color" class="swatches"></div>
+        </fieldset>
+        <fieldset>
+          <legend><label for="f-brand">Brand</label></legend>
+          <select id="f-brand"></select>
+        </fieldset>
+        <fieldset>
+          <legend>Price (USD)</legend>
+          <div class="range">
+            <label><span>Min</span><input id="f-price-min" type="number" min="0" step="1" inputmode="decimal"></label>
+            <label><span>Max</span><input id="f-price-max" type="number" min="0" step="1" inputmode="decimal"></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><label for="f-rating">Rating at least</label></legend>
+          <select id="f-rating">
+            <option value="">Any</option><option value="3">3 stars</option><option value="3.5">3.5 stars</option>
+            <option value="4">4 stars</option><option value="4.5">4.5 stars</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>More</legend>
+          <div id="f-flags" class="flags"></div>
+        </fieldset>
+        <button type="button" id="clear" class="clear">Clear all filters</button>
+      </form>
+    </details>
+
+    <section class="shelf" aria-labelledby="shelf-title">
+      <div class="shelf-head">
+        <h2 id="shelf-title">Products</h2>
+        <p id="shelf-meta">Search to see products.</p>
+      </div>
+      <div id="grid" class="grid"></div>
+    </section>
+  </div>
+
+  <aside class="note">
+    <h2>What just happened</h2>
+    <ol>
+      <li>Your sentence went to the server. Code read the prices and ratings, and Jev picked each filter from this store's own list of categories, colors, and brands.</li>
+      <li>JevFilter checked the result against the store's schema. Nothing outside that list can get through.</li>
+      <li>The store's normal product query ran with those filters, the same one the sidebar uses. No SQL was written by a model.</li>
+    </ol>
+    <p>Changing the sidebar yourself doesn't call the model at all. For every step in detail, open the <a href="/demo/">helpdesk demo with the X-ray panel</a>.</p>
+  </aside>
+</main>
+
+<footer class="foot">
+  <p>Trailhead and its products are made up. What you type, along with the store's list of filters, is sent to TypeSafe's Jev model to interpret.</p>
+  <p><a href="/">What is JevFilter?</a> <a href="https://github.com/Karthick-Ramachandran/jevfilter">GitHub</a></p>
+</footer>
+</body>
+</html>

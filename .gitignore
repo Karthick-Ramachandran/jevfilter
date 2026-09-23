@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+.env.*
+*.tgz
+.wrangler/
+.dev.vars*
+demo/worker-configuration.d.ts
