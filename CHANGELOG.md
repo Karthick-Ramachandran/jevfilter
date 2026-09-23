@@ -6,6 +6,8 @@ Documentation only; no code changes.
 
 - README: demo GIF, links to the live demos (https://jevfilter.pages.dev) and API reference, a light/dark screenshot of the helpdesk X-ray, and the four known eval failures.
 - Images use absolute URLs so they also render on npm.
+- New headline and plainer copy across the README, landing page and package description ("Turn a user's search sentence into filters your API already accepts."), after a no-ai-slop pass.
+- README explains how to run the eval on your own schema (copy `evals/` and point `run.ts` at your setup); it previously implied `npm run eval` works on any schema as is.
 
 ## 0.1.0 — 2026-09-23
 

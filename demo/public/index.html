@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>JevFilter: natural language in, validated filters out</title>
+  <title>JevFilter: Turn search sentences into filters your API already accepts</title>
   <meta name="description" content="JevFilter is an open-source npm package that turns a user's sentence into typed, validated filters for the search API you already own. It doesn't generate SQL, and your code runs the query.">
   <meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#f5f4ee" media="(prefers-color-scheme: light)">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="JevFilter: natural language in, validated filters out">
-  <meta property="og:description" content="Your API already knows how to search. JevFilter lets users ask. Typed, validated filters from plain sentences, run by your own API.">
+  <meta property="og:title" content="JevFilter: Turn search sentences into filters your API already accepts">
+  <meta property="og:description" content="JevFilter turns a user's sentence into typed, validated filters, and your own API runs the search.">
   <meta property="og:image" content="/landing/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="JevFilter: natural language in, validated filters out">
-  <meta name="twitter:description" content="Your API already knows how to search. JevFilter lets users ask.">
+  <meta name="twitter:title" content="JevFilter: Turn search sentences into filters your API already accepts">
+  <meta name="twitter:description" content="JevFilter turns a user's sentence into typed, validated filters, and your own API runs the search.">
   <meta name="twitter:image" content="/landing/og.png">
   <link rel="icon" href="/landing/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,9 +65,8 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Open source npm package, v0.1</p>
-          <h1 id="hero-title">Your API already knows how to search. <span class="hl">JevFilter lets users ask.</span></h1>
-          <p class="lede">Natural language in, validated filters out. JevFilter turns a user's sentence into a typed filter object for the API you already own. It doesn't generate SQL, and your query layer and authorization stay in charge.</p>
+          <h1 id="hero-title">Turn a user's search sentence into filters your API already accepts.</h1>
+          <p class="lede">You describe the filters your API supports. JevFilter reads the user's request against that schema and returns a typed, validated filter object. Your existing query code runs the search with your authorization checks, and JevFilter never writes SQL.</p>
 
           <div class="install">
             <span class="install-prompt" aria-hidden="true">$</span>
@@ -79,19 +78,14 @@
           </div>
 
           <div class="cta-row">
-            <a class="btn btn-primary" href="/shop/">Try the live demo <span aria-hidden="true">→</span></a>
+            <a class="btn btn-primary" href="/shop/">Try the store demo</a>
             <a class="btn btn-ghost" href="https://github.com/Karthick-Ramachandran/jevfilter">
               <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
               GitHub
             </a>
           </div>
 
-          <ul class="meta-row" aria-label="Package facts">
-            <li>MIT</li>
-            <li>Node 20+</li>
-            <li>ESM</li>
-            <li>0 runtime deps</li>
-          </ul>
+          <p class="meta-row">v0.1, MIT, Node.js 20+, zero runtime dependencies</p>
         </div>
 
         <!-- INTERACTIVE TERMINAL -->
@@ -133,7 +127,7 @@
               </div>
             </div>
           </div>
-          <p class="term-caption">Real outputs from the library. Dates anchored to Wed 23 Sep 2026. Only <code>ready</code> carries executable filters.</p>
+          <p class="term-caption">These are real outputs from the library, with dates computed as of Wed 23 Sep 2026. Only <code>ready</code> carries filters you can execute.</p>
           <ul class="status-legend" aria-label="The five result statuses">
             <li><span class="dot" data-status="ready" aria-hidden="true"></span><code>ready</code></li>
             <li><span class="dot" data-status="needs_clarification" aria-hidden="true"></span><code>needs_clarification</code></li>
@@ -150,7 +144,7 @@
       <div class="wrap">
         <div class="section-head reveal">
           <p class="annot"><span class="annot-idx">01</span> how it works</p>
-          <h2 id="how-title">AI interprets. Your code queries.</h2>
+          <h2 id="how-title">Only one step uses a model</h2>
           <p class="section-lede">The model never writes a query. It picks from options built from your schema, and your code decides what runs.</p>
         </div>
 
@@ -195,13 +189,13 @@
         <div class="section-head reveal">
           <p class="annot"><span class="annot-idx">02</span> boundaries</p>
           <h2 id="wont-title">What JevFilter won't do</h2>
-          <p class="section-lede">JevFilter doesn't claim to make AI safe. Its guarantee is narrower: the model never gets direct authority over your database.</p>
+          <p class="section-lede">JevFilter doesn't claim to make AI safe. It guarantees only that the model never gets direct authority over your database.</p>
         </div>
         <ul class="wont-list reveal">
           <li><span class="wont-key" aria-hidden="true">no_sql</span><p>Generate SQL, ORM code, or any other executable text.</p></li>
           <li><span class="wont-key" aria-hidden="true">no_exec</span><p>Execute anything the model returns.</p></li>
           <li><span class="wont-key" aria-hidden="true">no_scope</span><p>Expand the caller's permissions. Scope comes from your session, never from the filters.</p></li>
-          <li><span class="wont-key" aria-hidden="true">no_data</span><p>Send the model your database credentials or your records.</p></li>
+          <li><span class="wont-key" aria-hidden="true">no_data</span><p>Send the model your database credentials, your records, or your query code.</p></li>
           <li><span class="wont-key" aria-hidden="true">no_guess</span><p>Guess which record you meant when a name matches several.</p></li>
         </ul>
       </div>
@@ -213,7 +207,7 @@
         <div class="section-head reveal">
           <p class="annot"><span class="annot-idx">03</span> compare</p>
           <h2 id="compare-title">What you get back</h2>
-          <p class="section-lede">Each approach returns something different. JevFilter returns a filter object that your existing API can already run.</p>
+          <p class="section-lede">JevFilter returns a filter object that your existing API can already run.</p>
         </div>
         <div class="cmp-wrap reveal">
         <table class="cmp">
@@ -292,7 +286,7 @@
           </li>
         </ol>
 
-        <p class="why-cta reveal"><a class="btn btn-primary" href="/shop/">Try the live demo <span aria-hidden="true">→</span></a></p>
+        <p class="why-cta reveal"><a class="btn btn-primary" href="/shop/">Try the store demo</a></p>
       </div>
     </section>
 
@@ -397,7 +391,7 @@ jev({ apiKey: (session) =&gt; session.workspace.jevKey }) // each customer bring
             <div><dt>known failures, published in the suite with what should happen</dt><dd>4</dd></div>
             <div><dt>unit tests, including a hostile provider that returns random and malicious answers</dt><dd>81</dd></div>
           </dl>
-          <p class="evidence-foot">The confidence thresholds come from this one small suite, so run <code>npm run eval</code> against your own schema before relying on them. Known failures today: sort words like "latest" are dropped, bare years aren't dates, OR between dates reads as AND, and a second customer name is dropped. <a href="https://github.com/Karthick-Ramachandran/jevfilter/tree/main/evals">See the eval cases</a></p>
+          <p class="evidence-foot">The confidence thresholds were tuned on this one small suite. To measure your own schema, copy <code>evals/</code>, point <code>evals/run.ts</code> at your <code>createNaturalFilter</code> setup, and write your own cases. Known failures today: sort words like "latest" are dropped, bare years aren't dates, OR between dates reads as AND, and a second customer name is dropped. <a href="https://github.com/Karthick-Ramachandran/jevfilter/tree/main/evals">See the eval cases</a></p>
         </div>
       </div>
     </section>
@@ -416,7 +410,7 @@ jev({ apiKey: (session) =&gt; session.workspace.jevKey }) // each customer bring
           </details>
           <details>
             <summary>Can the model see my data?</summary>
-            <p>Jev receives the search text and your configured filter schema (field names, descriptions, and allowed values). Records, credentials, and query code never are, so if your category names are sensitive, treat them like the search text. Candidate names aren't sent either, and entity candidate names aren't sent either: the model picks a phrase from the request, and your resolver looks it up within the user's scope.</p>
+            <p>Jev receives the search text and your configured filter schema (field names, descriptions, and allowed values). Your records, credentials, and query code are never sent, so if your category names are sensitive, treat them like the search text. Entity candidate names aren't sent either. The model picks a phrase from the request, and your resolver looks it up within the user's scope.</p>
           </details>
           <details>
             <summary>What if the model is wrong?</summary>
@@ -453,7 +447,7 @@ jev({ apiKey: (session) =&gt; session.workspace.jevKey }) // each customer bring
           <h2 id="closer-title">Type a sentence and watch it become a filter.</h2>
           <p class="section-lede">The store demo searches 640 made-up products and fills in its filter sidebar from your sentence. The helpdesk demo shows every step on the server, and you can try to break it.</p>
           <div class="cta-row">
-            <a class="btn btn-primary" href="/shop/">Try the store demo <span aria-hidden="true">→</span></a>
+            <a class="btn btn-primary" href="/shop/">Try the store demo</a>
             <a class="btn btn-ghost" href="/demo/">See every step</a>
           </div>
         </div>

@@ -357,7 +357,7 @@ type Filters&lt;F extends Fields&gt; = { [K in keyof F]?: FilterValue&lt;F[K]&gt
             <tr><td><code>from</code> or <code>between</code> X <code>to</code>, <code>until</code>, <code>till</code>, <code>through</code> or <code>and</code> Y</td><td>from 2026-09-01 to 2026-09-10<br>between aug 1 and aug 15</td><td><code>{ gte: "2026-09-01", lt: "2026-09-11" }</code><br><code>{ gte: "2026-08-01", lt: "2026-08-16" }</code></td></tr>
           </tbody>
         </table></div>
-        <p>Not understood in v0.1 (each of these finds no date): <code>tomorrow</code>, <code>next week</code> and other future-relative phrases, <code>3 days ago</code>, weekday names (<code>last monday</code>), quarter names (<code>q3 2026</code>), <code>mid august</code>, a bare month with no preposition (<code>august</code>), numbers written as words (<code>last seven days</code>), <code>last 0 days</code>, windows of 1000 or more, and times of day. A bare year (<code>in 2025</code>) is not a date: it is read as the number 2025.</p>
+        <p>Not understood in v0.1 (each of these finds no date): <code>tomorrow</code>, <code>next week</code> and other future-relative phrases, <code>3 days ago</code>, weekday names (<code>last monday</code>), quarter names (<code>q3 2026</code>), <code>mid august</code>, a bare month with no preposition (<code>august</code>), numbers written as words (<code>last seven days</code>), <code>last 0 days</code>, windows of 1000 or more, and times of day. A bare year (<code>in 2025</code>) is not a date. It is read as the number 2025.</p>
 
         <h3 id="number-phrases">Number phrases</h3>
         <p><code>parseNumbers</code> reads a number with its comparator and currency. Numbers inside date phrases are skipped when you pass the date spans as <code>exclude</code>, as <code>prepare</code> does. Real outputs:</p>
@@ -560,7 +560,7 @@ interface ClarificationOption&lt;F extends Fields = Fields&gt; {
 
         <article class="api">
           <h3 id="answering">Answering a question</h3>
-          <p>When the user picks an option, merge its <code>filters</code> into <code>result.filters</code> and call <code>execute</code>. With several questions, merge the chosen option of each. For <code>no_match</code> and <code>ambiguous_date</code> there is nothing to pick: ask the user to rephrase, or open your manual filters.</p>
+          <p>When the user picks an option, merge its <code>filters</code> into <code>result.filters</code> and call <code>execute</code>. With several questions, merge the chosen option of each. For <code>no_match</code> and <code>ambiguous_date</code> there is nothing to pick, so ask the user to rephrase, or open your manual filters.</p>
           <pre><code>if (result.status === "needs_clarification") {
   const q = result.questions[0];
   const picked = q.options.find((o) =&gt; o.value === userChoice);
@@ -700,7 +700,7 @@ todayIn(new Date("2026-09-23T20:00:00Z"), "Asia/Kolkata")   // "2026-09-24"</cod
       <!-- ================= PROVIDERS ================= -->
       <section aria-labelledby="providers">
         <h2 id="providers">Providers</h2>
-        <p>A provider answers closed multiple-choice questions. It never returns a value that becomes a filter directly: core checks every answer against the options it asked, and code computes every date and number.</p>
+        <p>A provider answers closed multiple-choice questions. It never returns a value that becomes a filter directly. Core checks every answer against the options it asked, and code computes every date and number.</p>
 
         <article class="api">
           <h3 id="FilterProvider"><code>FilterProvider</code></h3>
@@ -973,7 +973,7 @@ const provider = withCache(jev(), {
               <li>Sorting, ranking or limits ("latest", "biggest", "top 10").</li>
               <li>Counting or aggregation.</li>
               <li>Free-text search inside content ("the doc where we discussed AWS costs").</li>
-              <li>Languages other than English: the date and number parsers are English only.</li>
+              <li>Languages other than English. The date and number parsers are English only.</li>
               <li>More than one entity field, or more than one named record per request.</li>
               <li>More than 4 dates or 4 numbers in one request.</li>
               <li>Future-relative dates ("tomorrow", "next week"), weekday names and quarter names.</li>

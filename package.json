@@ -1,7 +1,7 @@
 {
   "name": "jevfilter",
   "version": "0.1.1",
-  "description": "Your API already knows how to search. JevFilter lets users ask. Natural language in, validated filters out: no generated SQL, and your auth stays in control.",
+  "description": "Turn a user's search sentence into filters your API already accepts. Typed, validated filters from a closed schema; your own query code and authorization run the search, and no SQL is generated.",
   "keywords": [
     "natural-language",
     "natural-language-search",

@@ -21,12 +21,12 @@
   </g>
 
   <g font-family="Helvetica Neue, Arial, sans-serif" font-weight="700" letter-spacing="-2.4">
-    <text x="72" y="240" font-size="66" fill="#eceee9">Your API already knows</text>
-    <text x="72" y="312" font-size="66" fill="#eceee9">how to search.</text>
-    <text x="72" y="384" font-size="66" fill="#9aa2a9">JevFilter lets users ask.</text>
+    <text x="72" y="240" font-size="62" fill="#eceee9">Turn a user's search sentence</text>
+    <text x="72" y="310" font-size="62" fill="#eceee9">into filters your API</text>
+    <text x="72" y="380" font-size="62" fill="#eceee9">already accepts.</text>
   </g>
 
-  <text x="72" y="452" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="24" fill="#c6f432">Natural language in, validated filters out.</text>
+  <text x="72" y="452" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="24" fill="#c6f432">Your own query code runs the search. No SQL is generated.</text>
 
   <g transform="translate(72 506)" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="20">
     <rect width="1056" height="64" rx="12" fill="#13161a" stroke="#e6ecf2" stroke-opacity="0.14"/>
@@ -35,5 +35,5 @@
     <text x="370" y="39" fill="#7c858e">{ <tspan fill="#dfe4d9">"priority"</tspan>: <tspan fill="#c6f432">"high"</tspan>, <tspan fill="#dfe4d9">"category"</tspan>: <tspan fill="#c6f432">"billing"</tspan> }</text>
   </g>
 
-  <text x="1128" y="98" text-anchor="end" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="18" fill="#969ea6">MIT · Node 20+ · npm</text>
+  <text x="1128" y="98" text-anchor="end" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="18" fill="#969ea6">npm install jevfilter</text>
 </svg>
