@@ -34,6 +34,10 @@ preferences.
 - Every non-ready status must never call the executor. Add a containment test for any new failure path.
 - Every new provider answer must be checked against its option set before use.
 - Strings from users, models or resolvers are rendered with `textContent`, never `innerHTML`.
+- Human-facing copy (README, landing, docs, demo UI text, package description, og image) passes the
+  no-ai-slop rules (github.com/petergyang/no-ai-slop, `skills/no-ai-slop/SKILL.md` and `eval.md`):
+  no binary contrasts, slogan rhythm, colon reveals, middle-dot meta strips, arrows on buttons, or
+  portable filler. Keep every fact, link and code sample unchanged.
 
 ## Anti-Patterns
 

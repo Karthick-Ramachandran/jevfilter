@@ -421,12 +421,24 @@ jev({ apiKey: (session) =&gt; session.workspace.jevKey }) // each customer bring
             <p>Scope comes from your session, and the filters can't change it. <code>execute()</code> validates the filters again on every call and reruns <code>authorize(context)</code>, and your executor applies tenant and user scope as an outer AND.</p>
           </details>
           <details>
+            <summary>Do I have to write an authorize function?</summary>
+            <p>Yes. <code>createNaturalFilter</code> throws if you leave out <code>authorize</code>, unless you pass <code>allowUnauthenticated: true</code> for data anyone may search. It runs before every model call and again before every <code>execute</code>.</p>
+          </details>
+          <details>
             <summary>Do I need Jev?</summary>
             <p>Jev is the launch provider. The <code>FilterProvider</code> interface lets you plug in any model that can answer closed multiple-choice questions, and the offline <code>keywordProvider</code> works for tests and demos.</p>
           </details>
           <details>
             <summary>What does it cost?</summary>
-            <p>Each search makes one Jev call. A demo search uses about 2.3k input tokens. TypeSafe lists Jev at $0.042 per million input tokens and doesn't charge for output tokens, so we estimate a search costs about $0.0001.</p>
+            <p>Each search makes one Jev call. A demo search uses about 2.3k input tokens. TypeSafe lists Jev at $0.042 per million input tokens and doesn't charge for output tokens, so we estimate a search costs about $0.0001. A repeat search served from the cache costs no tokens.</p>
+          </details>
+          <details>
+            <summary>Can I cache results?</summary>
+            <p>Yes. Wrap the provider with <code>withCache</code> and give it a scope, usually the tenant id, or <code>shared: true</code> for data anyone may search. Only Jev's answers are stored, keyed by the search text, the questions built from your schema, the scope and the model. <code>authorize</code>, validation, the customer lookup and your executor still run on every search, and dates like "last week" are recomputed on every search. In the store demo, a repeat search took 1 ms and 0 tokens instead of 602 ms and 2,829 tokens. <code>memoryCache()</code> ships with the package, and any store with <code>get</code> and <code>set</code> works, including one you back with Redis.</p>
+          </details>
+          <details>
+            <summary>Should it run on every keystroke?</summary>
+            <p>No. Each interpretation is a network call, and in the live demo one took 300 to 520 ms. Run it when the user presses Enter. Edits to chips or ordinary filter controls go straight to <code>execute()</code>, which doesn't call the model.</p>
           </details>
           <details>
             <summary>Which languages and limits?</summary>
