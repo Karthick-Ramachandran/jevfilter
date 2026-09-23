@@ -39,7 +39,7 @@ Natural language to validated filters: schema, parsers, provider questions, prep
 
 ## Rules
 
-- ADR-0004 publish as `jevfilter`, zero-dependency core, `jevfilter/jev` optional peer (supersedes ADR-0001)
+- ADR-0004 publish as `jevfilter`, zero-dependency core, `jevfilter/jev` optional peer
 - ADR-0002 stateless validated filters, no plan store (Accepted)
 - ADR-0003 bring-your-own Jev key (Accepted)
 - CONVENTIONS: FilterProvider, validateFilters, question ids, erasable-syntax-only TypeScript
