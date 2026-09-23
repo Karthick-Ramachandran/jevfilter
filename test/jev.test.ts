@@ -35,6 +35,7 @@ describe("jev provider", () => {
     const api = fakeApi();
     const nf = createNaturalFilter({
       schema,
+      allowUnauthenticated: true,
       provider: jev<Ctx>({ apiKey: (ctx) => ctx.jevKey ?? "", fetch: api.fetch, maxRetries: 0 }),
     });
     const a = await nf.prepare("open tickets", { context: { jevKey: "key-tenant-a" } });
@@ -50,7 +51,7 @@ describe("jev provider", () => {
 
   it("returns unavailable (not retryable) when a tenant has no key, without calling the API", async () => {
     const api = fakeApi();
-    const nf = createNaturalFilter({ schema, provider: jev<Ctx>({ apiKey: (ctx) => ctx.jevKey ?? "", fetch: api.fetch }) });
+    const nf = createNaturalFilter({ schema, allowUnauthenticated: true, provider: jev<Ctx>({ apiKey: (ctx) => ctx.jevKey ?? "", fetch: api.fetch }) });
     const r = await nf.prepare("open tickets", { context: {} });
     assert.deepEqual(r.status === "unavailable" && [r.reason, r.retryable], ["provider_error", false]);
     assert.equal(api.seen.length, 0);
@@ -61,6 +62,7 @@ describe("jev provider", () => {
     let logged: unknown;
     const nf = createNaturalFilter({
       schema,
+      allowUnauthenticated: true,
       provider: jev({ apiKey: "sk-secret-123", fetch: api.fetch, maxRetries: 0 }),
       onError: (e) => (logged = e),
     });
@@ -71,7 +73,7 @@ describe("jev provider", () => {
   });
 
   it("marks server errors retryable", async () => {
-    const nf = createNaturalFilter({ schema, provider: jev({ apiKey: "k", fetch: fakeApi(503).fetch, maxRetries: 0 }) });
+    const nf = createNaturalFilter({ schema, allowUnauthenticated: true, provider: jev({ apiKey: "k", fetch: fakeApi(503).fetch, maxRetries: 0 }) });
     const r = await nf.prepare("open tickets");
     assert.equal(r.status === "unavailable" && r.retryable, true);
   });

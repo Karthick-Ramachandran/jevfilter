@@ -71,8 +71,11 @@ decides what runs.
 - Generate SQL, ORM code, or any other executable text.
 - Execute anything the model returns.
 - Expand the caller's permissions. Scope comes from your session, never from the filters.
-- Send the model your database credentials or your records.
+- Send the model your database credentials, your records, or your query code.
 - Guess which record you meant when a name matches several.
+
+What Jev does receive: the search text and your filter schema (field names, descriptions, and
+allowed values). If your category names or descriptions are sensitive, treat them like the search text.
 
 ## Install
 
@@ -135,6 +138,10 @@ if (result.status === "ready") {
 
 The filters are typed from your schema, so `status` is `"open" | "pending" | "closed" | { not: … }`.
 
+`authorize` is required. If the data really is public, say so with `allowUnauthenticated: true`;
+leaving both out throws when you call `createNaturalFilter`, so skipping authorization is always
+a decision someone wrote down.
+
 ## It can say "I don't know"
 
 `prepare()` returns a union of five outcomes, and TypeScript narrows on `status`:
@@ -190,8 +197,9 @@ option.
 | `entityField({ resolve })` | `"cus_4"` (your id) | Jev picks a phrase and your resolver finds the records. One match binds; several trigger a question |
 
 "Last month" is the previous calendar month, not the last 30 days. "Under" means `<` and
-"at most" means `≤`. An ambiguous date like `03/04/2026` produces a question. Currencies are checked
-against the field's `unit`.
+"at most" means `≤`. An ambiguous date like `03/04/2026` produces a question. Unit checks cover
+currencies ($, €, £, ₹ and the codes USD, EUR, GBP, INR): "under ₹500" against a USD field is
+refused. Other units, such as `unit: "replies"`, are labels only in v0.1.
 
 ## Bring your own Jev key
 
@@ -263,12 +271,14 @@ const myProvider: FilterProvider = {
   name: "my-llm",
   async choose({ state, questions }, { signal }) {
     // questions: { [id]: { instructions, options: { [label]: description } } }
-    return { answers: { /* [id]: { choice: label, probabilities?: { [label]: p } } */ } };
+    return { answers: { /* [id]: { choice: label, probabilities: { [label]: p } } */ } };
   },
 };
 ```
 
-An answer that isn't one of the offered labels makes the result `unavailable`. The package also
+An answer that isn't one of the offered labels makes the result `unavailable`. Report a
+probability for at least the chosen label. An answer without one counts as unknown confidence, so
+JevFilter asks the user instead of accepting it. The package also
 exports `mockProvider` and the offline `keywordProvider` for tests and demos.
 
 ## Limits in v0.1

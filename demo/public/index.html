@@ -233,7 +233,7 @@
 
         <div class="why-story reveal">
           <p>Hosted AI search services generally ask you to copy or index your records into their system. They run the search on their side and return their results or a generated answer. That usually means keeping a second copy of your data in sync and re-creating your permission rules there.</p>
-          <p>JevFilter with Jev keeps your data where it is. Only the user's search text goes to Jev. Jev never sees your records, your credentials, or the customer names your resolver finds. Your existing API and its authorization run the query.</p>
+          <p>JevFilter with Jev keeps your data where it is. Jev receives the user's search text and your filter schema: field names, descriptions, and allowed values. It never sees your records, your credentials, your query code, or the customer names your resolver finds. Your existing API and its authorization run the query.</p>
         </div>
 
         <div class="why-sides reveal">
@@ -251,7 +251,7 @@
             <h3 class="why-side-title">JevFilter with Jev</h3>
             <dl>
               <div><dt>your records</dt><dd>Stay in your database</dd></div>
-              <div><dt>leaves your server</dt><dd>Only the user's search text</dd></div>
+              <div><dt>leaves your server</dt><dd>The search text and your filter schema</dd></div>
               <div><dt>runs the search</dt><dd>Your existing API</dd></div>
               <div><dt>permission rules</dt><dd>Your authorization, unchanged</dd></div>
               <div><dt>comes back</dt><dd>A typed filter object from your schema</dd></div>
@@ -406,7 +406,7 @@ jev({ apiKey: (session) =&gt; session.workspace.jevKey }) // each customer bring
           </details>
           <details>
             <summary>Can the model see my data?</summary>
-            <p>Only the search text is sent to Jev. Records and credentials never are, and entity candidate names aren't sent either: the model picks a phrase from the request, and your resolver looks it up within the user's scope.</p>
+            <p>Jev receives the search text and your configured filter schema (field names, descriptions, and allowed values). Records, credentials, and query code never are, so if your category names are sensitive, treat them like the search text. Candidate names aren't sent either, and entity candidate names aren't sent either: the model picks a phrase from the request, and your resolver looks it up within the user's scope.</p>
           </details>
           <details>
             <summary>What if the model is wrong?</summary>

@@ -11,7 +11,7 @@ inside the operator's tenant.
 
 ## What the model sees, and what it doesn't
 
-Jev only receives the search text and the field descriptions from `orders.ts`. It never receives
+Jev receives the search text and the filter schema from `orders.ts`: field names, descriptions, and allowed values. It never receives
 rows, table names, SQL, customer names, or credentials. What Jev receives doesn't depend on how
 much data you have, so a search costs the same whether the table holds 3,600 orders or 30 million.
 Nothing gets indexed or uploaded.

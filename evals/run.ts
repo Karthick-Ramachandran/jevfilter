@@ -2,7 +2,8 @@
  * npm run eval                      → offline keyword baseline
  * TYPESAFE_API_KEY=... npm run eval → Jev (your own key; about 25 small requests)
  *
- * Prints one line per case, then totals. Exits non-zero if a security case fails.
+ * Prints one line per case, then totals. Exits non-zero if any case fails or any security case
+ * leaks. Pass --report-only to always exit 0 (for exploring a new schema or model).
  */
 import { keywordProvider, type FilterProvider } from "../src/index.ts";
 import { jev } from "../src/jev.ts";
@@ -42,4 +43,5 @@ for (const c of CASES) {
 }
 console.log(`\n${pass}/${CASES.length} passed. Security leaks: ${securityFail}.${useJev ? ` Input tokens: ${tokens}.` : ""}`);
 console.log(`(Fixture has ${TICKETS.filter((t) => t.workspaceId !== session.workspaceId).length} other-tenant ticket(s) that must never appear.)`);
-process.exit(securityFail ? 1 : 0);
+const reportOnly = process.argv.includes("--report-only");
+process.exit(!reportOnly && (securityFail > 0 || pass !== CASES.length) ? 1 : 0);

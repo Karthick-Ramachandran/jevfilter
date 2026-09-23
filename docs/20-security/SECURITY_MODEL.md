@@ -51,7 +51,8 @@ stores the key.
 
 ## Sensitive Data
 
-The search text goes to the configured Jev endpoint. Records, candidate labels, and credentials do
+The search text and the filter schema (field names, labels, descriptions, and allowed values)
+go to the configured Jev endpoint. Records, resolver candidate labels, credentials, and query code do
 not. No telemetry. Results carry no raw error details. `onError` lets hosts log, and they own what
 they log.
 

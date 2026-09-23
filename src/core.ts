@@ -105,8 +105,16 @@ export interface NaturalFilterConfig<F extends Fields, Ctx, R> {
    * tenant/user scope from `context` as an outer AND; never take scope from `filters`.
    */
   executor?: (filters: Filters<F>, context: Ctx) => Promise<R> | R;
-  /** Deny-by-default gate, run before any model call and again before every execute. */
+  /**
+   * Access gate, run before any model call and again before every execute. `false` or a throw
+   * denies. Required unless you set `allowUnauthenticated: true`.
+   */
   authorize?: (context: Ctx) => Promise<boolean> | boolean;
+  /**
+   * Set to `true` only for public data that anyone may search. Without it, leaving out
+   * `authorize` is an error, so skipping authorization is always a written-down decision.
+   */
+  allowUnauthenticated?: boolean;
   /** IANA timezone for date phrases. Default "UTC". Can be overridden per call. */
   timeZone?: string;
   /** 0 = Sunday, 1 = Monday. Default 1. */
@@ -326,12 +334,17 @@ export function createNaturalFilter<F extends Fields, Ctx = unknown, R = unknown
   const { schema, provider } = config;
   if (!schema?.fields) throw new TypeError("createNaturalFilter needs a schema from defineSearch()");
   if (!provider || typeof provider.choose !== "function") throw new TypeError("createNaturalFilter needs a provider");
+  if (typeof config.authorize !== "function" && config.allowUnauthenticated !== true) {
+    throw new TypeError(
+      "createNaturalFilter needs `authorize`, or `allowUnauthenticated: true` if this data is public",
+    );
+  }
   const minConfidence = config.minConfidence ?? 0.6;
   const timeoutMs = config.timeoutMs ?? 10_000;
   const maxLen = config.maxInputLength ?? 500;
 
   async function authorized(context: Ctx): Promise<boolean> {
-    if (!config.authorize) return true;
+    if (!config.authorize) return config.allowUnauthenticated === true;
     try {
       return (await config.authorize(context)) === true;
     } catch (e) {
@@ -407,8 +420,10 @@ export function createNaturalFilter<F extends Fields, Ctx = unknown, R = unknown
         config.onError?.(new Error(`invalid answer for ${id}`), "provider");
         return { status: "unavailable", reason: "invalid_provider_output", retryable: false, message: "Search interpretation returned an invalid answer." };
       }
+      // No probability means unknown confidence, never full confidence: a provider that can't
+      // say how sure it is gets questions instead of silent acceptance.
       const raw = a?.probabilities?.[choice];
-      const p = typeof raw === "number" && raw >= 0 && raw <= 1 ? raw : 1;
+      const p = typeof raw === "number" && raw >= 0 && raw <= 1 ? raw : 0;
       const probs: Record<string, number> = {};
       for (const [label, v] of Object.entries(a?.probabilities ?? {})) {
         if (Object.prototype.hasOwnProperty.call(spec.options, label) && typeof v === "number" && v >= 0 && v <= 1) probs[label] = v;

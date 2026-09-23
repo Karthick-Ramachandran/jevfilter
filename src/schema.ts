@@ -30,7 +30,11 @@ export interface BooleanField extends FieldBase {
 
 export interface NumberField extends FieldBase {
   kind: "number";
-  /** ISO currency code or unit name ("USD", "INR", "replies"). Mismatched currencies are rejected. */
+  /**
+   * Currency code or unit label. Currencies the parser recognizes (USD, EUR, GBP, INR and their
+   * symbols) are checked: "under ₹500" against a USD field is refused. Other units ("replies")
+   * are labels only in v0.1.
+   */
   unit?: string;
 }
 

@@ -21,5 +21,7 @@ on this repository. Do not open a public issue. We aim to reply within 5 working
   Show the interpretation chips to users.
 - That your executor, resolver, or `authorize` are correct. Your executor must apply tenant/user
   scope from the trusted session as an outer AND, and use least-privilege, read-only credentials.
-- Data handling by the model provider. The search text (never your records or credentials) is sent
-  to the configured Jev endpoint. Review TypeSafe's terms before sending sensitive text.
+- Data handling by the model provider. The search text and your filter schema (field names, labels,
+  descriptions, and allowed values) are sent to the configured Jev endpoint. Your records,
+  credentials, and query code never are. If your category names or descriptions are sensitive,
+  treat them like the search text. Review TypeSafe's terms before sending sensitive text.

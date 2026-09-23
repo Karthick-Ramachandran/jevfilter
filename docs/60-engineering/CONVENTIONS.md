@@ -28,6 +28,9 @@ preferences.
 - Core (`src/` except `src/jev.ts`) imports nothing outside `node:`-free standard JS. No runtime deps.
 - TypeScript must be erasable (`erasableSyntaxOnly`): no enums, namespaces, or parameter properties.
   Imports use `.ts` extensions; `tsc` rewrites them to `.js` on build.
+- A security-relevant omission must fail loudly: leaving out `authorize` throws unless
+  `allowUnauthenticated: true` is set. Don't add new options that default to "allow".
+- Missing provider confidence is unknown (0), never certain (1).
 - Every non-ready status must never call the executor. Add a containment test for any new failure path.
 - Every new provider answer must be checked against its option set before use.
 - Strings from users, models or resolvers are rendered with `textContent`, never `innerHTML`.

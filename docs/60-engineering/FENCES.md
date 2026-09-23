@@ -44,3 +44,33 @@ No constraint: a human confirmed nothing here is deliberate; change it freely.
 No constraint: a human confirmed nothing here is deliberate; change it freely.
 
 - 2026-09-23 — no constraint, confirmed by Karthick.
+
+## `src/provider.ts`
+
+No constraint: a human confirmed nothing here is deliberate; change it freely.
+
+- 2026-09-23 — no constraint, confirmed by Karthick.
+
+## `evals/run.ts`
+
+No constraint: a human confirmed nothing here is deliberate; change it freely.
+
+- 2026-09-23 — no constraint, confirmed by Karthick.
+
+## `src/schema.ts`
+
+No constraint: a human confirmed nothing here is deliberate; change it freely.
+
+- 2026-09-23 — no constraint, confirmed by Karthick.
+
+## `demo/public/index.html`
+
+No constraint: a human confirmed nothing here is deliberate; change it freely.
+
+- 2026-09-23 — no constraint, confirmed by Karthick.
+
+## `demo/public/shop/index.html`
+
+No constraint: a human confirmed nothing here is deliberate; change it freely.
+
+- 2026-09-23 — no constraint, confirmed by Karthick.

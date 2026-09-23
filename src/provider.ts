@@ -20,8 +20,12 @@ export interface ProviderRequest {
 
 export interface ProviderAnswer {
   choice: string;
-  /** Probability per option label, when the provider reports it. */
-  probabilities?: Record<string, number>;
+  /**
+   * Probability per option label, 0 to 1. At minimum include the chosen label. If it is missing,
+   * core treats the answer as unknown confidence (0), so non-default answers become
+   * clarification questions instead of being accepted silently.
+   */
+  probabilities: Record<string, number>;
 }
 
 export interface ProviderResponse {

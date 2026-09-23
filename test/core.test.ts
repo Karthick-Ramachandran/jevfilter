@@ -184,7 +184,7 @@ describe("containment: bad model output never reaches the executor", () => {
 
   it("times out a hanging provider", async () => {
     const hang: FilterProvider<Session> = { name: "hang", choose: () => new Promise(() => {}) };
-    const nf = createNaturalFilter({ schema: createTicketFilter(hang).schema, provider: hang, timeoutMs: 30 });
+    const nf = createNaturalFilter({ schema: createTicketFilter(hang).schema, provider: hang, timeoutMs: 30, allowUnauthenticated: true });
     const r = await nf.prepare("open tickets", { context: acme, now });
     assert.deepEqual(r.status === "unavailable" && [r.reason, r.retryable], ["timeout", true]);
   });
@@ -288,6 +288,31 @@ describe("execute: filters are untrusted input", () => {
   it("re-verifies entity ids against the current scope", async () => {
     assert.equal((await nf.execute({ customer: "cus_5" }, { context: acme })).status, "invalid");
     assert.equal((await nf.execute({ customer: "cus_1" }, { context: acme })).status, "ok");
+  });
+});
+
+describe("explicit decisions", () => {
+  it("refuses to build without authorize unless the data is declared public", () => {
+    const { provider } = script();
+    const schema = createTicketFilter(provider).schema;
+    assert.throws(() => createNaturalFilter({ schema, provider }), /authorize/);
+    assert.doesNotThrow(() => createNaturalFilter({ schema, provider, allowUnauthenticated: true }));
+    // allowUnauthenticated: false is not an opt-out.
+    assert.throws(() => createNaturalFilter({ schema, provider, allowUnauthenticated: false }), /authorize/);
+  });
+
+  it("treats a provider answer without probabilities as unknown confidence and asks", async () => {
+    const bare: FilterProvider<Session> = {
+      name: "bare",
+      choose: async (req) => ({
+        answers: Object.fromEntries(Object.keys(req.questions).map((id) => [id, {
+          choice: id === "intent" ? "filter" : id === "field_priority" ? 'is "high"' : id.startsWith("entity_") ? "none" : Object.keys(req.questions[id]!.options)[0]!,
+        }])) as never,
+      }),
+    };
+    const r = await createTicketFilter(bare).prepare("high priority tickets", { context: acme, now });
+    assert.equal(r.status, "needs_clarification");
+    assert.ok(r.status === "needs_clarification" && r.questions.some((q) => q.field === "priority"));
   });
 });
 

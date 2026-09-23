@@ -127,7 +127,7 @@ async function handleShopSearch(req: Request, env: Env): Promise<Response> {
   const body = await readBody(req);
   const key = await jevKeyFor(req, env);
   if ("error" in key) return key.error;
-  const nf = createNaturalFilter({ schema: shop, provider: shopProvider, timeoutMs: 9_000 });
+  const nf = createNaturalFilter({ schema: shop, provider: shopProvider, timeoutMs: 9_000, allowUnauthenticated: true }); // public catalog
   const started = Date.now();
   const result = await nf.prepare(String(body.text ?? ""), { context: { jevKey: key.value } });
   const usage = "meta" in result ? result.meta?.usage : undefined;
@@ -146,7 +146,7 @@ async function handleShopSearch(req: Request, env: Env): Promise<Response> {
 /** Chip removal and manual edits: validated filters only, no model call. */
 async function handleShopExecute(req: Request): Promise<Response> {
   const body = await readBody(req);
-  const nf = createNaturalFilter({ schema: shop, provider: shopProvider, executor: (f) => listProducts(f), allowEmptyFilters: true });
+  const nf = createNaturalFilter({ schema: shop, provider: shopProvider, executor: (f) => listProducts(f), allowEmptyFilters: true, allowUnauthenticated: true });
   const r = await nf.execute(body.filters, { context: { jevKey: "" } });
   return json(r.status === "ok" ? { status: "ok", filters: r.filters, products: r.results } : r, r.status === "ok" ? 200 : 400);
 }
