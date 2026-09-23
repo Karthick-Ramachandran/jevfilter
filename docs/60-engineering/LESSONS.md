@@ -26,6 +26,8 @@ Applies To:
 - Jev answered "none" (0.75-0.79) for "on 2026-09-14" when the request didn't name the date field. Dropping a code-parsed date/number now needs `DROP_CONFIDENCE` (0.9) or we ask; covered by the "parsed values are never dropped silently" tests.
 - "resolved support tickets": Jev chose category "unspecified" (0.78) with "support" at 0.18-0.22, silently dropping a mentioned value. Plausible alternatives (≥ `MENTION_CONFIDENCE`, 0.15) now produce a `choose_value` question with an "Any" option; covered by the "mentioned values are never dropped silently" tests. Across the other 22 eval queries, alternatives to "unspecified" stayed below 0.05.
 - `AbortSignal.timeout()` is unref'd: with a hung provider, Node 22 let the event loop exit before `prepare()` timed out. `prepare()` now uses its own ref'd `setTimeout` and clears it on every path. Covered by "times out a hanging provider" in CI's Node 22 job.
+- When the same word is a value in two enum fields ("refunded" as order status and payment status), Jev sets one and asks about the other. Keep value names distinct across fields, or expect a clarification.
+- "Shipped to Japan" was read as `status: shipped` plus the country. Phrases that double as a status value become filters; the chip shows it so the user can remove it.
 
 ## Demo site
 
@@ -35,3 +37,4 @@ Applies To:
 
 - Measure tokens per search before setting a spend cap: the first estimate (1.8k tokens, $1.10/day at 300/min) was about 40x too low for the global cap. The helpdesk schema uses about 2.3k tokens per search, so 300/min is about $42/day. ADR-0006 sets 30/min (about $4.2/day worst case).
 - Worker CSP forbids inline `<script>`/`<style>`/`style=""`; setting `element.style.x` from a script file (CSSOM) is fine.
+- The shop and helpdesk providers use 4 s attempts with one retry inside the 9 s budget. A single 6 s attempt failed twice during a slow period on the Jev API while direct calls took about 450 ms.

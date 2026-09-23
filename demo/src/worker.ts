@@ -17,6 +17,7 @@ import {
 } from "../../src/index.ts";
 import { jev } from "../../src/jev.ts";
 import { ACCOUNTS, dataset, helpdesk, listTickets, type Account, type Session, type Ticket } from "./data.ts";
+import { listProducts, shop } from "./shop.ts";
 
 interface Env {
   ASSETS: Fetcher;
@@ -40,7 +41,7 @@ const JSON_HEADERS = {
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 
 // Built once per isolate. The key comes from each request's context, never from module scope.
-const provider = jev<Ctx>({ apiKey: (ctx) => ctx.jevKey, maxRetries: 0, timeout: 6_000 });
+const provider = jev<Ctx>({ apiKey: (ctx) => ctx.jevKey, maxRetries: 1, timeout: 4_000 });
 
 interface TraceEntry {
   id: string;
@@ -100,23 +101,65 @@ function searchResponse(account: Account, now: Date, filters: Parameters<typeof 
   };
 }
 
+/**
+ * The visitor's own key (x-jev-api-key) if sent, else the shared secret behind the rate limits
+ * (ADR-0006). The value only ever goes into a request context, never into a response.
+ */
+async function jevKeyFor(req: Request, env: Env): Promise<{ value: string; own: boolean } | { error: Response }> {
+  const header = req.headers.get("x-jev-api-key")?.trim();
+  if (header && header.length <= 512) return { value: header, own: true };
+  // Shared key: 10/min per IP plus a 30/min global spend cap (ADR-0006).
+  const ip = req.headers.get("cf-connecting-ip") ?? "unknown";
+  const [perIp, global] = await Promise.all([env.IP_LIMITER.limit({ key: ip }), env.GLOBAL_LIMITER.limit({ key: "all" })]);
+  if (!perIp.success || !global.success) {
+    return { error: json({ error: "The shared demo key is busy. Wait a minute, or paste your own Jev key." }, 429) };
+  }
+  if (!env.TYPESAFE_API_KEY) return { error: json({ error: "The demo has no Jev key configured. Paste your own key to try it." }, 503) };
+  return { value: env.TYPESAFE_API_KEY, own: false };
+}
+
+type ShopCtx = { jevKey: string };
+const shopProvider = jev<ShopCtx>({ apiKey: (ctx) => ctx.jevKey, maxRetries: 1, timeout: 4_000 });
+
+/** The simple store demo: one model call, then the store's own product query. */
+async function handleShopSearch(req: Request, env: Env): Promise<Response> {
+  if (env.DEMO_DISABLED === "1") return json({ error: "The live demo is paused. Try again later." }, 503);
+  const body = await readBody(req);
+  const key = await jevKeyFor(req, env);
+  if ("error" in key) return key.error;
+  const nf = createNaturalFilter({ schema: shop, provider: shopProvider, timeoutMs: 9_000 });
+  const started = Date.now();
+  const result = await nf.prepare(String(body.text ?? ""), { context: { jevKey: key.value } });
+  const usage = "meta" in result ? result.meta?.usage : undefined;
+  return json({
+    result,
+    products: result.status === "ready" ? listProducts(result.filters) : null,
+    stats: {
+      ms: Date.now() - started,
+      inputTokens: usage?.inputTokens ?? 0,
+      estimatedUsd: usage ? Math.round(usage.inputTokens * USD_PER_INPUT_TOKEN * 1e6) / 1e6 : 0,
+      modelCalls: usage ? 1 : 0,
+    },
+  });
+}
+
+/** Chip removal and manual edits: validated filters only, no model call. */
+async function handleShopExecute(req: Request): Promise<Response> {
+  const body = await readBody(req);
+  const nf = createNaturalFilter({ schema: shop, provider: shopProvider, executor: (f) => listProducts(f), allowEmptyFilters: true });
+  const r = await nf.execute(body.filters, { context: { jevKey: "" } });
+  return json(r.status === "ok" ? { status: "ok", filters: r.filters, products: r.results } : r, r.status === "ok" ? 200 : 400);
+}
+
 async function handleSearch(req: Request, env: Env): Promise<Response> {
   if (env.DEMO_DISABLED === "1") return json({ error: "The live demo is paused. Try again later." }, 503);
   const body = await readBody(req);
   const account = accountFrom(body);
   if (!account) return json({ error: "Unknown demo account." }, 400);
 
-  const header = req.headers.get("x-jev-api-key")?.trim();
-  const ownKey = header && header.length <= 512 ? header : undefined;
-  if (!ownKey) {
-    // Shared key: 10/min per IP plus a 30/min global spend cap (ADR-0006).
-    const ip = req.headers.get("cf-connecting-ip") ?? "unknown";
-    const [perIp, global] = await Promise.all([env.IP_LIMITER.limit({ key: ip }), env.GLOBAL_LIMITER.limit({ key: "all" })]);
-    if (!perIp.success || !global.success) {
-      return json({ error: "The shared demo key is busy. Wait a minute, or paste your own Jev key." }, 429);
-    }
-    if (!env.TYPESAFE_API_KEY) return json({ error: "The demo has no Jev key configured. Paste your own key to try it." }, 503);
-  }
+  const key = await jevKeyFor(req, env);
+  if ("error" in key) return key.error;
+  const ownKey = key.own ? key.value : undefined;
 
   const now = new Date();
   const text = String(body.text ?? "");
@@ -128,7 +171,7 @@ async function handleSearch(req: Request, env: Env): Promise<Response> {
     timeZone: "UTC",
     timeoutMs: 9_000,
   });
-  const context: Ctx = { account, now, jevKey: ownKey ?? env.TYPESAFE_API_KEY! };
+  const context: Ctx = { account, now, jevKey: key.value };
   const started = Date.now();
   const result = await nf.prepare(text, { context, now });
   const ms = Date.now() - started;
@@ -190,6 +233,8 @@ export default {
       if (url.pathname === "/api/meta" && req.method === "GET") return handleMeta();
       if (url.pathname === "/api/search" && req.method === "POST") return await handleSearch(req, env);
       if (url.pathname === "/api/execute" && req.method === "POST") return await handleExecute(req);
+      if (url.pathname === "/api/shop/search" && req.method === "POST") return await handleShopSearch(req, env);
+      if (url.pathname === "/api/shop/execute" && req.method === "POST") return await handleShopExecute(req);
       if (url.pathname.startsWith("/api/")) return json({ error: "Not found." }, 404);
       return env.ASSETS.fetch(req);
     } catch {

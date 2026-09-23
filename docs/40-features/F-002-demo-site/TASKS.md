@@ -17,7 +17,11 @@ Evidence (local `wrangler dev` against live Jev, `jev-1.13.0`):
 
 ## T2: Landing page
 
-Status: In progress (separate agent): `demo/public/index.html`, `demo/public/landing/**`.
+Status: Done (2026-09-23). Built by a separate agent in `demo/public/index.html` and `demo/public/landing/**`: interactive terminal with six real outputs, "Why Jev instead of a hosted AI search service" (no other vendors named), quick start, FAQ, Geist fonts. Screenshots were checked at 1440/1024/768/390/360 in both themes. Humanizer pass done on the landing page, the demo page copy, and 404.
+
+## T2b: Store demo
+
+Status: Done (2026-09-23). `/shop/` + `demo/src/shop.ts`: 640 fictional products, 8 fields. The filter sidebar fills itself in from the sentence; sidebar clicks and chip removal call `/api/shop/execute` with no model call. Live checks: "red running shoes under $100" → 3 filters; "rated 4.5 or more" routes to rating, not price; "Kestrel or Alder boots" → multiple_values; "cheap stuff" → no_filters. About 2.9k input tokens and 330-450 ms per search.
 
 ## T3: Deploy
 

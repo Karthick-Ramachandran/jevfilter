@@ -15,5 +15,7 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["src", "test", "examples", "evals"]
+  "include": ["src", "test", "examples", "evals"],
+  // Has its own package.json (pg); typecheck it there with `npm run typecheck`.
+  "exclude": ["examples/postgres"]
 }

@@ -3,15 +3,15 @@
 
 (() => {
   const STEPS = [
-    { target: "#tour-account", title: "Pick who you are", text: "You're signed in to one company. That choice, not anything you type, decides which tickets you can see. Switch companies and the same search returns different rows." },
+    { target: "#tour-account", title: "Pick who you are", text: "You're signed in to one company, and that choice decides which tickets you can see. Nothing you type can change it. Switch companies and the same search returns different rows." },
     { target: "#search", title: "Ask in plain English", text: "Type a request the way you'd say it. JevFilter turns it into filters for this helpdesk's existing search API." },
     { target: "#tour-sentence", title: "See what it understood", text: "Recognised phrases are marked in your sentence, and every filter it will apply appears as a chip. If something is ambiguous, you get a question here instead of a guess." },
     { target: "#stage-parse", title: "Code reads the values", text: "\"Last week\" became exact dates and \"$500\" an exact bound. Code does this part, so the model can't invent a number." },
-    { target: "#stage-jev", title: "Jev picks, it doesn't write", text: "For each field, Jev chose one option from a fixed list and scored every option. It never writes a query. Low scores turn into questions for you." },
+    { target: "#stage-jev", title: "Jev picks from a list", text: "For each field, Jev chose one option from a fixed list and scored every option. It never writes a query. Low scores turn into questions for you." },
     { target: "#stage-filters", title: "The contract your API receives", text: "This object is checked against the schema before anything runs. Unknown fields, values, and operators are rejected." },
-    { target: "#stage-run", title: "Your API, your rules", text: "The helpdesk's own search ran it inside the signed-in company. Tokens and cost for this one search are shown too." },
-    { target: "#tour-results", title: "Real results", text: "Matching tickets from the existing API. When nothing matches, the list stays empty instead of quietly broadening the search." },
-    { target: "#tour-break", title: "Now try to break it", text: "Each of these tries to escape the company or sneak in a query. Every one is refused, and the counter stays at zero." },
+    { target: "#stage-run", title: "Your API runs the search", text: "The helpdesk's own search ran it inside the signed-in company. Tokens and cost for this one search are shown too." },
+    { target: "#tour-results", title: "Matching tickets", text: "These rows come from the existing API. When nothing matches, the list stays empty and the search is not widened to find something." },
+    { target: "#tour-break", title: "Now try to break it", text: "Each of these tries to escape the company or sneak in a query. All of them are refused, so the counter stays at zero." },
   ];
 
   const $ = (id) => document.getElementById(id);

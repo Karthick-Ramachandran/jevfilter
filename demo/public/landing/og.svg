@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#e6ecf2" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="fade" cx="0.75" cy="0.1" r="0.9">
+      <stop offset="0" stop-color="#0c0e11" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0c0e11" stop-opacity="1"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0c0e11"/>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <rect width="1200" height="630" fill="url(#fade)"/>
+
+  <g transform="translate(72 70)">
+    <rect width="44" height="44" rx="10" fill="#eceee9"/>
+    <path d="M16.5 11.7c-3.3 0-4.4 1.4-4.4 4.1v3c0 1.7-1 2.8-2.8 3.2 1.8.4 2.8 1.5 2.8 3.2v3c0 2.7 1.1 4.1 4.4 4.1" fill="none" stroke="#0c0e11" stroke-width="3" stroke-linecap="round" transform="translate(0 -0.5)"/>
+    <path d="M27.5 11.7c3.3 0 4.4 1.4 4.4 4.1v3c0 1.7 1 2.8 2.8 3.2-1.8.4-2.8 1.5-2.8 3.2v3c0 2.7-1.1 4.1-4.4 4.1" fill="none" stroke="#0c0e11" stroke-width="3" stroke-linecap="round" transform="translate(0 -0.5)"/>
+    <circle cx="22" cy="22" r="3.2" fill="#c6f432"/>
+    <text x="62" y="32" font-family="Helvetica Neue, Arial, sans-serif" font-size="30" font-weight="700" fill="#eceee9" letter-spacing="-0.6">JevFilter</text>
+  </g>
+
+  <g font-family="Helvetica Neue, Arial, sans-serif" font-weight="700" letter-spacing="-2.4">
+    <text x="72" y="240" font-size="66" fill="#eceee9">Your API already knows</text>
+    <text x="72" y="312" font-size="66" fill="#eceee9">how to search.</text>
+    <text x="72" y="384" font-size="66" fill="#9aa2a9">JevFilter lets users ask.</text>
+  </g>
+
+  <text x="72" y="452" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="24" fill="#c6f432">Natural language in, validated filters out.</text>
+
+  <g transform="translate(72 506)" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="20">
+    <rect width="1056" height="64" rx="12" fill="#13161a" stroke="#e6ecf2" stroke-opacity="0.14"/>
+    <text x="24" y="39" fill="#969ea6">"urgent billing stuff"</text>
+    <text x="330" y="39" fill="#c6f432">→</text>
+    <text x="370" y="39" fill="#7c858e">{ <tspan fill="#dfe4d9">"priority"</tspan>: <tspan fill="#c6f432">"high"</tspan>, <tspan fill="#dfe4d9">"category"</tspan>: <tspan fill="#c6f432">"billing"</tspan> }</text>
+  </g>
+
+  <text x="1128" y="98" text-anchor="end" font-family="Menlo, DejaVu Sans Mono, monospace" font-size="18" fill="#969ea6">MIT · Node 20+ · npm</text>
+</svg>

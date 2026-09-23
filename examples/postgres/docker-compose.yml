@@ -1,0 +1,19 @@
+# Local development only. The passwords below are throwaway defaults for a container bound to
+# 127.0.0.1; never reuse them anywhere else.
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: jevfilter-orderdesk-db
+    environment:
+      POSTGRES_DB: orderdesk
+      POSTGRES_USER: orderdesk_owner
+      POSTGRES_PASSWORD: owner_dev_only
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orderdesk_owner -d orderdesk"]
+      interval: 2s
+      timeout: 3s
+      retries: 30

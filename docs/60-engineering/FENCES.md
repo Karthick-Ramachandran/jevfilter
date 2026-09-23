@@ -26,3 +26,21 @@ No constraint: a human confirmed nothing here is deliberate; change it freely.
 No constraint: a human confirmed nothing here is deliberate; change it freely.
 
 - 2026-09-23 — no constraint, confirmed by Karthick.
+
+## `demo/public/demo/index.html`
+
+No constraint: a human confirmed nothing here is deliberate; change it freely.
+
+- 2026-09-23 — no constraint, confirmed by Karthick.
+
+## `demo/public/demo/tour.js`
+
+No constraint: a human confirmed nothing here is deliberate; change it freely.
+
+- 2026-09-23 — no constraint, confirmed by Karthick.
+
+## `demo/src/worker.ts`
+
+No constraint: a human confirmed nothing here is deliberate; change it freely.
+
+- 2026-09-23 — no constraint, confirmed by Karthick.
