@@ -120,8 +120,10 @@ describe("Workers KV answer cache", () => {
   it("treats junk in KV as a miss", async () => {
     const kv = fakeKv();
     const store = kvStore(() => kv);
-    kv.data.set("jf:answers:v1:k", JSON.stringify("not answers"));
-    assert.equal(await store.get("k"), undefined);
+    for (const junk of ["not answers", 42, null, { foo: 1 }, { answers: "x" }, { answers: null }]) {
+      kv.data.set("jf:answers:v1:k", JSON.stringify(junk));
+      assert.equal(await store.get("k"), undefined, `accepted junk ${JSON.stringify(junk)}`);
+    }
   });
 
   it("works as memory-only when the KV binding is missing", async () => {

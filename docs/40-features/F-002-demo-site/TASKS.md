@@ -66,3 +66,11 @@ Status: Done (2026-09-23), ADR-0010. Global cap raised from 30 to 60 per minute;
 - **Local runtime:** after a full restart of wrangler dev, a store search hit at 0 tokens in 7 ms (was 704 ms, 2,826 tokens). Acme hit and Globex missed.
 - **Production:** after a redeploy (version 40bc269a to 4077b800, fresh isolates), a store search hit at 0 tokens in 3 ms (was 714 ms, 2,960 tokens). Acme hit and Globex missed.
 - **KV contents** read back from production: answers only, with no search text and no secrets. The chosen labels (e.g. `is "yellow"`) show the interpretation; the security model says so.
+
+Follow-up verification (2026-09-23, after the maintainer asked whether this was properly tested):
+
+- The full live security check was re-run on the KV-enabled Worker: 0 key occurrences, 0 leaked rows, tampering rejected, CSP on all pages.
+- Mutation-tested the KV tests with five deliberate breaks. Four were caught at first. The "junk object accepted" break was missed because the test only used a junk string; the test now covers six junk shapes and catches it.
+- CI now runs `demo/test/*.test.ts`, which passes on Node 22 and 26.
+- Live rate limit: the per-IP 429 came after 27 rapid requests (nominal 10). The limiter is approximate; see LESSONS. The 60/min global cap can't be exercised from a single IP; the deploy output confirms it is configured.
+- Still untested: KV actually failing in production (simulated in unit tests only), cross-region propagation (up to 60 s), and whether `waitUntil` is strictly required here (it follows Cloudflare's documented rule).
