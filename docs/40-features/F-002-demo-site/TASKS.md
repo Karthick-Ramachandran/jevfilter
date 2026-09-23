@@ -74,3 +74,11 @@ Follow-up verification (2026-09-23, after the maintainer asked whether this was 
 - CI now runs `demo/test/*.test.ts`, which passes on Node 22 and 26.
 - Live rate limit: the per-IP 429 came after 27 rapid requests (nominal 10). The limiter is approximate; see LESSONS. The 60/min global cap can't be exercised from a single IP; the deploy output confirms it is configured.
 - Still untested: KV actually failing in production (simulated in unit tests only), cross-region propagation (up to 60 s), and whether `waitUntil` is strictly required here (it follows Cloudflare's documented rule).
+
+Redis (2026-09-23, "can users set up Redis?"): a user-written Redis `CacheStore` was tested against a real local Redis (port 6399, no persistence) with `jevfilter@0.1.1` from npm and redis@6.2.1:
+
+- A second process got a hit in 21-23 ms with 0 tokens (the first took about 520 ms), and another tenant missed.
+- Entries have a 10-minute TTL and hold no search text.
+- With Redis frozen (SIGSTOP), the search was still ready, in 707 ms. With Redis stopped, it was ready in 488 ms.
+
+The README snippet is the exact code that was typechecked (strict, no skipLibCheck) and run.

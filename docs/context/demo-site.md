@@ -17,6 +17,7 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 - add an interactive demo, video, or GIF to the GitHub README
 - raise the demo rate cap for a launch
 - test caching with a real external store (Workers KV) and across instances
+- can users set up Redis with the current cache (yes: README has a tested redisStore)
 - a docs page with all the available APIs, supported fields, and what is possible
 
 Live: https://jevfilter.pages.dev (Pages project `jevfilter` for the site; Worker `jevfilter` for /api with secret `TYPESAFE_API_KEY` and kill switch `DEMO_DISABLED`). Deploy the site with `npm run deploy:pages`, and the API with `npm run deploy`, both run in `demo/`.
