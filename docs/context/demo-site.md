@@ -13,6 +13,7 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 - how many tokens does a demo search use / what does the demo cost
 - change the demo's rate limits or pause the demo (DEMO_DISABLED)
 - deploy the demo to Cloudflare
+- a docs page with all the available APIs, supported fields, and what is possible
 
 ## Also Known As
 
@@ -31,6 +32,7 @@ Hosted Cloudflare demo + landing page for jevfilter: Worker API, synthetic helpd
 - demo/public/index.html — landing page
 - demo/public/landing/ — landing page styles, script, and images
 - demo/public/_headers — CSP and security headers
+- demo/public/docs/index.html — API reference page, written from src/
 
 ## Rules
 

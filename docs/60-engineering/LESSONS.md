@@ -13,6 +13,17 @@ model preferences.
 
 <!-- Add an area for each part of the codebase: a "## Billing" heading, an "Applies To:" list of paths such as `src/billing/**`, an optional "Also Known As:" line, then one bullet per lesson. -->
 
+## Packaging
+
+Applies To:
+
+- package.json
+- scripts/**
+- tsconfig.build.json
+
+- tsc rewrites `.ts` import paths to `.js` in emitted JS but not in `.d.ts` files. `npm run build` runs `scripts/fix-dts-extensions.mjs`, which fails the build if any relative `.ts` import is left in `dist/*.d.ts`.
+- The types need TypeScript 5.0+ (`const` type parameters in `enumField`/`defineSearch`); TypeScript 4.9 can't parse them. This is documented in the README and API reference.
+
 ## Natural filter pipeline
 
 Applies To:

@@ -23,6 +23,10 @@ Status: Done (2026-09-23). Built by a separate agent in `demo/public/index.html`
 
 Status: Done (2026-09-23). `/shop/` + `demo/src/shop.ts`: 640 fictional products, 8 fields. The filter sidebar fills itself in from the sentence; sidebar clicks and chip removal call `/api/shop/execute` with no model call. Live checks: "red running shoes under $100" → 3 filters; "rated 4.5 or more" routes to rating, not price; "Kestrel or Alder boots" → multiple_values; "cheap stuff" → no_filters. About 2.9k input tokens and 330-450 ms per search.
 
+## T2c: API reference page
+
+Status: Done (2026-09-23). `/docs/` (`demo/public/docs/`), written from the source. A script over the built `.d.ts` found 0 of 172 names missing (all 57 exports, every config option, status, reason and clarification kind). All 73 parser examples on the page were asserted against real output. The review also found six places where the README disagreed with the source, all now fixed. It found `.ts` paths in the published `.d.ts` files, now rewritten to `.js` by `scripts/fix-dts-extensions.mjs` and checked with strict TypeScript 5 consumers. TypeScript 4.9 can't read the types (`const` type parameters), so TypeScript 5.0+ is now documented.
+
 ## T3: Deploy
 
 Status: Todo. `npx wrangler secret put TYPESAFE_API_KEY` (value piped from `.env`), then `npx wrangler deploy`.

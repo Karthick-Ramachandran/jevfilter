@@ -107,8 +107,10 @@ If all six hold, the remaining question is how well Jev reads requests against y
 npm install jevfilter @typesafe-ai/sdk
 ```
 
-It runs server-side on Node.js 20+ and ships as ESM. The core has no runtime dependencies;
-`@typesafe-ai/sdk` is only needed for the Jev provider.
+It runs server-side on Node.js 20+ and ships as ESM. Types need TypeScript 5.0 or newer. The core
+has no runtime dependencies; `@typesafe-ai/sdk` is only needed for the Jev provider. The API
+reference, served at `/docs/` on the demo site (source in `demo/public/docs/`), lists every option,
+status, and limit.
 
 ## Quick start
 
@@ -168,7 +170,8 @@ a decision someone wrote down.
 
 ## It can say "I don't know"
 
-`prepare()` returns a union of five outcomes, and TypeScript narrows on `status`:
+`prepare()` returns a union of five outcomes, and TypeScript narrows on `status`. This is the
+short form; the API reference has every field:
 
 ```ts
 type NaturalFilterResult<F> =
@@ -223,7 +226,8 @@ option.
 "Last month" is the previous calendar month, not the last 30 days. "Under" means `<` and
 "at most" means `≤`. An ambiguous date like `03/04/2026` produces a question. Unit checks cover
 currencies ($, €, £, ₹ and the codes USD, EUR, GBP, INR): "under ₹500" against a USD field is
-refused. Other units, such as `unit: "replies"`, are labels only in v0.1.
+refused. A non-currency unit such as `unit: "replies"` isn't parsed from the text in v0.1, but
+it still refuses currency amounts: "under $5" against a `replies` field is `unit_mismatch`.
 
 ## Bring your own Jev key
 
@@ -237,8 +241,9 @@ jev({ client: new TypeSafeClient({ /* … */ }) })       // full control
 ```
 
 The function form runs on every request with your trusted server context, so in a multi-tenant
-product each customer can use, and pay for, their own Jev account. Keys never appear in logs,
-results, or errors, and none are cached between requests.
+product each customer can use, and pay for, their own Jev account. With the function form, no
+client or key is kept between requests. A string key, or the environment variable, builds one
+client on first use and reuses it. Keys never appear in logs, results, or errors.
 
 ## Filters from the browser are untrusted
 
@@ -293,8 +298,8 @@ run on every search, and dates like "last week" are recomputed from today, so a 
 skip security or go stale on the calendar. `result.meta.cached` tells you when a result came from
 the cache.
 
-- **The key** is a hash of the search text, the questions built from your schema, the scope, and the
-  provider's `model`. Editing a field's description or values changes the questions and misses the
+- **The key** is a hash of the provider's name and `model`, the scope, the search text, and the
+  questions built from your schema. Editing a field's description or values changes the questions and misses the
   cache. `jev()` reports its model; set `model` on a custom provider so upgrades miss the cache too.
 - **Scope is required.** `scope` must return a non-empty string, usually the tenant id. Anything else
   fails the search instead of sharing a cache. Use `shared: true` only for public data.
@@ -347,8 +352,9 @@ exports `mockProvider` and the offline `keywordProvider` for tests and demos.
 
 - English only, one entity field per search, up to 16 fields and 100 values per enum.
 - No OR across fields, no "open or pending" on a single field, no sorting or ranking preferences.
-- Requests are capped at 500 characters. Each `prepare` makes one Jev call, plus a call to your
-  resolver when a customer is named, with a 10 s total timeout by default.
+- Requests are capped at 500 characters (`maxInputLength`) and 2 KiB of UTF-8. Each `prepare` makes
+  one Jev request, which `jev()` retries once on failure by default, plus a call to your resolver
+  when a customer is named. The whole `prepare` has a 10 s budget by default.
 - `{ not: X }` leaves null handling to your executor.
 - Don't name the resource after one of its values, such as "support tickets" with a `support` category.
 - The model can still misread a request it's allowed to make, which is why you should show the chips

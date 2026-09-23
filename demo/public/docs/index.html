@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JevFilter API reference</title>
+  <meta name="description" content="API reference for the jevfilter npm package, v0.1: schema builders, createNaturalFilter, results, validation, parsers, providers, the Jev provider, caching, limits and security.">
+  <meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f5f4ee" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="/landing/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&display=swap">
+  <link rel="stylesheet" href="/docs/docs.css">
+  <script src="/docs/docs.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="JevFilter home">
+        <svg class="brand-mark" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+          <rect x="1" y="1" width="30" height="30" rx="7" class="bm-bg"/>
+          <path d="M12 8.5c-2.4 0-3.2 1-3.2 3v2.2c0 1.2-.7 2-2 2.3 1.3.3 2 1.1 2 2.3v2.2c0 2 .8 3 3.2 3" class="bm-br" fill="none" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M20 8.5c2.4 0 3.2 1 3.2 3v2.2c0 1.2.7 2 2 2.3-1.3.3-2 1.1-2 2.3v2.2c0 2-.8 3-3.2 3" class="bm-br" fill="none" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="16" cy="16" r="2.3" class="bm-dot"/>
+        </svg>
+        <span class="brand-name">JevFilter</span>
+        <span class="brand-sub">Docs</span>
+      </a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/shop/">Store demo</a></li>
+          <li><a href="/demo/">Helpdesk demo</a></li>
+          <li><a href="https://github.com/Karthick-Ramachandran/jevfilter">GitHub</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.6A8.3 8.3 0 0 1 9.4 4a8.3 8.3 0 1 0 10.6 10.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="On this page">
+      <details id="toc-details" open>
+        <summary>On this page</summary>
+        <ol>
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#schema">Schema</a>
+            <ol>
+              <li><a href="#defineSearch">defineSearch</a></li>
+              <li><a href="#enumField">enumField</a></li>
+              <li><a href="#booleanField">booleanField</a></li>
+              <li><a href="#numberField">numberField</a></li>
+              <li><a href="#dateField">dateField</a></li>
+              <li><a href="#entityField">entityField</a></li>
+              <li><a href="#LIMITS">LIMITS</a></li>
+              <li><a class="p" href="#schema-types">Schema types</a></li>
+            </ol>
+          </li>
+          <li><a href="#field-types">Field types</a>
+            <ol>
+              <li><a class="p" href="#date-phrases">Date phrases</a></li>
+              <li><a class="p" href="#number-phrases">Number phrases</a></li>
+            </ol>
+          </li>
+          <li><a href="#core">Core</a>
+            <ol>
+              <li><a href="#createNaturalFilter">createNaturalFilter</a></li>
+              <li><a href="#NaturalFilterConfig">NaturalFilterConfig</a></li>
+              <li><a href="#prepare">prepare</a></li>
+              <li><a href="#execute">execute</a></li>
+              <li><a href="#validate">validate</a></li>
+            </ol>
+          </li>
+          <li><a href="#results">Results</a>
+            <ol>
+              <li><a href="#NaturalFilterResult">NaturalFilterResult</a></li>
+              <li><a class="p" href="#reasons">Reason codes</a></li>
+              <li><a href="#Clarification">Clarification</a></li>
+              <li><a class="p" href="#answering">Answering a question</a></li>
+              <li><a href="#FilterChip">FilterChip</a></li>
+              <li><a href="#ResultMeta">ResultMeta</a></li>
+              <li><a href="#ExecuteResult">ExecuteResult</a></li>
+            </ol>
+          </li>
+          <li><a href="#validation">Validation</a></li>
+          <li><a href="#parsers">Parsers</a></li>
+          <li><a href="#providers">Providers</a>
+            <ol>
+              <li><a href="#FilterProvider">FilterProvider</a></li>
+              <li><a class="p" href="#question-ids">Question ids</a></li>
+              <li><a href="#ProviderError">ProviderError</a></li>
+              <li><a href="#mockProvider">mockProvider</a></li>
+              <li><a href="#keywordProvider">keywordProvider</a></li>
+            </ol>
+          </li>
+          <li><a href="#jev-provider">Jev provider</a></li>
+          <li><a href="#cache">Cache</a>
+            <ol>
+              <li><a href="#withCache">withCache</a></li>
+              <li><a href="#memoryCache">memoryCache</a></li>
+              <li><a href="#CacheStore">CacheStore</a></li>
+            </ol>
+          </li>
+          <li><a href="#limits">Limits</a></li>
+          <li><a href="#scope">Possible in v0.1</a></li>
+          <li><a href="#security">Security</a></li>
+        </ol>
+      </details>
+    </nav>
+
+    <main id="main" class="content">
+      <header class="page-head">
+        <p class="eyebrow">jevfilter v0.1.0</p>
+        <h1>API reference</h1>
+        <p class="lede">Everything the <code>jevfilter</code> package exports, with the defaults and limits taken from the v0.1.0 source. For a guided introduction, start with the <a href="https://github.com/Karthick-Ramachandran/jevfilter#readme">README</a>.</p>
+      </header>
+
+      <!-- ================= OVERVIEW ================= -->
+      <section aria-labelledby="overview">
+        <h2 id="overview">Overview</h2>
+        <pre><code>npm install jevfilter @typesafe-ai/sdk</code></pre>
+        <p>The package runs server-side on Node.js 20 or later and ships as ESM only. Its types need TypeScript 5.0 or later. It has two entry points:</p>
+        <ul>
+          <li><code>jevfilter</code>: the core, with no runtime dependencies.</li>
+          <li><code>jevfilter/jev</code>: the Jev provider. It imports <code>@typesafe-ai/sdk</code>, an optional peer dependency pinned to <code>^0.6.0</code>. You only need it if you use <code>jev()</code>.</li>
+        </ul>
+        <p>A search built with <code>createNaturalFilter</code> has two steps. <code>prepare()</code> reads text and never runs a search. <code>execute()</code> runs your search and never calls a model.</p>
+
+        <div class="flow">
+          <div class="flow-col">
+            <h3 class="flow-title" id="flow-prepare"><code>prepare(text, options)</code></h3>
+            <ol class="steps">
+              <li>Normalize the text (NFC, collapse whitespace, trim) and check its length.</li>
+              <li>Run <code>authorize(context)</code>. A denial ends here, before any model call.</li>
+              <li>Code finds date and number phrases and computes their values.</li>
+              <li>One provider call answers closed multiple-choice questions built from your schema.</li>
+              <li>Every answer is checked against the options it was offered.</li>
+              <li>Your entity resolver looks up a named record, within the user's scope.</li>
+              <li>Returns <code>ready</code>, <code>needs_clarification</code>, <code>unsupported</code>, <code>blocked</code> or <code>unavailable</code>.</li>
+            </ol>
+          </div>
+          <div class="flow-col">
+            <h3 class="flow-title" id="flow-execute"><code>execute(filters, options)</code></h3>
+            <ol class="steps">
+              <li>Treat <code>filters</code> as untrusted input and validate them strictly against the schema.</li>
+              <li>Reject empty filters unless <code>allowEmptyFilters</code> is set.</li>
+              <li>Run <code>authorize(context)</code> again.</li>
+              <li>Re-check entity ids with <code>verify</code>, if you gave one.</li>
+              <li>Call your <code>executor(filters, context)</code> with a validated copy.</li>
+              <li>Returns <code>ok</code>, <code>invalid</code> or <code>blocked</code>.</li>
+            </ol>
+          </div>
+        </div>
+
+        <pre><code>import { createNaturalFilter, defineSearch, enumField, dateField } from "jevfilter";
+import { jev } from "jevfilter/jev";
+
+const tickets = defineSearch({
+  resource: "tickets",
+  fields: {
+    status: enumField({ open: "still open, active", closed: "resolved, done" }),
+    createdAt: dateField({ label: "created" }),
+  },
+});
+
+const search = createNaturalFilter({
+  schema: tickets,
+  provider: jev(),                                      // reads TYPESAFE_API_KEY
+  authorize: (session) => session.canSearchTickets,
+  executor: (filters, session) => searchTickets(filters, session),
+});
+
+const result = await search.prepare("open tickets from last week", { context: session });
+if (result.status === "ready") {
+  const page = await search.execute(result.filters, { context: session });
+}</code></pre>
+      </section>
+
+      <!-- ================= SCHEMA ================= -->
+      <section aria-labelledby="schema">
+        <h2 id="schema">Schema</h2>
+        <p>A schema lists the fields your API can already filter on. It is the only source of options the model can choose from. The builders validate their input and throw a <code>TypeError</code> when it is wrong, so mistakes show up when the module loads.</p>
+
+        <article class="api">
+          <h3 id="defineSearch"><code>defineSearch(schema)</code></h3>
+          <pre><code>function defineSearch&lt;const F extends Fields&gt;(schema: {
+  resource: string;
+  version?: string;
+  fields: F;
+}): SearchSchema&lt;F&gt;</code></pre>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Property</th><th>Type</th><th>Default</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>resource</code></td><td><code>string</code></td><td>required</td><td>Plural name used in questions and messages, such as <code>"support tickets"</code>. Its words are never treated as entity names.</td></tr>
+              <tr><td><code>version</code></td><td><code>string</code></td><td><code>"1"</code></td><td>Bump it when field meanings change. Reported as <code>meta.schemaVersion</code>.</td></tr>
+              <tr><td><code>fields</code></td><td><code>F</code></td><td>required</td><td>Field name to field, built with the builders below.</td></tr>
+            </tbody>
+          </table></div>
+          <p>Throws when there are no fields, more than 16 fields, a field name that does not match <code>/^[A-Za-z][A-Za-z0-9_]{0,63}$/</code>, or more than one entity field. The returned schema and its <code>fields</code> object are frozen.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="enumField"><code>enumField(values, options?)</code></h3>
+          <pre><code>function enumField&lt;const V extends string&gt;(
+  values: readonly V[] | Readonly&lt;Record&lt;V, string | null&gt;&gt;,
+  options?: FieldBase,
+): EnumField&lt;V&gt;</code></pre>
+          <p>Pass an array of allowed values, or an object that maps each value to a description. The description is sent to the model, so it is where business synonyms go: <code>{ high: "urgent, critical, P1" }</code> is the only reason "urgent" can mean <code>high</code>. Throws with no values, more than 100 values, or a value that is blank or longer than 100 characters.</p>
+          <p>Filter value: <code>"open"</code> or <code>{ not: "closed" }</code>.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="booleanField"><code>booleanField(options?)</code></h3>
+          <pre><code>function booleanField(options?: FieldBase): BooleanField</code></pre>
+          <p>A yes/no flag. Filter value: <code>true</code> or <code>false</code>. Use <code>description</code> to say what "yes" means, for example <code>"escalated to a manager"</code>.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="numberField"><code>numberField(options?)</code></h3>
+          <pre><code>function numberField(options?: FieldBase &amp; { unit?: string }): NumberField</code></pre>
+          <p>Filter value: a <code>NumberRange</code> such as <code>{ lt: 500 }</code>. <code>unit</code> is a currency code or a unit label. When both the field and the request name a unit and they differ (compared case-insensitively), <code>prepare</code> returns <code>unsupported</code> with reason <code>unit_mismatch</code>. The parser only recognizes USD, EUR, GBP and INR, so a field with <code>unit: "replies"</code> accepts plain numbers and refuses currency amounts such as "$5". A request number with no unit is accepted for any field.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="dateField"><code>dateField(options?)</code></h3>
+          <pre><code>function dateField(options?: FieldBase): DateField</code></pre>
+          <p>Filter value: a half-open <code>DateRange</code> of calendar dates, <code>{ gte: "2026-08-01", lt: "2026-09-01" }</code>, in the request time zone.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="entityField"><code>entityField(options)</code></h3>
+          <pre><code>function entityField&lt;Ctx = unknown&gt;(
+  options: FieldBase &amp; Pick&lt;EntityField&lt;Ctx&gt;, "resolve" | "verify"&gt;,
+): EntityField&lt;Ctx&gt;
+
+resolve: (phrase: string, context: Ctx) =&gt; Promise&lt;EntityCandidate[]&gt; | EntityCandidate[];
+verify?: (id: string, context: Ctx) =&gt; Promise&lt;boolean&gt; | boolean;</code></pre>
+          <p>A named record, such as a customer or an owner. The model picks which phrase of the request names it. Your <code>resolve</code> function looks that phrase up within what <code>context</code> may see and returns <code>{ id, label }</code> candidates:</p>
+          <ul>
+            <li>exactly one candidate binds, and its <code>id</code> becomes the filter value;</li>
+            <li>zero candidates give a <code>no_match</code> clarification;</li>
+            <li>two or more give a <code>choose_entity</code> clarification listing them.</li>
+          </ul>
+          <p>Candidates are deduplicated by <code>id</code>, labels are cut to 200 characters, and the list stops at 20 (<code>LIMITS.maxEntityCandidates</code>). A result that is not an array, or has an item without a non-empty string <code>id</code> and a string <code>label</code>, gives <code>unavailable</code> with reason <code>resolver_error</code>. Candidate labels and ids are never sent to the model.</p>
+          <p><code>verify</code> is optional. When present, <code>execute</code> calls it for the entity id in the filters and treats anything other than <code>true</code>, or a throw, as "not found". Throws at build time when <code>resolve</code> is not a function.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="LIMITS"><code>LIMITS</code></h3>
+          <pre><code>const LIMITS = {
+  maxFields: 16,
+  maxEnumValues: 100,
+  maxEntityCandidates: 20,
+} as const;</code></pre>
+          <p>The full list of hard limits is in <a href="#limits">Limits</a>.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="schema-types">Schema types</h3>
+          <pre><code>interface FieldBase {
+  label?: string;        // shown in chips and questions; defaults to the field key
+  description?: string;  // plain-language meaning, sent to the model
+}
+
+interface EnumField&lt;V extends string = string&gt; extends FieldBase {
+  kind: "enum"; values: Readonly&lt;Record&lt;V, string | null&gt;&gt;;
+}
+interface BooleanField extends FieldBase { kind: "boolean" }
+interface NumberField extends FieldBase { kind: "number"; unit?: string }
+interface DateField extends FieldBase { kind: "date" }
+interface EntityField&lt;Ctx = unknown&gt; extends FieldBase {
+  kind: "entity";
+  resolve: (phrase: string, context: Ctx) =&gt; Promise&lt;EntityCandidate[]&gt; | EntityCandidate[];
+  verify?: (id: string, context: Ctx) =&gt; Promise&lt;boolean&gt; | boolean;
+}
+interface EntityCandidate {
+  id: string;     // opaque handle your executor understands; ends up in filters
+  label: string;  // shown to the user in a chooser; never sent to the model
+}
+
+type Field&lt;Ctx = any&gt; = EnumField&lt;string&gt; | BooleanField | NumberField | DateField | EntityField&lt;Ctx&gt;;
+type Fields&lt;Ctx = any&gt; = Record&lt;string, Field&lt;Ctx&gt;&gt;;
+
+interface SearchSchema&lt;F extends Fields = Fields&gt; {
+  resource: string; version: string; fields: F;
+}
+
+interface NumberRange { eq?: number; gt?: number; gte?: number; lt?: number; lte?: number }
+interface DateRange { gte?: string; lt?: string }   // YYYY-MM-DD, half-open
+
+type FilterValue&lt;F&gt; =                // enum: V | { not: V }
+                                      // boolean: boolean
+                                      // number: NumberRange
+                                      // date: DateRange
+                                      // entity: string (the id)
+type Filters&lt;F extends Fields&gt; = { [K in keyof F]?: FilterValue&lt;F[K]&gt; };</code></pre>
+          <p><code>Filters</code> is the typed object your executor receives. Every key is optional, and every present bound of a <code>NumberRange</code> must hold.</p>
+        </article>
+      </section>
+
+      <!-- ================= FIELD TYPES ================= -->
+      <section aria-labelledby="field-types">
+        <h2 id="field-types">Field types</h2>
+        <p>Who decides a value depends on the field type. Code computes dates and numbers. The model only chooses among options that code built.</p>
+        <div class="table-wrap"><table class="wrap-code">
+          <thead><tr><th>Builder</th><th>Filter value</th><th>Operators</th><th>Who decides</th><th>Understands</th></tr></thead>
+          <tbody>
+            <tr><td><code>enumField</code></td><td><code>"high"</code>, <code>{ not: "closed" }</code></td><td>is, is not (one value)</td><td>The model picks one of your values, or says the field is not mentioned</td><td>"open tickets", "everything except closed", "urgent" when a description lists it</td></tr>
+            <tr><td><code>booleanField</code></td><td><code>true</code>, <code>false</code></td><td>is</td><td>The model picks yes, no or not mentioned</td><td>"escalated tickets", wording from the field's description</td></tr>
+            <tr><td><code>numberField</code></td><td><code>{ lt: 500 }</code>, <code>{ gte: 100, lte: 500 }</code></td><td><code>eq</code>, <code>gt</code>, <code>gte</code>, <code>lt</code>, <code>lte</code></td><td>Code parses the number and comparator. The model only picks the field</td><td>"under $500", "at least 3", "between 100 and 500", "over 2k"</td></tr>
+            <tr><td><code>dateField</code></td><td><code>{ gte: "2026-08-01", lt: "2026-09-01" }</code></td><td><code>gte</code>, <code>lt</code></td><td>Code does the calendar math in your time zone. The model only picks the field</td><td>"last week", "since 2026-09-01", "in august", "last 7 days"</td></tr>
+            <tr><td><code>entityField</code></td><td><code>"cus_4"</code> (your id)</td><td>is</td><td>The model picks a phrase from the request. Your resolver finds the records</td><td>"Sam's invoices", "tickets for Acme Corp"</td></tr>
+          </tbody>
+        </table></div>
+        <p>When two phrases land on the same date or number field, their ranges are intersected, so "over 100 and under 500" becomes <code>{ gt: 100, lt: 500 }</code>. A range that can never match returns <code>unsupported</code> with reason <code>contradictory</code>.</p>
+
+        <h3 id="date-phrases">Date phrases</h3>
+        <p><code>parseDates</code> finds these phrases and turns each into a half-open range of calendar dates. The outputs below are real, with <code>now = 2026-09-23T10:00:00Z</code> (a Wednesday), time zone <code>UTC</code> and weeks starting on Monday.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Form</th><th>Example</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Single days</td><td>today<br>yesterday</td><td><code>{ gte: "2026-09-23", lt: "2026-09-24" }</code><br><code>{ gte: "2026-09-22", lt: "2026-09-23" }</code></td></tr>
+            <tr><td>Calendar periods: <code>this</code>, <code>last</code>, <code>previous</code> + week, month, quarter, year</td><td>this week<br>last week<br>last month<br>this quarter<br>last year</td><td><code>{ gte: "2026-09-21", lt: "2026-09-28" }</code><br><code>{ gte: "2026-09-14", lt: "2026-09-21" }</code><br><code>{ gte: "2026-08-01", lt: "2026-09-01" }</code><br><code>{ gte: "2026-07-01", lt: "2026-10-01" }</code><br><code>{ gte: "2025-01-01", lt: "2026-01-01" }</code></td></tr>
+            <tr><td>Rolling windows ending today: <code>past</code> + week, month, quarter, year</td><td>past week<br>past month</td><td><code>{ gte: "2026-09-17", lt: "2026-09-24" }</code><br><code>{ gte: "2026-08-23", lt: "2026-09-24" }</code></td></tr>
+            <tr><td><code>last</code> or <code>past</code> + N (1 to 999) days, weeks, months</td><td>last 7 days<br>past 2 weeks<br>last 3 months</td><td><code>{ gte: "2026-09-17", lt: "2026-09-24" }</code><br><code>{ gte: "2026-09-10", lt: "2026-09-24" }</code><br><code>{ gte: "2026-06-23", lt: "2026-09-24" }</code></td></tr>
+            <tr><td>ISO dates</td><td>2026-09-01</td><td><code>{ gte: "2026-09-01", lt: "2026-09-02" }</code></td></tr>
+            <tr><td>Numeric dates, <code>D/M/YYYY</code> or <code>M/D/YYYY</code></td><td>on 23/09/2026<br>on 03/04/2026</td><td><code>{ gte: "2026-09-23", lt: "2026-09-24" }</code><br>ambiguous: no range, and <code>prepare</code> asks with <code>ambiguous_date</code></td></tr>
+            <tr><td>Month and day, with or without a year, ordinals, "of"</td><td>sep 14<br>14th of september<br>Sept. 5th, 2025<br>sep 30</td><td><code>{ gte: "2026-09-14", lt: "2026-09-15" }</code><br><code>{ gte: "2026-09-14", lt: "2026-09-15" }</code><br><code>{ gte: "2025-09-05", lt: "2025-09-06" }</code><br><code>{ gte: "2025-09-30", lt: "2025-10-01" }</code></td></tr>
+            <tr><td>Month and year</td><td>september 2025</td><td><code>{ gte: "2025-09-01", lt: "2025-10-01" }</code></td></tr>
+            <tr><td>Bare month, only after a preposition</td><td>in august<br>in december</td><td><code>{ gte: "2026-08-01", lt: "2026-09-01" }</code><br><code>{ gte: "2025-12-01", lt: "2026-01-01" }</code></td></tr>
+          </tbody>
+        </table></div>
+        <p>Rules the parser applies:</p>
+        <ul>
+          <li>A numeric date is read as day/month when the first number is over 12, and as month/day when the second is. When both are 12 or less and differ, it is ambiguous. The same number twice (04/04/2026) is fine.</li>
+          <li>Without a year, a month and day means the most recent one that is not in the future, and a bare month means the most recent month that has started. That is why "sep 30" and "in december" fall in 2025 above.</li>
+          <li>"may" alone is ignored because it is usually a verb ("tickets that may be urgent" finds no date). "in may" works.</li>
+          <li>"this week" and "last week" follow <code>weekStartsOn</code>. With <code>weekStartsOn: 0</code>, "this week" is <code>{ gte: "2026-09-20", lt: "2026-09-27" }</code>.</li>
+          <li>"today" is computed in the request time zone with <code>todayIn</code>. At 20:00 UTC on 23 September it is already 24 September in <code>Asia/Kolkata</code>.</li>
+          <li>Invalid dates such as <code>2026-02-30</code> and backwards ranges are dropped.</li>
+        </ul>
+        <p>A preposition in front of any of the forms above changes the range:</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Preposition</th><th>Example</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td><code>since</code></td><td>since last week</td><td><code>{ gte: "2026-09-14" }</code> (start of the period)</td></tr>
+            <tr><td><code>after</code></td><td>after 2026-09-01</td><td><code>{ gte: "2026-09-02" }</code> (the day after the period ends)</td></tr>
+            <tr><td><code>before</code></td><td>before yesterday</td><td><code>{ lt: "2026-09-22" }</code></td></tr>
+            <tr><td><code>until</code>, <code>till</code></td><td>till 2026-09-10</td><td><code>{ lt: "2026-09-11" }</code> (the named day is included)</td></tr>
+            <tr><td><code>on</code>, <code>in</code>, <code>during</code>, <code>from</code></td><td>during last month</td><td><code>{ gte: "2026-08-01", lt: "2026-09-01" }</code></td></tr>
+            <tr><td><code>from</code> or <code>between</code> X <code>to</code>, <code>until</code>, <code>till</code>, <code>through</code> or <code>and</code> Y</td><td>from 2026-09-01 to 2026-09-10<br>between aug 1 and aug 15</td><td><code>{ gte: "2026-09-01", lt: "2026-09-11" }</code><br><code>{ gte: "2026-08-01", lt: "2026-08-16" }</code></td></tr>
+          </tbody>
+        </table></div>
+        <p>Not understood in v0.1 (each of these finds no date): <code>tomorrow</code>, <code>next week</code> and other future-relative phrases, <code>3 days ago</code>, weekday names (<code>last monday</code>), quarter names (<code>q3 2026</code>), <code>mid august</code>, a bare month with no preposition (<code>august</code>), numbers written as words (<code>last seven days</code>), <code>last 0 days</code>, windows of 1000 or more, and times of day. A bare year (<code>in 2025</code>) is not a date: it is read as the number 2025.</p>
+
+        <h3 id="number-phrases">Number phrases</h3>
+        <p><code>parseNumbers</code> reads a number with its comparator and currency. Numbers inside date phrases are skipped when you pass the date spans as <code>exclude</code>, as <code>prepare</code> does. Real outputs:</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Operator</th><th>Words before the number</th><th>Words after the number</th><th>Example</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td><code>lt</code></td><td>under, below, less than, fewer than, lower than, cheaper than, smaller than, <code>&lt;</code></td><td></td><td>under $500</td><td><code>{ lt: 500 }</code>, unit <code>USD</code></td></tr>
+            <tr><td><code>lte</code></td><td>at most, no more than, not more than, up to, maximum, maximum of, max, <code>&lt;=</code></td><td>or less, or fewer, or below, or lower, and below, and under</td><td>up to €200<br>20 or less</td><td><code>{ lte: 200 }</code>, unit <code>EUR</code><br><code>{ lte: 20 }</code></td></tr>
+            <tr><td><code>gt</code></td><td>over, above, more than, greater than, higher than, larger than, exceeding, <code>&gt;</code></td><td></td><td>over 2k<br>above 12.5</td><td><code>{ gt: 2000 }</code><br><code>{ gt: 12.5 }</code></td></tr>
+            <tr><td><code>gte</code></td><td>at least, no less than, not less than, minimum, minimum of, min, <code>&gt;=</code></td><td><code>+</code>, or more, or above, or higher, and above, and up, or greater</td><td>at least 3 replies<br>100 or more<br>50+</td><td><code>{ gte: 3 }</code><br><code>{ gte: 100 }</code><br><code>{ gte: 50 }</code></td></tr>
+            <tr><td><code>eq</code></td><td>exactly, equal to, equals, <code>=</code>, or no comparator</td><td></td><td>exactly 42<br>3 replies</td><td><code>{ eq: 42 }</code><br><code>{ eq: 3 }</code></td></tr>
+            <tr><td><code>gte</code> + <code>lte</code></td><td colspan="2">between X and Y (also <code>to</code> or <code>-</code> as the joiner), in either order</td><td>between 500 and 100</td><td><code>{ gte: 100, lte: 500 }</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Feature</th><th>Recognized</th><th>Example</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Currency symbols</td><td><code>$</code> USD, <code>€</code> EUR, <code>£</code> GBP, <code>₹</code> INR</td><td>under £30</td><td><code>{ lt: 30 }</code>, unit <code>GBP</code></td></tr>
+            <tr><td>Codes and words before</td><td>usd, inr, eur, gbp, rs, rs.</td><td>under INR 5,000</td><td><code>{ lt: 5000 }</code>, unit <code>INR</code></td></tr>
+            <tr><td>Codes and words after</td><td>usd, inr, eur, gbp, dollar(s), rupee(s), euro(s), pound(s)</td><td>under 40 euros</td><td><code>{ lt: 40 }</code>, unit <code>EUR</code></td></tr>
+            <tr><td>Suffixes</td><td>k (1,000), m (1,000,000), lakh or lakhs (100,000), crore or crores (10,000,000)</td><td>over 2 lakh<br>under 1 crore rupees</td><td><code>{ gt: 200000 }</code><br><code>{ lt: 10000000 }</code>, unit <code>INR</code></td></tr>
+            <tr><td>Grouping and decimals</td><td>1,000,000, Indian grouping, decimals</td><td>under ₹5,00,000</td><td><code>{ lt: 500000 }</code>, unit <code>INR</code></td></tr>
+          </tbody>
+        </table></div>
+        <p>Not understood in v0.1: negative numbers (<code>-5</code> reads as 5), numbers written as words, the symbols <code>≤</code> and <code>≥</code> (the number is read as <code>eq</code>), ranges without "between" (<code>100 to 200</code> gives two separate numbers), and units other than the four currencies. A <code>%</code> sign is ignored (<code>under 10%</code> is <code>{ lt: 10 }</code>), and <code>m</code> always means million, never minutes. Numbers glued to letters, such as <code>P1</code>, are not read as numbers, and values beyond <code>Number.MAX_SAFE_INTEGER</code> are dropped.</p>
+      </section>
+
+      <!-- ================= CORE ================= -->
+      <section aria-labelledby="core">
+        <h2 id="core">Core</h2>
+
+        <article class="api">
+          <h3 id="createNaturalFilter"><code>createNaturalFilter(config)</code></h3>
+          <pre><code>function createNaturalFilter&lt;F extends Fields, Ctx = unknown, R = unknown&gt;(
+  config: NaturalFilterConfig&lt;F, Ctx, R&gt;,
+): NaturalFilter&lt;F, Ctx, R&gt;
+
+interface NaturalFilter&lt;F extends Fields, Ctx, R&gt; {
+  readonly schema: SearchSchema&lt;F&gt;;
+  prepare(text: string, options?: PrepareOptions&lt;Ctx&gt;): Promise&lt;NaturalFilterResult&lt;F&gt;&gt;;
+  execute(filters: unknown, options?: { context?: Ctx }): Promise&lt;ExecuteResult&lt;F, R&gt;&gt;;
+  validate(filters: unknown): ValidationResult&lt;F&gt;;
+}</code></pre>
+          <p><code>Ctx</code> is your trusted server context, usually the session. <code>R</code> is whatever your executor returns. Throws a <code>TypeError</code> when <code>schema</code> has no <code>fields</code>, when <code>provider</code> has no <code>choose</code> function, or when <code>authorize</code> is missing and <code>allowUnauthenticated</code> is not exactly <code>true</code>.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="NaturalFilterConfig"><code>NaturalFilterConfig</code></h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>schema</code></td><td><code>SearchSchema&lt;F&gt;</code></td><td>required</td><td>From <code>defineSearch</code>.</td></tr>
+              <tr><td><code>provider</code></td><td><code>FilterProvider&lt;Ctx&gt;</code></td><td>required</td><td>Answers the closed questions. <code>jev()</code>, <code>withCache(...)</code>, <code>mockProvider</code>, <code>keywordProvider</code>, or your own.</td></tr>
+              <tr><td><code>executor</code></td><td><code>(filters: Filters&lt;F&gt;, context: Ctx) =&gt; Promise&lt;R&gt; | R</code></td><td>none</td><td>Your read-only search. It gets validated filters and the trusted context. Apply the tenant and user scope from <code>context</code> as an outer AND, never from <code>filters</code>. Optional for <code>prepare</code>; <code>execute</code> throws <code>Error</code> without it. Errors it throws are not caught.</td></tr>
+              <tr><td><code>authorize</code></td><td><code>(context: Ctx) =&gt; Promise&lt;boolean&gt; | boolean</code></td><td>required unless <code>allowUnauthenticated: true</code></td><td>Runs before any model call in <code>prepare</code> and again in every <code>execute</code>. Only a return value of exactly <code>true</code> allows. <code>false</code>, any other value, or a throw denies (a throw is reported to <code>onError</code> with stage <code>"authorize"</code>).</td></tr>
+              <tr><td><code>allowUnauthenticated</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Set to <code>true</code> only for public data anyone may search. It makes skipping <code>authorize</code> a written decision; <code>false</code> does not count as an opt-out.</td></tr>
+              <tr><td><code>timeZone</code></td><td><code>string</code></td><td><code>"UTC"</code></td><td>IANA time zone for date phrases. <code>PrepareOptions.timeZone</code> overrides it per call.</td></tr>
+              <tr><td><code>weekStartsOn</code></td><td><code>number</code></td><td><code>1</code></td><td>0 is Sunday, 1 is Monday. Used by "this week" and "last week".</td></tr>
+              <tr><td><code>minConfidence</code></td><td><code>number</code></td><td><code>0.6</code></td><td>Minimum probability to accept an answer other than "not mentioned" without asking. Below it, the user gets a clarification.</td></tr>
+              <tr><td><code>timeoutMs</code></td><td><code>number</code></td><td><code>10000</code></td><td>Total budget for one <code>prepare</code>, including the model call and the resolver. When it runs out the result is <code>unavailable</code> with reason <code>timeout</code>. It does not apply to <code>execute</code>.</td></tr>
+              <tr><td><code>maxInputLength</code></td><td><code>number</code></td><td><code>500</code></td><td>Maximum request length in characters, after whitespace is collapsed and trimmed. A separate, fixed cap of 2048 UTF-8 bytes also applies.</td></tr>
+              <tr><td><code>allowEmptyFilters</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Allow <code>execute({})</code>, which browses everything within the caller's scope. Without it, empty filters are <code>invalid</code>.</td></tr>
+              <tr><td><code>onError</code></td><td><code>(error: unknown, stage: "provider" | "resolver" | "authorize") =&gt; void</code></td><td>none</td><td>Called with provider, resolver and authorize errors so you can log them. Results never include error details.</td></tr>
+            </tbody>
+          </table></div>
+        </article>
+
+        <article class="api">
+          <h3 id="prepare"><code>prepare(text, options?)</code></h3>
+          <pre><code>prepare(text: string, options?: PrepareOptions&lt;Ctx&gt;): Promise&lt;NaturalFilterResult&lt;F&gt;&gt;
+
+interface PrepareOptions&lt;Ctx&gt; {
+  context?: Ctx;
+  now?: Date;
+  timeZone?: string;
+  signal?: AbortSignal;
+}</code></pre>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Option</th><th>Default</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>context</code></td><td><code>undefined</code></td><td>Trusted server context. Passed to <code>authorize</code>, the provider (for example to pick a per-tenant key) and your resolver. Never sent to a model.</td></tr>
+              <tr><td><code>now</code></td><td>the current time</td><td>Reference time for relative dates.</td></tr>
+              <tr><td><code>timeZone</code></td><td><code>config.timeZone</code>, then <code>"UTC"</code></td><td>Time zone for this call.</td></tr>
+              <tr><td><code>signal</code></td><td>none</td><td>Combined with the <code>timeoutMs</code> deadline. Aborting ends the call with an <code>unavailable</code> result.</td></tr>
+            </tbody>
+          </table></div>
+          <p>Interprets the text and never calls the executor. It makes one provider call, plus one call to your resolver when the request names an entity. Checks run in this order: empty input, length, <code>authorize</code>, then the count of dates and numbers (more than 4 of either is <code>too_complex</code>). None of these reach the provider. <code>prepare</code> does not throw for bad input; every outcome is a <a href="#NaturalFilterResult">result</a>.</p>
+          <p>Two thresholds keep conditions from disappearing quietly. If code found a date or number, the model must be at least 90% sure it is not a filter before it is ignored; otherwise the user is asked. If the model says an enum or boolean field is not mentioned but gives some value a probability of 0.15 or more, the user is asked too.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="execute"><code>execute(filters, options?)</code></h3>
+          <pre><code>execute(filters: unknown, options?: { context?: Ctx }): Promise&lt;ExecuteResult&lt;F, R&gt;&gt;</code></pre>
+          <p>Accepts filters from <code>prepare</code>, from an answered clarification, or from manual edits in your UI, and treats all of them as untrusted. In order, it:</p>
+          <ol>
+            <li>throws <code>Error("createNaturalFilter: no executor configured")</code> when there is no executor;</li>
+            <li>validates with <a href="#validateFilters"><code>validateFilters</code></a> and returns <code>{ status: "invalid", errors }</code> on failure;</li>
+            <li>returns <code>invalid</code> with <code>["no filters"]</code> for an empty object, unless <code>allowEmptyFilters</code> is set;</li>
+            <li>runs <code>authorize(context)</code> and returns <code>{ status: "blocked", reason: "unauthorized" }</code> on denial, so a permission revoked after the preview blocks the search;</li>
+            <li>calls <code>verify(id, context)</code> for the entity field if you gave one, returning <code>invalid</code> with <code>["&lt;field&gt;: not found"]</code> when it does not return <code>true</code>;</li>
+            <li>calls your executor with the validated copy and returns <code>{ status: "ok", filters, results }</code>.</li>
+          </ol>
+          <p><code>execute</code> never calls a model, so manual filter edits add no tokens and no model latency.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="validate"><code>validate(filters)</code></h3>
+          <pre><code>validate(filters: unknown): ValidationResult&lt;F&gt;</code></pre>
+          <p>Strict validation only, against this search's schema. The same as <code>validateFilters(schema, filters)</code>.</p>
+        </article>
+      </section>
+
+      <!-- ================= RESULTS ================= -->
+      <section aria-labelledby="results">
+        <h2 id="results">Results</h2>
+
+        <article class="api">
+          <h3 id="NaturalFilterResult"><code>NaturalFilterResult</code></h3>
+          <pre><code>type NaturalFilterResult&lt;F extends Fields = Fields&gt; =
+  | { status: "ready"; filters: Filters&lt;F&gt;; interpretation: FilterChip[]; meta: ResultMeta }
+  | {
+      status: "needs_clarification";
+      filters: Filters&lt;F&gt;;            // understood so far; not executable yet
+      interpretation: FilterChip[];
+      questions: Clarification&lt;F&gt;[];
+      meta: ResultMeta;
+    }
+  | { status: "unsupported"; reason: UnsupportedReason; message: string; field?: string; meta?: ResultMeta }
+  | { status: "blocked"; reason: "unauthorized" | "empty_input" | "input_too_long"; message: string }
+  | {
+      status: "unavailable";
+      reason: "provider_error" | "timeout" | "invalid_provider_output" | "resolver_error";
+      retryable: boolean;
+      message: string;
+    };
+
+type UnsupportedReason =
+  | "no_filters" | "out_of_scope" | "multiple_values"
+  | "contradictory" | "unit_mismatch" | "too_complex";</code></pre>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Status</th><th>Meaning</th><th>What to do</th></tr></thead>
+            <tbody>
+              <tr><td><code>ready</code></td><td>Validated filters you can execute. The only status meant to run as it is.</td><td>Show <code>interpretation</code> as chips, then call <code>execute(result.filters)</code>.</td></tr>
+              <tr><td><code>needs_clarification</code></td><td>Something needs the user's choice. <code>filters</code> holds what was understood.</td><td>Show <code>questions</code>. See <a href="#answering">Answering a question</a>.</td></tr>
+              <tr><td><code>unsupported</code></td><td>The request is outside what this schema and v0.1 can express.</td><td>Show <code>message</code> and offer your manual filters.</td></tr>
+              <tr><td><code>blocked</code></td><td>Stopped before any model call.</td><td>Show <code>message</code>.</td></tr>
+              <tr><td><code>unavailable</code></td><td>The provider or the resolver failed. Nothing falls back to searching everything.</td><td>Offer a retry when <code>retryable</code> is true.</td></tr>
+            </tbody>
+          </table></div>
+        </article>
+
+        <article class="api">
+          <h3 id="reasons">Reason codes</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Status</th><th>Reason</th><th>When it happens</th><th>Message</th></tr></thead>
+            <tbody>
+              <tr><td><code>blocked</code></td><td><code>empty_input</code></td><td>The text is empty or only whitespace, or not a string.</td><td>Type what you are looking for.</td></tr>
+              <tr><td><code>blocked</code></td><td><code>input_too_long</code></td><td>Longer than <code>maxInputLength</code> characters or 2048 UTF-8 bytes.</td><td>Keep searches under <var>maxInputLength</var> characters.</td></tr>
+              <tr><td><code>blocked</code></td><td><code>unauthorized</code></td><td><code>authorize</code> returned something other than <code>true</code>, or threw.</td><td>You can't search here.</td></tr>
+              <tr><td><code>unsupported</code></td><td><code>too_complex</code></td><td>More than 4 date phrases or more than 4 numbers. No model call is made and there is no <code>meta</code>.</td><td>That request has too many dates or numbers. Try fewer conditions.</td></tr>
+              <tr><td><code>unsupported</code></td><td><code>out_of_scope</code></td><td>The model says the request asks for something other than a filter: other records, other tenants, permission changes, actions, counting or sorting, instructions to the system, or conditions no field can express.</td><td>This search can only filter <var>resource</var> by its listed fields.</td></tr>
+              <tr><td><code>unsupported</code></td><td><code>multiple_values</code></td><td>The request allows or excludes more than one value of an enum field ("open or pending"). Sets <code>field</code>.</td><td>Pick one <var>label</var> at a time for now.</td></tr>
+              <tr><td><code>unsupported</code></td><td><code>contradictory</code></td><td>Dates or numbers on one field can never all hold ("over 500 and under 100"). Sets <code>field</code>. Also returned without <code>field</code> if the final filters fail validation.</td><td>Those dates (or limits) for <var>label</var> can't all be true.</td></tr>
+              <tr><td><code>unsupported</code></td><td><code>unit_mismatch</code></td><td>The number field has a <code>unit</code> and the request names a different currency. Sets <code>field</code>.</td><td><var>label</var> is in <var>unit</var>, not <var>unit</var>.</td></tr>
+              <tr><td><code>unsupported</code></td><td><code>no_filters</code></td><td>Nothing to filter on and nothing to ask, as in "tickets". JevFilter does not invent a filter.</td><td>Add a condition, for example a <var>field</var> or <var>field</var>.</td></tr>
+              <tr><td><code>unavailable</code></td><td><code>provider_error</code></td><td>The provider threw. <code>retryable</code> comes from <code>ProviderError.retryable</code>, and is <code>true</code> for any other error.</td><td>Search interpretation is unavailable.</td></tr>
+              <tr><td><code>unavailable</code></td><td><code>timeout</code></td><td>The <code>timeoutMs</code> budget ran out, or the provider or resolver threw an error named <code>TimeoutError</code> or <code>APITimeoutError</code>. Always retryable.</td><td>Search interpretation timed out. (Resolver: Couldn't look up <var>label</var>.)</td></tr>
+              <tr><td><code>unavailable</code></td><td><code>invalid_provider_output</code></td><td>Some question got no answer, or an answer that is not one of its offered labels. Not retryable.</td><td>Search interpretation returned an invalid answer.</td></tr>
+              <tr><td><code>unavailable</code></td><td><code>resolver_error</code></td><td>Your <code>resolve</code> threw (retryable) or returned an invalid shape (not retryable).</td><td>Couldn't look up <var>label</var>.</td></tr>
+            </tbody>
+          </table></div>
+        </article>
+
+        <article class="api">
+          <h3 id="Clarification"><code>Clarification</code></h3>
+          <pre><code>interface Clarification&lt;F extends Fields = Fields&gt; {
+  kind: "choose_value" | "choose_entity" | "choose_field" | "no_match" | "ambiguous_date";
+  field?: string;
+  question: string;                    // suggested text to show
+  phrase?: string;                     // the part of the request that needs clarifying
+  options: ClarificationOption&lt;F&gt;[];   // empty for no_match and ambiguous_date
+}
+
+interface ClarificationOption&lt;F extends Fields = Fields&gt; {
+  value: string;        // enum value, entity id, or field name, depending on kind
+  label: string;
+  filters: Filters&lt;F&gt;;  // merge into result.filters when picked
+}</code></pre>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Kind</th><th>When</th><th>Options</th><th>Question</th></tr></thead>
+            <tbody>
+              <tr><td><code>choose_value</code></td><td>An enum or boolean field: the model said "unclear", its confidence was below <code>minConfidence</code>, or it said "not mentioned" while rating a value at 0.15 or more.</td><td>Every allowed value (for booleans, <code>"true"</code> and <code>"false"</code>), plus <code>value: "any"</code> labelled "Any <var>label</var>" with <code>filters: {}</code>.</td><td>Which <var>label</var> did you mean?</td></tr>
+              <tr><td><code>choose_entity</code></td><td>Your resolver returned 2 to 20 candidates.</td><td>One per candidate: <code>{ value: id, label, filters: { [field]: id } }</code>.</td><td>Which <var>label</var> did you mean?</td></tr>
+              <tr><td><code>choose_field</code></td><td>The model is not sure which date or number field a parsed phrase belongs to, or is less than 90% sure it is not a filter. Sets <code>phrase</code>, not <code>field</code>.</td><td>One per field of that kind, with the parsed range, plus <code>value: "none"</code> labelled "Don't filter by this" with <code>filters: {}</code>.</td><td>Which field should "<var>phrase</var>" apply to?</td></tr>
+              <tr><td><code>no_match</code></td><td>Your resolver returned no candidates.</td><td>None.</td><td>No <var>label</var> matched "<var>phrase</var>".</td></tr>
+              <tr><td><code>ambiguous_date</code></td><td>A numeric date such as 03/04/2026 could be either day/month or month/day.</td><td>None.</td><td>"<var>phrase</var>" could mean two dates. Write it as YYYY-MM-DD.</td></tr>
+            </tbody>
+          </table></div>
+        </article>
+
+        <article class="api">
+          <h3 id="answering">Answering a question</h3>
+          <p>When the user picks an option, merge its <code>filters</code> into <code>result.filters</code> and call <code>execute</code>. With several questions, merge the chosen option of each. For <code>no_match</code> and <code>ambiguous_date</code> there is nothing to pick: ask the user to rephrase, or open your manual filters.</p>
+          <pre><code>if (result.status === "needs_clarification") {
+  const q = result.questions[0];
+  const picked = q.options.find((o) =&gt; o.value === userChoice);
+  const filters = { ...result.filters, ...picked.filters };
+  const page = await search.execute(filters, { context: session });
+}</code></pre>
+          <p>The "Any" and "Don't filter by this" options add nothing. If nothing else was understood, the merged object is empty and <code>execute</code> returns <code>invalid</code> unless <code>allowEmptyFilters</code> is set.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="FilterChip"><code>FilterChip</code></h3>
+          <pre><code>interface FilterChip {
+  field: string;
+  text: string;     // human-readable
+  source?: string;  // the part of the request it came from, when there is one
+}</code></pre>
+          <p>Chip text uses the field's <code>label</code>, or its key:</p>
+          <ul>
+            <li>enum: <code>priority is high</code>, <code>status is not closed</code></li>
+            <li>boolean: <code>escalated: yes</code></li>
+            <li>date: <code>created from 2026-09-14 to before 2026-09-21</code>, <code>created on or after 2026-09-01</code>, <code>created before 2026-09-22</code></li>
+            <li>number: <code>amount &lt; 500 USD</code>, with <code>=</code>, <code>&gt;</code>, <code>≥</code>, <code>&lt;</code>, <code>≤</code> joined by "and"</li>
+            <li>entity: <code>customer is Sam Wilson</code> (the candidate's label)</li>
+          </ul>
+          <p>Date, number and entity chips carry <code>source</code>.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="ResultMeta"><code>ResultMeta</code></h3>
+          <pre><code>interface ResultMeta {
+  schemaVersion: string;
+  provider: string;
+  model?: string;
+  usage?: { inputTokens: number; outputTokens?: number };
+  cached?: boolean;
+}</code></pre>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>schemaVersion</code></td><td>The schema's <code>version</code>.</td></tr>
+              <tr><td><code>provider</code></td><td>The provider's <code>name</code>, such as <code>"jev"</code>.</td></tr>
+              <tr><td><code>model</code></td><td>The model the provider's response reports, when it reports one.</td></tr>
+              <tr><td><code>usage</code></td><td>Token usage from the provider's response. A cache hit reports <code>{ inputTokens: 0, outputTokens: 0 }</code>.</td></tr>
+              <tr><td><code>cached</code></td><td><code>true</code> when the answers came from <a href="#withCache"><code>withCache</code></a>. Absent otherwise.</td></tr>
+            </tbody>
+          </table></div>
+          <p><code>ready</code> and <code>needs_clarification</code> always carry <code>meta</code>. <code>unsupported</code> carries it except for <code>too_complex</code>. <code>blocked</code> and <code>unavailable</code> never do.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="ExecuteResult"><code>ExecuteResult</code></h3>
+          <pre><code>type ExecuteResult&lt;F extends Fields, R&gt; =
+  | { status: "ok"; filters: Filters&lt;F&gt;; results: R }
+  | { status: "invalid"; errors: string[] }
+  | { status: "blocked"; reason: "unauthorized"; message: string };</code></pre>
+          <p><code>ok</code> with an empty result set is still <code>ok</code>. The filters are never broadened to find something.</p>
+        </article>
+      </section>
+
+      <!-- ================= VALIDATION ================= -->
+      <section aria-labelledby="validation">
+        <h2 id="validation">Validation</h2>
+        <article class="api">
+          <h3 id="validateFilters"><code>validateFilters(schema, input)</code></h3>
+          <pre><code>function validateFilters&lt;F extends Fields&gt;(
+  schema: SearchSchema&lt;F&gt;,
+  input: unknown,
+): ValidationResult&lt;F&gt;
+
+type ValidationResult&lt;F extends Fields&gt; =
+  | { ok: true; filters: Filters&lt;F&gt; }
+  | { ok: false; errors: string[] };</code></pre>
+          <p>On success, <code>filters</code> is a fresh copy that holds only validated keys. It rejects:</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Input</th><th>Error</th></tr></thead>
+            <tbody>
+              <tr><td>Anything but a plain object (arrays, <code>null</code>, class instances)</td><td><code>filters must be a plain object</code></td></tr>
+              <tr><td>A key that is not a schema field, including <code>workspaceId</code> or an own <code>__proto__</code> key</td><td><code>unknown field: "…"</code></td></tr>
+              <tr><td>Enum: a value outside the list, or an object other than <code>{ not: value }</code> with an allowed value</td><td><code>&lt;field&gt;: must be one of the allowed values, or { not: value }</code></td></tr>
+              <tr><td>Boolean: anything but <code>true</code> or <code>false</code></td><td><code>&lt;field&gt;: must be true or false</code></td></tr>
+              <tr><td>Number: not a plain object, or empty</td><td><code>&lt;field&gt;: must be a range like { lt: 500 }</code></td></tr>
+              <tr><td>Number: an operator other than <code>eq</code>, <code>gt</code>, <code>gte</code>, <code>lt</code>, <code>lte</code>, or a value that is not a finite number (<code>NaN</code>, <code>Infinity</code>, strings)</td><td><code>&lt;field&gt;: allowed operators are eq, gt, gte, lt, lte with finite numbers</code></td></tr>
+              <tr><td>Number: bounds no number can satisfy, such as <code>{ lt: 5, gt: 10 }</code></td><td><code>&lt;field&gt;: range can never match</code></td></tr>
+              <tr><td>Date: not a plain object, or empty</td><td><code>&lt;field&gt;: must be a range like { gte: "2026-09-01", lt: "2026-10-01" }</code></td></tr>
+              <tr><td>Date: an operator other than <code>gte</code> and <code>lt</code>, or a value that is not a real <code>YYYY-MM-DD</code> date (<code>2026-02-30</code> fails)</td><td><code>&lt;field&gt;: allowed operators are gte and lt with YYYY-MM-DD dates</code></td></tr>
+              <tr><td>Date: <code>gte</code> on or after <code>lt</code></td><td><code>&lt;field&gt;: range can never match</code></td></tr>
+              <tr><td>Entity: not a string, empty, or longer than 256 characters</td><td><code>&lt;field&gt;: must be a non-empty id string</code></td></tr>
+            </tbody>
+          </table></div>
+          <p>All errors are collected, not just the first. Validation does not check that an entity id exists; that is what <code>verify</code> is for.</p>
+        </article>
+      </section>
+
+      <!-- ================= PARSERS ================= -->
+      <section aria-labelledby="parsers">
+        <h2 id="parsers">Parsers</h2>
+        <p>The deterministic parsers that <code>prepare</code> uses, exported for tests and for your own UI. The phrases they accept are listed under <a href="#date-phrases">Date phrases</a> and <a href="#number-phrases">Number phrases</a>.</p>
+
+        <article class="api">
+          <h3 id="parseDates"><code>parseDates(text, opts)</code></h3>
+          <pre><code>function parseDates(
+  text: string,
+  opts: { now: Date; timeZone: string; weekStartsOn?: number },   // weekStartsOn default 1
+): DateCandidate[]
+
+interface Span { start: number; end: number; text: string }
+interface DateCandidate extends Span {
+  range?: DateRange;   // undefined when the phrase is ambiguous (03/04/2026)
+}</code></pre>
+          <pre><code>parseDates("tickets from last week", { now: new Date("2026-09-23T10:00:00Z"), timeZone: "UTC" })
+// [{ start: 8, end: 22, text: "from last week", range: { gte: "2026-09-14", lt: "2026-09-21" } }]</code></pre>
+          <p><code>text</code> is the exact source text, including the preposition.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="parseNumbers"><code>parseNumbers(text, exclude?)</code></h3>
+          <pre><code>function parseNumbers(text: string, exclude?: Span[]): NumberCandidate[]
+
+interface NumberCandidate extends Span {
+  range: NumberRange;
+  unit?: string;   // upper-case currency code when the text named one
+}</code></pre>
+          <pre><code>const text = "since 2026-09-01 under $50";
+parseNumbers(text, parseDates(text, { now, timeZone: "UTC" }))
+// [{ start: 17, end: 26, text: "under $50", range: { lt: 50 }, unit: "USD" }]</code></pre>
+          <p>Numbers that overlap an <code>exclude</code> span are skipped. Pass the date candidates so the digits of a date are not read as numbers.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="todayIn"><code>todayIn(now, timeZone)</code></h3>
+          <pre><code>function todayIn(now: Date, timeZone: string): string   // "YYYY-MM-DD"
+
+todayIn(new Date("2026-09-23T20:00:00Z"), "Asia/Kolkata")   // "2026-09-24"</code></pre>
+        </article>
+      </section>
+
+      <!-- ================= PROVIDERS ================= -->
+      <section aria-labelledby="providers">
+        <h2 id="providers">Providers</h2>
+        <p>A provider answers closed multiple-choice questions. It never returns a value that becomes a filter directly: core checks every answer against the options it asked, and code computes every date and number.</p>
+
+        <article class="api">
+          <h3 id="FilterProvider"><code>FilterProvider</code></h3>
+          <pre><code>interface FilterProvider&lt;Ctx = unknown&gt; {
+  readonly name: string;
+  readonly model?: string;   // part of the cache key
+  choose(request: ProviderRequest, options: ProviderCallOptions&lt;Ctx&gt;): Promise&lt;ProviderResponse&gt;;
+}
+
+interface ProviderRequest {
+  state: { search_request: string };        // the untrusted user text, kept apart from instructions
+  questions: Record&lt;string, ChoiceSpec&gt;;    // question id → question
+}
+
+interface ChoiceSpec {
+  instructions: string;                     // trusted, compiled from the schema
+  options: Record&lt;string, string | null&gt;;   // option label → description
+}
+
+interface ProviderCallOptions&lt;Ctx = unknown&gt; {
+  context: Ctx;          // trusted server context; never send it to a model
+  signal: AbortSignal;   // aborts at the prepare() deadline or with the caller's signal
+}
+
+interface ProviderResponse {
+  answers: Record&lt;string, ProviderAnswer&gt;;
+  model?: string;
+  usage?: { inputTokens: number; outputTokens?: number };
+  cached?: boolean;
+}
+
+interface ProviderAnswer {
+  choice: string;                          // must be one of the question's option labels
+  probabilities: Record&lt;string, number&gt;;   // label → 0..1; include at least the chosen label
+}</code></pre>
+          <p>The contract:</p>
+          <ul>
+            <li>Answer every question id with one of its option labels. A missing answer or an unknown label makes the whole result <code>unavailable</code> with reason <code>invalid_provider_output</code>. Extra answers are ignored.</li>
+            <li>Report a probability for at least the chosen label. When it is missing, or not a number from 0 to 1, core treats the answer as unknown confidence (0). Answers other than "not mentioned" then become clarification questions instead of being accepted.</li>
+            <li>Set <code>model</code> on the provider so a model upgrade changes the cache key.</li>
+            <li>Throw <a href="#ProviderError"><code>ProviderError</code></a> to say whether a retry could help.</li>
+          </ul>
+          <pre><code>import type { FilterProvider } from "jevfilter";
+
+const myProvider: FilterProvider = {
+  name: "my-llm",
+  model: "my-llm-2026-09",
+  async choose({ state, questions }, { signal }) {
+    // questions: { [id]: { instructions, options: { [label]: description } } }
+    return { answers: { /* [id]: { choice: label, probabilities: { [label]: p } } */ } };
+  },
+};</code></pre>
+        </article>
+
+        <article class="api">
+          <h3 id="question-ids">Question ids and option labels</h3>
+          <p>Ids are stable, so tests and custom providers can rely on them.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Id</th><th>Asked when</th><th>Option labels</th></tr></thead>
+            <tbody>
+              <tr><td><code>intent</code></td><td>Always.</td><td><code>filter</code>, <code>other</code></td></tr>
+              <tr><td><code>field_&lt;name&gt;</code></td><td>For every enum and boolean field.</td><td>Enum: <code>unspecified</code>, <code>is "&lt;value&gt;"</code> and <code>is not "&lt;value&gt;"</code> for each value, <code>several values</code>, <code>unclear</code>.<br>Boolean: <code>unspecified</code>, <code>yes</code>, <code>no</code>, <code>unclear</code>.</td></tr>
+              <tr><td><code>date_&lt;i&gt;</code></td><td>For each date phrase found, when the schema has a date field. <code>i</code> counts from 0.</td><td>The name of each date field, and <code>none</code>.</td></tr>
+              <tr><td><code>number_&lt;i&gt;</code></td><td>For each number found, when the schema has a number field.</td><td>The name of each number field, and <code>none</code>.</td></tr>
+              <tr><td><code>entity_&lt;name&gt;</code></td><td>When the schema has an entity field and the request has candidate phrases.</td><td><code>none</code>, <code>phrase 1</code>, <code>phrase 2</code> and so on. Each description is a phrase of 1 to 3 words from the request, up to 60 of them.</td></tr>
+            </tbody>
+          </table></div>
+        </article>
+
+        <article class="api">
+          <h3 id="ProviderError"><code>ProviderError</code></h3>
+          <pre><code>class ProviderError extends Error {
+  readonly retryable: boolean;
+  constructor(message: string, options: { retryable: boolean; cause?: unknown });
+}</code></pre>
+          <p>Its <code>name</code> is <code>"ProviderError"</code>. <code>prepare</code> copies <code>retryable</code> into the <code>unavailable</code> result. Any other error counts as retryable, and an error named <code>TimeoutError</code> or <code>APITimeoutError</code> becomes reason <code>timeout</code>. The message goes to <code>onError</code> only.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="mockProvider"><code>mockProvider(answer, name?)</code></h3>
+          <pre><code>function mockProvider(
+  answer: (q: { id: string; question: ChoiceSpec; text: string }) =&gt; MockAnswer | undefined,
+  name?: string,   // default "mock"
+): FilterProvider&lt;any&gt;
+
+type MockAnswer = string | { choice: string; probability?: number };</code></pre>
+          <p>An offline provider for tests. Your function answers each question with an option label. <code>undefined</code> picks the first option, and the probability defaults to 1. It makes no network calls and reports no <code>model</code> or <code>usage</code>.</p>
+          <pre><code>mockProvider(({ id }) =&gt; ({ intent: "filter", field_status: 'is "open"' })[id])</code></pre>
+        </article>
+
+        <article class="api">
+          <h3 id="keywordProvider"><code>keywordProvider()</code></h3>
+          <pre><code>function keywordProvider(): FilterProvider&lt;any&gt;   // name "keyword-baseline"</code></pre>
+          <p>A naive keyword baseline built on <code>mockProvider</code>. It is not a language model. Use it to try the library without a key and as the baseline in evals. It matches enum values and short comma-separated synonyms from their descriptions, treats "not", "except", "excluding", "without" or "non" before a value as an exclusion, gives each date and number to the first field of its kind, and picks a capitalized phrase for an entity. Words such as "ignore", "tenant", "admin", "delete", "permission", "count" or "how many" make it answer <code>other</code> to the intent question.</p>
+        </article>
+      </section>
+
+      <!-- ================= JEV ================= -->
+      <section aria-labelledby="jev-provider">
+        <h2 id="jev-provider">Jev provider (<code>jevfilter/jev</code>)</h2>
+        <article class="api">
+          <h3 id="jev"><code>jev(options?)</code></h3>
+          <pre><code>import { jev, DEFAULT_JEV_MODEL } from "jevfilter/jev";
+
+function jev&lt;Ctx = unknown&gt;(options?: JevOptions&lt;Ctx&gt;): FilterProvider&lt;Ctx&gt;   // name "jev"</code></pre>
+          <p>Needs the <code>@typesafe-ai/sdk</code> peer dependency. JevFilter never ships a key or sends requests through a key of its own.</p>
+          <h4 id="JevOptions"><code>JevOptions</code></h4>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>apiKey</code></td><td><code>string | ((context: Ctx) =&gt; string | Promise&lt;string&gt;)</code></td><td>the <code>TYPESAFE_API_KEY</code> environment variable</td><td>A string (or the environment variable) builds one client on first use and reuses it. A function runs on every <code>prepare</code> with the trusted context, so each tenant can use its own key. The result is trimmed, a fresh client is built for that call, and no key is cached. An empty or non-string result fails the call with a non-retryable <code>ProviderError</code>, without contacting the API.</td></tr>
+              <tr><td><code>client</code></td><td><code>TypeSafeClient</code></td><td>none</td><td>A pre-built client (custom fetch, logging, proxies). When set, <code>apiKey</code>, <code>baseURL</code>, <code>timeout</code>, <code>maxRetries</code> and <code>fetch</code> are not used.</td></tr>
+              <tr><td><code>model</code></td><td><code>string</code></td><td><code>"jev-1.13.0"</code></td><td>Model version, sent with every request and reported as the provider's <code>model</code>.</td></tr>
+              <tr><td><code>baseURL</code></td><td><code>string</code></td><td><code>TYPESAFE_BASE_URL</code>, then <code>https://api.typesafe.ai</code></td><td>API root.</td></tr>
+              <tr><td><code>timeout</code></td><td><code>number</code></td><td><code>5000</code></td><td>Timeout per attempt in ms. The core <code>timeoutMs</code> still caps the whole <code>prepare</code>.</td></tr>
+              <tr><td><code>maxRetries</code></td><td><code>number</code></td><td><code>1</code></td><td>Retries after the first attempt.</td></tr>
+              <tr><td><code>fetch</code></td><td><code>(input: string, init?: RequestInit) =&gt; Promise&lt;Response&gt;</code></td><td>global <code>fetch</code></td><td>Custom fetch, for proxies and tests.</td></tr>
+            </tbody>
+          </table></div>
+          <pre><code>jev()                                                  // TYPESAFE_API_KEY from the environment
+jev({ apiKey: process.env.JEV_API_KEY })               // one key for your app
+jev({ apiKey: (session) =&gt; session.workspace.jevKey }) // each customer brings their own key
+jev({ client: new TypeSafeClient({ /* … */ }) })       // full control</code></pre>
+          <p>Clients built by <code>jev()</code> have SDK logging turned off, because request bodies contain the user's search text. Errors are mapped like this:</p>
+          <ul>
+            <li>SDK timeout: reason <code>timeout</code>, retryable.</li>
+            <li>Rate limit, connection error or HTTP 500 and above: <code>provider_error</code>, retryable.</li>
+            <li>Other API errors, such as HTTP 401: <code>provider_error</code>, not retryable.</li>
+            <li>No key configured: <code>provider_error</code>, not retryable.</li>
+          </ul>
+          <p>Messages passed to <code>onError</code> are sanitized (for example <code>Jev request failed (HTTP 401)</code>) and never contain keys, headers or request bodies.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="DEFAULT_JEV_MODEL"><code>DEFAULT_JEV_MODEL</code></h3>
+          <pre><code>const DEFAULT_JEV_MODEL = "jev-1.13.0";</code></pre>
+          <p>The pinned default model. Upgrading it changes interpretations, so rerun your evals before you do.</p>
+        </article>
+      </section>
+
+      <!-- ================= CACHE ================= -->
+      <section aria-labelledby="cache">
+        <h2 id="cache">Cache</h2>
+        <article class="api">
+          <h3 id="withCache"><code>withCache(provider, options)</code></h3>
+          <pre><code>function withCache&lt;Ctx&gt;(provider: FilterProvider&lt;Ctx&gt;, options: CacheOptions&lt;Ctx&gt;): FilterProvider&lt;Ctx&gt;
+
+type CacheOptions&lt;Ctx&gt; = {
+  store: CacheStore;
+  ttlMs?: number;
+  storeTimeoutMs?: number;
+} &amp; (
+  | { scope: (context: Ctx) =&gt; string; shared?: never }
+  | { shared: true; scope?: never }
+);</code></pre>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>store</code></td><td><code>CacheStore</code></td><td>required</td><td>Where answers live: <code>memoryCache()</code>, or your own <code>{ get, set }</code> backed by Redis, KV and so on.</td></tr>
+              <tr><td><code>scope</code></td><td><code>(context: Ctx) =&gt; string</code></td><td>one of <code>scope</code> or <code>shared</code> is required</td><td>Partitions the cache, usually by tenant: <code>(ctx) =&gt; ctx.tenantId</code>. Must return a non-empty string.</td></tr>
+              <tr><td><code>shared</code></td><td><code>true</code></td><td>one of <code>scope</code> or <code>shared</code> is required</td><td>One cache for everyone. Public data only. Kept apart from a tenant that happens to be named "shared".</td></tr>
+              <tr><td><code>ttlMs</code></td><td><code>number</code></td><td><code>600000</code> (10 minutes)</td><td>How long an answer stays valid.</td></tr>
+              <tr><td><code>storeTimeoutMs</code></td><td><code>number</code></td><td><code>250</code></td><td>Longest a store read may take before it counts as a miss.</td></tr>
+            </tbody>
+          </table></div>
+          <p>Only the provider's answers are cached. <code>authorize</code>, answer validation, entity resolution and your executor run on every search, and dates such as "last week" are recomputed from today, so a hit cannot skip security or go stale on the calendar. The wrapped provider keeps the inner provider's <code>name</code> and <code>model</code>.</p>
+          <p>The key is a SHA-256 hash of the provider's <code>name</code> and <code>model</code>, the scope (or shared), the search text, and the questions compiled from your schema. Editing a field's description or values changes the questions, so it misses the cache.</p>
+          <p>Failure rules:</p>
+          <ul>
+            <li>Building throws a <code>TypeError</code> without a store that has <code>get</code> and <code>set</code>, without <code>scope</code> or <code>shared: true</code>, or when <code>ttlMs</code> or <code>storeTimeoutMs</code> is not a finite number of at least 1.</li>
+            <li>If <code>scope(context)</code> returns anything but a non-empty string, the search fails (<code>unavailable</code>, <code>provider_error</code>) instead of sharing a cache.</li>
+            <li>A store read that throws, or takes longer than <code>storeTimeoutMs</code>, counts as a miss. Writes run in the background, and a failing write is ignored.</li>
+            <li>Only complete responses are stored, with a valid option for every question. Errors and invalid answers are never cached. What is stored is the answers and the model.</li>
+            <li>Identical concurrent searches share one provider call. If that call fails, is abandoned or returns an incomplete answer, a waiting caller makes the call itself instead of inheriting the failure. After 3 such rounds it calls the provider directly.</li>
+            <li>A hit returns <code>cached: true</code> and zero usage, which reaches you as <code>meta.cached</code>.</li>
+          </ul>
+          <p>With per-tenant keys, a cached answer inside one scope can be served to a user whose search would have been paid with a different key. If each tenant brings its own key, scope by tenant.</p>
+          <pre><code>import { memoryCache, withCache } from "jevfilter";
+import { jev } from "jevfilter/jev";
+
+const provider = withCache(jev(), {
+  store: memoryCache({ maxEntries: 1000 }),
+  scope: (session) =&gt; session.tenantId,
+  ttlMs: 10 * 60_000,
+});</code></pre>
+        </article>
+
+        <article class="api">
+          <h3 id="memoryCache"><code>memoryCache(options?)</code></h3>
+          <pre><code>function memoryCache(options?: { maxEntries?: number; ttlMs?: number }): CacheStore</code></pre>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Option</th><th>Default</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>maxEntries</code></td><td><code>500</code></td><td>Entries kept before the least recently used is evicted. Rounded down; must be a finite number of at least 1.</td></tr>
+              <tr><td><code>ttlMs</code></td><td>no cap</td><td>Caps how long any entry may live, whatever <code>withCache</code> asks for. Must be a finite number of at least 1.</td></tr>
+            </tbody>
+          </table></div>
+          <p>An in-process LRU cache, good for a single server or a Worker isolate. Reads and writes copy the value with <code>structuredClone</code>, so a caller that mutates an answer cannot change the cache. A write with a TTL of zero, a negative TTL or <code>NaN</code> is not stored. Invalid options throw a <code>TypeError</code>.</p>
+        </article>
+
+        <article class="api">
+          <h3 id="CacheStore"><code>CacheStore</code></h3>
+          <pre><code>interface CacheStore {
+  get(key: string): Promise&lt;ProviderResponse | undefined&gt; | ProviderResponse | undefined;
+  set(key: string, value: ProviderResponse, ttlMs: number): Promise&lt;void&gt; | void;
+}</code></pre>
+          <p>Keys are 64-character hex strings. Return <code>undefined</code> for a miss.</p>
+        </article>
+      </section>
+
+      <!-- ================= LIMITS ================= -->
+      <section aria-labelledby="limits">
+        <h2 id="limits">Limits</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Limit</th><th>Value</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>Fields per schema (<code>LIMITS.maxFields</code>)</td><td>1 to 16</td><td><code>defineSearch</code> throws</td></tr>
+            <tr><td>Field name</td><td>letter first, then letters, digits or <code>_</code>; 64 characters at most</td><td><code>defineSearch</code> throws</td></tr>
+            <tr><td>Entity fields per schema</td><td>at most 1</td><td><code>defineSearch</code> throws</td></tr>
+            <tr><td>Values per enum (<code>LIMITS.maxEnumValues</code>)</td><td>1 to 100</td><td><code>enumField</code> throws</td></tr>
+            <tr><td>Enum value length</td><td>not blank, 100 characters at most</td><td><code>enumField</code> throws</td></tr>
+            <tr><td>Request length (<code>maxInputLength</code>)</td><td>500 characters by default</td><td><code>blocked</code>, <code>input_too_long</code></td></tr>
+            <tr><td>Request size</td><td>2048 UTF-8 bytes, fixed</td><td><code>blocked</code>, <code>input_too_long</code></td></tr>
+            <tr><td>Date phrases per request</td><td>4</td><td>5 or more: <code>unsupported</code>, <code>too_complex</code></td></tr>
+            <tr><td>Numbers per request</td><td>4</td><td>5 or more: <code>unsupported</code>, <code>too_complex</code></td></tr>
+            <tr><td>Relative window size ("last N days")</td><td>1 to 999</td><td>outside it, no date is found</td></tr>
+            <tr><td>Entity phrase candidates sent to the model</td><td>60, each 1 to 3 words</td><td>the shortest phrases are kept</td></tr>
+            <tr><td>Entity candidates (<code>LIMITS.maxEntityCandidates</code>)</td><td>20</td><td>extra candidates are dropped</td></tr>
+            <tr><td>Entity candidate label</td><td>200 characters</td><td>cut</td></tr>
+            <tr><td>Entity id in filters</td><td>1 to 256 characters</td><td><code>invalid</code></td></tr>
+            <tr><td>Provider calls per <code>prepare</code></td><td>1, plus one resolver call when an entity is named</td><td></td></tr>
+            <tr><td><code>prepare</code> time budget (<code>timeoutMs</code>)</td><td>10000 ms by default</td><td><code>unavailable</code>, <code>timeout</code></td></tr>
+            <tr><td>Accept a non-default answer (<code>minConfidence</code>)</td><td>0.6 by default</td><td>below it, a clarification</td></tr>
+            <tr><td>Ignore a date or number code found</td><td>0.9, fixed</td><td>below it, a <code>choose_field</code> clarification</td></tr>
+            <tr><td>Ask about a value rated plausible</td><td>0.15, fixed</td><td>a <code>choose_value</code> clarification</td></tr>
+            <tr><td>Jev request timeout and retries</td><td>5000 ms per attempt, 1 retry</td><td></td></tr>
+            <tr><td>Cache TTL, store read timeout</td><td>600000 ms, 250 ms</td><td></td></tr>
+            <tr><td><code>memoryCache</code> entries</td><td>500 by default</td><td>least recently used evicted</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- ================= SCOPE ================= -->
+      <section aria-labelledby="scope">
+        <h2 id="scope">What v0.1 can and can't do</h2>
+        <div class="two-col">
+          <div class="col-yes">
+            <h3 id="possible">Possible</h3>
+            <ul>
+              <li>Conditions on several fields, combined with AND ("urgent billing tickets from last week").</li>
+              <li>One value per enum field, or excluding one value (<code>{ not: "closed" }</code>).</li>
+              <li>Boolean flags.</li>
+              <li>Number comparisons and ranges, including "between" and two bounds on one field.</li>
+              <li>Relative and absolute dates, in your time zone, with a configurable first day of the week.</li>
+              <li>Finding a named record through your resolver, with a chooser when several match.</li>
+              <li>Clarification questions instead of guesses.</li>
+              <li>Currency checks for USD, EUR, GBP and INR.</li>
+              <li>Manual filter edits that skip the model and go through the same validation.</li>
+              <li>A Jev key per app or per tenant.</li>
+              <li>Caching model answers, per scope.</li>
+              <li>Custom providers, and offline providers for tests.</li>
+            </ul>
+          </div>
+          <div class="col-no">
+            <h3 id="not-possible">Not possible</h3>
+            <ul>
+              <li>OR across fields.</li>
+              <li>"A or B" on one field, or excluding more than one value (<code>multiple_values</code>).</li>
+              <li>Nested or grouped conditions.</li>
+              <li>Sorting, ranking or limits ("latest", "biggest", "top 10").</li>
+              <li>Counting or aggregation.</li>
+              <li>Free-text search inside content ("the doc where we discussed AWS costs").</li>
+              <li>Languages other than English: the date and number parsers are English only.</li>
+              <li>More than one entity field, or more than one named record per request.</li>
+              <li>More than 4 dates or 4 numbers in one request.</li>
+              <li>Future-relative dates ("tomorrow", "next week"), weekday names and quarter names.</li>
+              <li>Unit checks for anything but the four currencies.</li>
+              <li>Null handling for <code>{ not: X }</code>; that is up to your executor.</li>
+            </ul>
+          </div>
+        </div>
+        <p>Also, don't name the resource after one of its values, such as "support tickets" with a <code>support</code> category. And the model can still misread a request it is allowed to make, so show the chips and let users edit them.</p>
+      </section>
+
+      <!-- ================= SECURITY ================= -->
+      <section aria-labelledby="security">
+        <h2 id="security">Security</h2>
+        <div class="two-col">
+          <div>
+            <h3 id="library-enforces">The library enforces</h3>
+            <ul>
+              <li><code>authorize</code> is required unless you declare the data public, and runs before any model call and again before every execute.</li>
+              <li>The model only picks among closed options. Code computes dates and numbers, and your resolver finds records.</li>
+              <li>Every answer is checked against the options offered. A bad answer gives <code>unavailable</code> and never a broader search.</li>
+              <li><code>execute</code> validates filters from the client strictly and passes your executor a fresh copy.</li>
+              <li>No SQL, ORM code or other executable text is produced.</li>
+              <li>The search text travels in <code>state</code>, apart from the instructions. Questions quote only the date, number and name phrases that code found in it.</li>
+              <li>Results never include error details, and the Jev provider keeps keys out of logs, results and errors.</li>
+              <li>The cache needs an explicit scope.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 id="host-responsibilities">Your app must</h3>
+            <ul>
+              <li>Write <code>authorize</code> correctly. JevFilter can't fix broken authorization.</li>
+              <li>Apply tenant and user scope inside the executor, from <code>context</code>, as an outer AND. Never take scope from <code>filters</code>.</li>
+              <li>Keep the executor read-only.</li>
+              <li>Scope the entity resolver to what the user may see, and add <code>verify</code> for ids.</li>
+              <li>Keep API keys on the server and store customer keys securely.</li>
+              <li>Rate-limit searches as you would any paid API call.</li>
+            </ul>
+          </div>
+        </div>
+        <h3 id="what-jev-receives">What the model receives</h3>
+        <p>The search text, plus instructions and options compiled from your schema: the resource name, field names and labels, field kinds, descriptions, enum values and their descriptions, and the date, number and name phrases found in the search text. If your values or descriptions are sensitive, treat them like the search text.</p>
+        <p>It never receives your records, entity candidate labels or ids, the <code>context</code>, database credentials, or query code.</p>
+      </section>
+
+      <footer class="page-foot">
+        <p>JevFilter is MIT licensed. Source and issues on <a href="https://github.com/Karthick-Ramachandran/jevfilter">GitHub</a>.</p>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
