@@ -12,7 +12,17 @@ and authorization stay in charge.
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![zero dependencies](https://img.shields.io/badge/runtime%20deps-0-brightgreen.svg)
 
-[Live demo](https://jevfilter.pages.dev/shop/) · [Helpdesk demo with X-ray](https://jevfilter.pages.dev/demo/) · [API reference](https://jevfilter.pages.dev/docs/)
+<br>
+
+<a href="https://jevfilter.pages.dev/shop/"><img src=".github/assets/jevfilter-demo.gif" alt="The JevFilter store demo: typing 'black waterproof boots under $130' fills in the category, color, waterproof and price filters and shows matching boots; removing a chip re-runs without a model call; 'Kestrel or Alder boots' is refused instead of guessed." width="860"></a>
+
+<sub>Recorded on the live store demo. The sentence becomes filters, and a chip can be removed with no model call. "Kestrel or Alder boots" is refused rather than guessed.</sub>
+
+<br><br>
+
+[![Try the live demo](https://img.shields.io/badge/Try_the_live_demo-c6f432?style=for-the-badge&labelColor=15181b)](https://jevfilter.pages.dev/shop/)
+[![Helpdesk demo with X-ray](https://img.shields.io/badge/Helpdesk_demo_with_X--ray-15181b?style=for-the-badge)](https://jevfilter.pages.dev/demo/)
+[![API reference](https://img.shields.io/badge/API_reference-15181b?style=for-the-badge)](https://jevfilter.pages.dev/docs/)
 
 </div>
 
@@ -59,6 +69,14 @@ the way it always has.
 
 The model never writes a query. It picks from options built from your schema, and your code
 decides what runs.
+
+The [helpdesk demo](https://jevfilter.pages.dev/demo/) shows each of these steps for every search:
+what code parsed, what Jev chose and how sure it was, the validated filters, and what your API ran.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/helpdesk-xray-dark.png">
+  <img alt="The helpdesk demo: 'urgent billing tickets from last week' is annotated in place, becomes three filter chips and two tickets, and the What happened panel shows the parsed date range, Jev's probability for each choice, the validated filters, and that no SQL was generated." src=".github/assets/helpdesk-xray-light.png" width="860">
+</picture>
 
 | Approach | What you get back |
 | --- | --- |

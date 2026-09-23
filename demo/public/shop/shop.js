@@ -254,6 +254,14 @@ function stats(s) {
   );
 }
 
+/** Nothing ran: drop the previous search's filters so the sidebar and chips don't show stale state. */
+function clearAll() {
+  filters = {};
+  renderChips();
+  syncSidebar(false);
+  renderProducts(null);
+}
+
 async function ask(text) {
   const query = String(text ?? "").trim();
   if (!query || busy) return;
@@ -262,7 +270,11 @@ async function ask(text) {
   $("verdict").replaceChildren(el("span", "thinking", el("span", "pulse"), "Reading your request"));
   try {
     const { ok, status, data } = await post("/api/shop/search", { text: query });
-    if (!ok || !data?.result) { verdict(data?.error ?? `The search failed (HTTP ${status}).`, "refused"); return; }
+    if (!ok || !data?.result) {
+      verdict(data?.error ?? `The search failed (HTTP ${status}).`, "refused");
+      clearAll();
+      return;
+    }
     const r = data.result;
     if (r.status === "ready") {
       filters = { ...r.filters };
@@ -278,8 +290,7 @@ async function ask(text) {
       renderProducts(null);
     } else {
       verdict(`${r.message ?? "That request can't be searched."} Nothing ran.`, "refused");
-      $("chips").replaceChildren();
-      renderProducts(null);
+      clearAll();
     }
     stats(data.stats);
   } catch {

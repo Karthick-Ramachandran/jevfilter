@@ -52,3 +52,4 @@ Applies To:
 - A new `*.pages.dev` project fails TLS for about two minutes after the first deploy, until its certificate is issued. Wait for a 200 before testing.
 - Worker CSP forbids inline `<script>`/`<style>`/`style=""`; setting `element.style.x` from a script file (CSSOM) is fine.
 - The shop and helpdesk providers use 4 s attempts with one retry inside the 9 s budget. A single 6 s attempt failed twice during a slow period on the Jev API while direct calls took about 450 ms.
+- agent-browser: Meta+A doesn't select all in its headless Chromium, so typed text was appended to the old query (and looked like a Jev misread). Clear inputs with `fill <sel> ""`. Screenshot paths are resolved from the browser daemon's working directory, so pass absolute paths.

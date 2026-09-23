@@ -48,3 +48,12 @@ Status: Done (2026-09-23), ADR-0009. https://jevfilter.pages.dev serves the stat
 - The CSP header is on all pages, including 404. API responses keep `no-store` and `nosniff`. In the browser, the store search works and Geist loads.
 - The same visitor IP reaches the Worker through Pages as when called directly (compared in `wrangler tail` without printing it).
 - The Worker's workers.dev URL is still up. Turning it off is the maintainer's call.
+
+## T5: README media and a store fix
+
+Status: Done (2026-09-23).
+
+- `.github/assets/jevfilter-demo.gif` (557 KB, 960 px, 14 s) and `jevfilter-demo.mp4` (217 KB, 1280x800) were recorded on the live store. It shows a sentence becoming four filters and 2 products (1 model call, 2,960 tokens), a chip removed with no model call, and "Kestrel or Alder boots" refused.
+- `helpdesk-xray-light.png` and `helpdesk-xray-dark.png` sit in the README in a `<picture>` element that follows the reader's theme.
+- The README has the GIF (linking to the live store) and three live-demo buttons. GitHub's markdown API marks the GIF `data-animated-image`, and all badge URLs return 200.
+- **Fix:** the store kept the previous search's filters (sidebar badge, selected category, chips) after a refused request or an HTTP error, although nothing ran. `clearAll()` now resets them. Verified locally, then deployed to Pages. `.github/assets` is not in the npm package.
