@@ -1,0 +1,62 @@
+{
+  "name": "naturalfilter",
+  "version": "0.1.0",
+  "description": "Add natural-language filters to your existing API. Models interpret, code executes. Powered by Jev. No generated SQL.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./jev": {
+      "types": "./dist/jev.d.ts",
+      "default": "./dist/jev.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "keywords": [
+    "natural-language",
+    "filters",
+    "search",
+    "jev",
+    "typesafe",
+    "llm",
+    "no-sql-generation"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test --experimental-strip-types test/*.test.ts",
+    "check": "npm run typecheck && npm test && npm run build",
+    "example": "node --experimental-strip-types examples/tickets/server.ts",
+    "eval": "node --env-file-if-exists=.env --experimental-strip-types evals/run.ts",
+    "prepublishOnly": "npm run check"
+  },
+  "peerDependencies": {
+    "@typesafe-ai/sdk": "^0.6.0"
+  },
+  "peerDependenciesMeta": {
+    "@typesafe-ai/sdk": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@typesafe-ai/sdk": "0.6.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

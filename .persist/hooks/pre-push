@@ -20,3 +20,4 @@ run_persist() {
 }
 
 run_persist test-gate
+# testCommand: npm test

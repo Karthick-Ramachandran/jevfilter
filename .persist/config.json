@@ -11,7 +11,7 @@
   "adrDir": "docs/adrs",
   "preCommitGates": [],
   "prePushGates": [],
-  "testCommand": null,
+  "testCommand": "npm test",
   "fenceEnabled": true,
   "contextHook": true
 }
