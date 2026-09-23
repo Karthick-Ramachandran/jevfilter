@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.1.0 — unreleased
+## 0.1.1 — 2026-09-23
+
+Documentation only; no code changes.
+
+- README: demo GIF, links to the live demos (https://jevfilter.pages.dev) and API reference, a light/dark screenshot of the helpdesk X-ray, and the four known eval failures.
+- Images use absolute URLs so they also render on npm.
+
+## 0.1.0 — 2026-09-23
 
 First public version, published as `jevfilter`.
 

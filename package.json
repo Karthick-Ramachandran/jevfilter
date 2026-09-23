@@ -1,6 +1,6 @@
 {
   "name": "jevfilter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Your API already knows how to search. JevFilter lets users ask. Natural language in, validated filters out: no generated SQL, and your auth stays in control.",
   "keywords": [
     "natural-language",
