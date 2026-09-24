@@ -134,6 +134,9 @@ has no runtime dependencies; `@typesafe-ai/sdk` is only needed for the Jev provi
 [API reference](https://jevfilter.pages.dev/docs/) lists every option, status, and
 limit.
 
+If you use an AI coding agent, the docs start with a [prompt you can paste](https://jevfilter.pages.dev/docs/#start-with-a-prompt)
+that has it connect JevFilter to the search function you already have.
+
 ## Quick start
 
 ### 1. Describe the filters your API already supports

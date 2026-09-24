@@ -50,6 +50,34 @@
       heads[i].appendChild(a);
     }
 
+    /* ---------------- copy buttons ---------------- */
+    var copies = doc.querySelectorAll("[data-copy]");
+    for (var c = 0; c < copies.length; c++) {
+      copies[c].addEventListener("click", function (ev) {
+        var btn = ev.currentTarget;
+        var src = doc.getElementById(btn.getAttribute("data-copy"));
+        if (!src) return;
+        var text = src.textContent;
+        function done(label) {
+          btn.textContent = label;
+          window.setTimeout(function () { btn.textContent = "Copy prompt"; }, 2000);
+        }
+        function fallback() {
+          var range = doc.createRange();
+          range.selectNodeContents(src);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          done("Selected. Press Ctrl+C or \u2318C");
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { done("Copied"); }, fallback);
+        } else {
+          fallback();
+        }
+      });
+    }
+
     /* ---------------- table of contents ---------------- */
     var details = doc.getElementById("toc-details");
     var narrow = null;

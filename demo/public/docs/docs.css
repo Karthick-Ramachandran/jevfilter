@@ -322,6 +322,26 @@ pre {
   tab-size: 2;
 }
 pre code { white-space: pre; }
+pre.wrap code { white-space: pre-wrap; }
+
+/* ---------- copyable prompt ---------- */
+.prompt-box { position: relative; }
+.prompt-box pre { padding-top: 48px; max-height: 460px; overflow-y: auto; }
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  font: 600 0.8rem var(--font-body);
+  padding: 6px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--accent-ink);
+  cursor: pointer;
+}
+.copy-btn:hover { filter: brightness(0.95); }
+.copy-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* ---------- tables ---------- */
 .table-wrap {
