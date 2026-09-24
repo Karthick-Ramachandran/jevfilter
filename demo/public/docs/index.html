@@ -49,6 +49,7 @@
       <details id="toc-details" open>
         <summary>On this page</summary>
         <ol>
+          <li><a href="#start-with-a-prompt">Get started with a prompt</a></li>
           <li><a href="#overview">Overview</a></li>
           <li><a href="#schema">Schema</a>
             <ol>
@@ -120,6 +121,34 @@
         <h1>API reference</h1>
         <p class="lede">Everything the <code>jevfilter</code> package exports, with the defaults and limits taken from the v0.1.0 source. For a guided introduction, start with the <a href="https://github.com/Karthick-Ramachandran/jevfilter#readme">README</a>.</p>
       </header>
+
+      <!-- ================= GET STARTED WITH A PROMPT ================= -->
+      <section aria-labelledby="start-with-a-prompt">
+        <h2 id="start-with-a-prompt">Get started with a prompt</h2>
+        <p>The quickest way to try JevFilter in your own app is to hand the work to an AI coding agent, such as Claude Code, Cursor, or Codex. Open it in your project and paste this prompt. It works for any app with a search or list endpoint that already takes filters. It tells the agent how JevFilter works and asks it to find your existing search before changing anything.</p>
+        <div class="prompt-box">
+          <button type="button" class="copy-btn" data-copy="start-prompt">Copy prompt</button>
+          <pre class="wrap" id="start-prompt"><code>I want to add natural-language search to my app with JevFilter, the npm package `jevfilter` (https://github.com/Karthick-Ramachandran/jevfilter). Read its README and the API reference at https://jevfilter.pages.dev/docs/ before you write code.
+
+How JevFilter works:
+- I describe the filters my API already accepts with `defineSearch` and field builders from "jevfilter": `enumField` (fixed values; put the words users say in each value's description), `booleanField`, `numberField({ unit: "USD" })`, `dateField`, and at most one `entityField({ resolve })` for named things looked up in my own data.
+- `createNaturalFilter({ schema, provider: jev(), authorize, executor })`, with `jev` imported from "jevfilter/jev". `jev()` reads TYPESAFE_API_KEY. This runs on the server only.
+- `prepare(text, { context })` returns one of: ready, needs_clarification, unsupported, blocked, unavailable. Only `ready` has filters to run. Show `result.interpretation` as chips.
+- `execute(filters, { context })` validates the filters again, reruns `authorize`, and calls my executor. Filters coming back from the browser are untrusted.
+- The model only picks from options built from my schema. It never writes SQL. Code parses numbers and dates.
+- Limits in v0.1: no OR between two values of one field, no sorting or "top 10", one entity field per search, English only, at most 16 fields, at most 100 values per enum.
+
+What to build:
+1. Find the function in my code that already searches with structured filters, and the filter type it takes. Show me what you found before changing anything.
+2. Write a `defineSearch` schema that matches that filter type exactly. Don't invent fields my API doesn't support.
+3. On the server, call `createNaturalFilter` with `authorize` from my session and an `executor` that calls my existing search. Tenant and user scope come from the session, never from the filters.
+4. Add an endpoint that takes `{ text }`, calls `prepare`, and for `ready` calls `execute` and returns the rows. In the UI, handle every status: show clarification questions, show why a request was refused, and never fall back to searching everything.
+5. Keep the API key on the server. Never send it to the browser.
+6. Write tests with `keywordProvider()` or `mockProvider()` from "jevfilter", so they run without a key.
+
+Ask me before you change my existing search function or its filter type.</code></pre>
+        </div>
+      </section>
 
       <!-- ================= OVERVIEW ================= -->
       <section aria-labelledby="overview">
