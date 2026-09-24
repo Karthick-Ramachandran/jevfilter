@@ -50,7 +50,11 @@
         <summary>On this page</summary>
         <ol>
           <li><a href="#start-with-a-prompt">Get started with a prompt</a></li>
-          <li><a href="#overview">Overview</a></li>
+          <li><a href="#overview">Overview</a>
+            <ol>
+              <li><a class="p" href="#api-key">Set your Jev key</a></li>
+            </ol>
+          </li>
           <li><a href="#schema">Schema</a>
             <ol>
               <li><a href="#defineSearch">defineSearch</a></li>
@@ -143,7 +147,7 @@ What to build:
 2. Write a `defineSearch` schema that matches that filter type exactly. Don't invent fields my API doesn't support.
 3. On the server, call `createNaturalFilter` with `authorize` from my session and an `executor` that calls my existing search. Tenant and user scope come from the session, never from the filters.
 4. Add an endpoint that takes `{ text }`, calls `prepare`, and for `ready` calls `execute` and returns the rows. In the UI, handle every status: show clarification questions, show why a request was refused, and never fall back to searching everything.
-5. Keep the API key on the server. Never send it to the browser.
+5. Set up the Jev key. `jev()` reads TYPESAFE_API_KEY from the server's environment, and I create keys at https://console.typesafe.ai/keys. Add `TYPESAFE_API_KEY=` to .env.example, load .env on the server the way this project already loads environment variables, and check that .env is in .gitignore. Don't ask me to paste the key into this chat, and never put it in client code or commit it. I'll add it to .env myself.
 6. Write tests with `keywordProvider()` or `mockProvider()` from "jevfilter", so they run without a key.
 
 Ask me before you change my existing search function or its filter type.</code></pre>
@@ -154,6 +158,12 @@ Ask me before you change my existing search function or its filter type.</code><
       <section aria-labelledby="overview">
         <h2 id="overview">Overview</h2>
         <pre><code>npm install jevfilter @typesafe-ai/sdk</code></pre>
+        <h3 id="api-key">Set your Jev key</h3>
+        <p>Create a key at <a href="https://console.typesafe.ai/keys">console.typesafe.ai/keys</a>, and give it to your server as the <code>TYPESAFE_API_KEY</code> environment variable. <code>jev()</code> reads it there. For local development, a <code>.env</code> file works:</p>
+        <pre><code>echo "TYPESAFE_API_KEY=your-key" &gt;&gt; .env
+echo ".env" &gt;&gt; .gitignore
+node --env-file=.env server.js    # Node 20.6+; frameworks that load .env do this for you</code></pre>
+        <p>In production, set it wherever your host keeps secrets. Keep the key out of browser code and out of git. To pass a key some other way, or one key per customer, see <a href="#jev"><code>jev(options)</code></a>.</p>
         <p>The package runs server-side on Node.js 20 or later and ships as ESM only. Its types need TypeScript 5.0 or later. It has two entry points:</p>
         <ul>
           <li><code>jevfilter</code>: the core, with no runtime dependencies.</li>
@@ -835,7 +845,7 @@ type MockAnswer = string | { choice: string; probability?: number };</code></pre
           <pre><code>import { jev, DEFAULT_JEV_MODEL } from "jevfilter/jev";
 
 function jev&lt;Ctx = unknown&gt;(options?: JevOptions&lt;Ctx&gt;): FilterProvider&lt;Ctx&gt;   // name "jev"</code></pre>
-          <p>Needs the <code>@typesafe-ai/sdk</code> peer dependency. JevFilter never ships a key or sends requests through a key of its own.</p>
+          <p>Needs the <code>@typesafe-ai/sdk</code> peer dependency. JevFilter never ships a key or sends requests through a key of its own. Keys come from <a href="https://console.typesafe.ai/keys">console.typesafe.ai/keys</a>; see <a href="#api-key">Set your Jev key</a>.</p>
           <h4 id="JevOptions"><code>JevOptions</code></h4>
           <div class="table-wrap"><table>
             <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>

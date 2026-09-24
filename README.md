@@ -134,6 +134,20 @@ has no runtime dependencies; `@typesafe-ai/sdk` is only needed for the Jev provi
 [API reference](https://jevfilter.pages.dev/docs/) lists every option, status, and
 limit.
 
+### Get a Jev key
+
+Create a key at [console.typesafe.ai/keys](https://console.typesafe.ai/keys), and give it to your
+server as the `TYPESAFE_API_KEY` environment variable. For local development, a `.env` file works:
+
+```sh
+echo "TYPESAFE_API_KEY=your-key" >> .env
+echo ".env" >> .gitignore
+node --env-file=.env server.js    # Node 20.6+; frameworks that load .env do this for you
+```
+
+In production, set it wherever your host keeps secrets. `jev()` reads the variable on the server.
+Keep the key out of browser code and out of git.
+
 If you use an AI coding agent, the docs start with a [prompt you can paste](https://jevfilter.pages.dev/docs/#start-with-a-prompt)
 that has it connect JevFilter to the search function you already have.
 
@@ -256,7 +270,8 @@ it still refuses currency amounts: "under $5" against a `replies` field is `unit
 
 ## Bring your own Jev key
 
-JevFilter never ships a key or proxies requests through one of its own.
+JevFilter never ships a key or proxies requests through one of its own. Keys come from
+[console.typesafe.ai/keys](https://console.typesafe.ai/keys).
 
 ```ts
 jev()                                                  // TYPESAFE_API_KEY from the environment
